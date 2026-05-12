@@ -1,343 +1,1269 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" id="html-root">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoScan — Productos Ecológicos de Proximidad</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --g900:#1B5E3B;--g700:#2D6A4F;--g500:#52B788;--g300:#95D5B2;--g100:#D8F3DC;--g50:#F0FAF3;
-  --sa:#038141;--sb:#85BB2F;--sc:#FECB02;--sd:#EF7D00;--se:#E63312;
-  --bg:#F0FAF3;--card:#fff;--text:#1A1A2E;--muted:#6B7280;--border:#E5E7EB;
-  --sh:0 2px 12px rgba(0,0,0,.07);--shl:0 8px 40px rgba(0,0,0,.13)
-}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">EcoScan — Productos Ecológicos de Proximidad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* ── Header ─────────────────────────────────────────── */
-header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 24px}
-.hinner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.2rem;color:var(--g700);text-decoration:none}
-.logo-box{width:36px;height:36px;background:var(--g700);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px}
-.loc-badge{background:var(--g100);color:var(--g700);padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:5px}
-.cfg-btn{background:none;border:none;cursor:pointer;font-size:1.3rem;color:var(--muted);padding:6px;border-radius:8px;transition:.15s}
-.cfg-btn:hover{background:var(--g50);color:var(--g700)}
+    :root {
+      --g900: #1B5E3B;
+      --g700: #2D6A4F;
+      --g500: #52B788;
+      --g300: #95D5B2;
+      --g100: #D8F3DC;
+      --g50: #F0FAF3;
+      --sa: #038141;
+      --sb: #85BB2F;
+      --sc: #FECB02;
+      --sd: #EF7D00;
+      --se: #E63312;
+      --bg: #F0FAF3;
+      --card: #fff;
+      --text: #1A1A2E;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --sh: 0 2px 12px rgba(0, 0, 0, .07);
+      --shl: 0 8px 40px rgba(0, 0, 0, .13)
+    }
 
-/* ── Hero ─────────────────────────────────────────────  */
-.hero{background:linear-gradient(135deg,#0d3b26 0%,var(--g900) 40%,var(--g700) 75%,#3a8f65 100%);color:#fff;padding:64px 24px 52px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.hero h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;margin-bottom:12px;line-height:1.15;position:relative}
-.hero h1 span{color:#95d5b2}
-.hero p{font-size:1.05rem;opacity:.85;margin-bottom:36px;position:relative}
-.search-wrap{max-width:540px;margin:0 auto;position:relative}
-.search-wrap input{width:100%;padding:16px 130px 16px 20px;border:none;border-radius:50px;font-size:1rem;font-family:'Inter',sans-serif;box-shadow:var(--shl);outline:none}
-.search-btn{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:var(--g700);color:#fff;border:none;border-radius:50px;padding:10px 22px;cursor:pointer;font-weight:700;font-size:.85rem;transition:.2s}
-.search-btn:hover{background:var(--g900)}
-.hero-stats{display:flex;justify-content:center;gap:clamp(20px,4vw,48px);margin-top:44px;flex-wrap:wrap;position:relative}
-.hstat{text-align:center}
-.hstat-v{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;line-height:1}
-.hstat-l{font-size:.78rem;opacity:.7;margin-top:4px}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh
+    }
 
-/* ── Filters ──────────────────────────────────────────  */
-.main{max-width:1200px;margin:0 auto;padding:32px 24px}
-.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;align-items:center}
-.chip{padding:8px 18px;border-radius:50px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:.85rem;font-weight:500;transition:.15s;white-space:nowrap}
-.chip:hover,.chip.on{border-color:var(--g500);background:var(--g50);color:var(--g700)}
-.sort{margin-left:auto;padding:8px 16px;border-radius:50px;border:2px solid var(--border);background:#fff;font-family:'Inter',sans-serif;font-size:.85rem;cursor:pointer;outline:none}
-.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.sh h2{font-size:1.2rem;font-weight:700}
-.sh-count{color:var(--muted);font-size:.85rem}
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 24px
+    }
 
-/* ── Product grid ──────────────────────────────────────  */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+    .hinner {
+      max-width: 1200px;
+      margin: 0 auto;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
 
-/* ── Product card ──────────────────────────────────────  */
-.card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:var(--sh);transition:transform .2s,box-shadow .2s;cursor:pointer;border:1px solid transparent}
-.card:hover{transform:translateY(-5px);box-shadow:var(--shl);border-color:var(--g100)}
-.card-top{padding:18px 18px 14px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--border)}
-.p-emoji{font-size:2.8rem;line-height:1;flex-shrink:0}
-.p-meta{flex:1;min-width:0}
-.p-cat{font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.p-name{font-size:1rem;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.p-origin{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:3px}
-.season{background:#FFF8E1;color:#E65100;padding:3px 9px;border-radius:5px;font-size:.65rem;font-weight:700;flex-shrink:0}
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: var(--g700);
+      text-decoration: none
+    }
 
-/* ── Rating banner ───────────────────────────────────── */
-.rating-bar{padding:9px 18px;display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600}
+    .logo-box {
+      width: 36px;
+      height: 36px;
+      background: var(--g700);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px
+    }
 
-/* ── Scores row ──────────────────────────────────────── */
-.scores-row{padding:12px 18px;display:flex;align-items:flex-end;gap:14px;border-bottom:1px solid var(--border)}
-.score-col{display:flex;flex-direction:column;align-items:center;gap:4px}
-.score-label{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.ns-scale{display:flex;gap:3px}
-.ns-l{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff;opacity:.3;transition:.2s}
-.ns-l.active{opacity:1;transform:scale(1.15)}
-.ns-l.na{opacity:.5;font-size:.65rem}
-.nl-a{background:var(--sa)}.nl-b{background:var(--sb)}.nl-c{background:var(--sc);color:#333!important}.nl-d{background:var(--sd)}.nl-e{background:var(--se)}.nl-x{background:#9CA3AF}
-.price-col{margin-left:auto;text-align:right}
-.price-val{font-weight:800;font-size:1.1rem;color:var(--g700)}
-.price-unit{font-size:.72rem;color:var(--muted);font-weight:400}
-.co2-tag{font-size:.68rem;font-weight:600;margin-top:2px}
+    .loc-badge {
+      background: var(--g100);
+      color: var(--g700);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
 
-/* ── Distance bar ────────────────────────────────────── */
-.dist-section{padding:10px 18px 14px}
-.dist-header{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:6px}
-.dist-header strong{font-weight:600;color:var(--text)}
-.dist-bar{height:7px;background:var(--g100);border-radius:4px;overflow:hidden}
-.dist-fill{height:100%;border-radius:4px}
+    .cfg-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: var(--muted);
+      padding: 6px;
+      border-radius: 8px;
+      transition: .15s
+    }
 
-/* ── Certs ───────────────────────────────────────────── */
-.card-foot{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:4px;flex-wrap:wrap}
-.cert{background:var(--g100);color:var(--g700);padding:3px 9px;border-radius:5px;font-size:.68rem;font-weight:600}
+    .cfg-btn:hover {
+      background: var(--g50);
+      color: var(--g700)
+    }
 
-/* ── Chat FAB ────────────────────────────────────────── */
-.fab{position:fixed;bottom:28px;right:28px;background:var(--g700);color:#fff;border:none;border-radius:50px;padding:14px 22px;font-size:.92rem;font-weight:700;cursor:pointer;box-shadow:0 6px 28px rgba(45,106,79,.45);display:flex;align-items:center;gap:9px;z-index:200;transition:.2s}
-.fab:hover{background:var(--g900);transform:scale(1.04)}
-.fab-dot{width:9px;height:9px;background:#4ade80;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+    .lang-sw {
+      display: flex;
+      gap: 3px;
+      align-items: center
+    }
 
-/* ── Chat panel ──────────────────────────────────────── */
-.chat{position:fixed;bottom:88px;right:28px;width:380px;max-width:calc(100vw - 40px);background:#fff;border-radius:22px;box-shadow:var(--shl);z-index:200;display:none;flex-direction:column;max-height:580px;overflow:hidden}
-.chat.open{display:flex}
-.chat-head{padding:16px 18px;background:var(--g700);color:#fff;display:flex;align-items:center;gap:12px}
-.chat-head-txt h3{font-size:.9rem;font-weight:700}
-.chat-head-txt p{font-size:.72rem;opacity:.75}
-.chat-close{margin-left:auto;background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
-.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:88%;padding:10px 14px;border-radius:16px;font-size:.84rem;line-height:1.45}
-.msg.bot{background:var(--g50);border:1px solid var(--g100);align-self:flex-start;border-bottom-left-radius:4px}
-.msg.user{background:var(--g700);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-.chat-inp{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
-.chat-inp input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:50px;font-family:'Inter',sans-serif;font-size:.84rem;outline:none;transition:.15s}
-.chat-inp input:focus{border-color:var(--g500)}
-.send-btn{background:var(--g700);color:#fff;border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:1.1rem;flex-shrink:0;transition:.15s}
-.send-btn:hover{background:var(--g900)}
-.typing{display:flex;gap:5px;padding:10px 14px;background:var(--g50);border-radius:16px;border-bottom-left-radius:4px;align-self:flex-start}
-.td{width:8px;height:8px;background:var(--g500);border-radius:50%;animation:bounce 1.2s infinite}
-.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-7px);opacity:1}}
+    .lang-btn {
+      background: none;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      color: var(--muted);
+      transition: .15s;
+      line-height: 1
+    }
 
-/* ── API Key modal ───────────────────────────────────── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:20px}
-.overlay.open{display:flex}
-.modal{background:#fff;border-radius:22px;padding:32px;max-width:460px;width:100%;box-shadow:var(--shl)}
-.modal h2{font-size:1.15rem;font-weight:800;margin-bottom:8px}
-.modal p{color:var(--muted);font-size:.85rem;line-height:1.5;margin-bottom:20px}
-.modal input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-family:'Inter',sans-serif;font-size:.9rem;margin-bottom:16px;outline:none;transition:.15s}
-.modal input:focus{border-color:var(--g500)}
-.mbtn-row{display:flex;gap:10px}
-.btn-p{flex:1;background:var(--g700);color:#fff;border:none;padding:12px;border-radius:12px;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:.15s}
-.btn-p:hover{background:var(--g900)}
-.btn-s{flex:1;background:var(--g50);color:var(--g700);border:2px solid var(--g300);padding:12px;border-radius:12px;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer}
+    .lang-btn.active,
+    .lang-btn:hover {
+      border-color: var(--g300);
+      background: var(--g50);
+      color: var(--g700)
+    }
 
-/* ── Footer ──────────────────────────────────────────── */
-footer{background:var(--g900);color:#fff;padding:32px 24px;text-align:center;margin-top:60px}
-footer p{opacity:.6;font-size:.82rem;margin-top:6px}
+    /* ── Hero ─────────────────────────────────────────────  */
+    .hero {
+      background: linear-gradient(135deg, #0d3b26 0%, var(--g900) 40%, var(--g700) 75%, #3a8f65 100%);
+      color: #fff;
+      padding: 64px 24px 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
 
-.no-r{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1}
-.no-r-i{font-size:3rem;margin-bottom:12px}
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+    }
 
-@media(max-width:600px){
-  .hero h1{font-size:1.7rem}
-  .hstat-v{font-size:1.5rem}
-  .grid{grid-template-columns:1fr}
-  .fab{padding:12px 18px;font-size:.85rem}
-}
-</style>
+    .hero h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 900;
+      margin-bottom: 12px;
+      line-height: 1.15;
+      position: relative
+    }
+
+    .hero h1 span {
+      color: #95d5b2
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      opacity: .85;
+      margin-bottom: 36px;
+      position: relative
+    }
+
+    .search-wrap {
+      max-width: 540px;
+      margin: 0 auto;
+      position: relative
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 16px 130px 16px 20px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      box-shadow: var(--shl);
+      outline: none
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--g700);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 22px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: .85rem;
+      transition: .2s
+    }
+
+    .search-btn:hover {
+      background: var(--g900)
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: clamp(20px, 4vw, 48px);
+      margin-top: 44px;
+      flex-wrap: wrap;
+      position: relative
+    }
+
+    .hstat {
+      text-align: center
+    }
+
+    .hstat-v {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 900;
+      line-height: 1
+    }
+
+    .hstat-l {
+      font-size: .78rem;
+      opacity: .7;
+      margin-top: 4px
+    }
+
+    /* ── Filters ──────────────────────────────────────────  */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+      align-items: center
+    }
+
+    .chip {
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 500;
+      transition: .15s;
+      white-space: nowrap
+    }
+
+    .chip:hover,
+    .chip.on {
+      border-color: var(--g500);
+      background: var(--g50);
+      color: var(--g700)
+    }
+
+    .sort {
+      margin-left: auto;
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      outline: none
+    }
+
+    .sh {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px
+    }
+
+    .sh h2 {
+      font-size: 1.2rem;
+      font-weight: 700
+    }
+
+    .sh-count {
+      color: var(--muted);
+      font-size: .85rem
+    }
+
+    /* ── Product grid ──────────────────────────────────────  */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px
+    }
+
+    /* ── Product card ──────────────────────────────────────  */
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--sh);
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+      border: 1px solid transparent
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shl);
+      border-color: var(--g100)
+    }
+
+    .card-top {
+      padding: 18px 18px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .p-emoji {
+      font-size: 2.8rem;
+      line-height: 1;
+      flex-shrink: 0
+    }
+
+    .p-meta {
+      flex: 1;
+      min-width: 0
+    }
+
+    .p-cat {
+      font-size: .7rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 3px
+    }
+
+    .p-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .p-origin {
+      font-size: .78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 3px
+    }
+
+    .season {
+      background: #FFF8E1;
+      color: #E65100;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: .65rem;
+      font-weight: 700;
+      flex-shrink: 0
+    }
+
+    /* ── Rating banner ───────────────────────────────────── */
+    .rating-bar {
+      padding: 9px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+      font-weight: 600
+    }
+
+    /* ── Scores row ──────────────────────────────────────── */
+    .scores-row {
+      padding: 12px 18px;
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .score-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px
+    }
+
+    .score-label {
+      font-size: .62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted)
+    }
+
+    .ns-scale {
+      display: flex;
+      gap: 3px
+    }
+
+    .ns-l {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 800;
+      color: #fff;
+      opacity: .3;
+      transition: .2s
+    }
+
+    .ns-l.active {
+      opacity: 1;
+      transform: scale(1.15)
+    }
+
+    .ns-l.na {
+      opacity: .5;
+      font-size: .65rem
+    }
+
+    .nl-a {
+      background: var(--sa)
+    }
+
+    .nl-b {
+      background: var(--sb)
+    }
+
+    .nl-c {
+      background: var(--sc);
+      color: #333 !important
+    }
+
+    .nl-d {
+      background: var(--sd)
+    }
+
+    .nl-e {
+      background: var(--se)
+    }
+
+    .nl-x {
+      background: #9CA3AF
+    }
+
+    .price-col {
+      margin-left: auto;
+      text-align: right
+    }
+
+    .price-val {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--g700)
+    }
+
+    .price-unit {
+      font-size: .72rem;
+      color: var(--muted);
+      font-weight: 400
+    }
+
+    .co2-tag {
+      font-size: .68rem;
+      font-weight: 600;
+      margin-top: 2px
+    }
+
+    /* ── Distance bar ────────────────────────────────────── */
+    .dist-section {
+      padding: 10px 18px 14px
+    }
+
+    .dist-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: .72rem;
+      color: var(--muted);
+      margin-bottom: 6px
+    }
+
+    .dist-header strong {
+      font-weight: 600;
+      color: var(--text)
+    }
+
+    .dist-bar {
+      height: 7px;
+      background: var(--g100);
+      border-radius: 4px;
+      overflow: hidden
+    }
+
+    .dist-fill {
+      height: 100%;
+      border-radius: 4px
+    }
+
+    /* ── Certs ───────────────────────────────────────────── */
+    .card-foot {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap
+    }
+
+    .cert {
+      background: var(--g100);
+      color: var(--g700);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: .68rem;
+      font-weight: 600
+    }
+
+    /* ── Chat FAB ────────────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--g700);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 22px;
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 28px rgba(45, 106, 79, .45);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      z-index: 200;
+      transition: .2s
+    }
+
+    .fab:hover {
+      background: var(--g900);
+      transform: scale(1.04)
+    }
+
+    .fab-dot {
+      width: 9px;
+      height: 9px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .5;
+        transform: scale(.8)
+      }
+    }
+
+    /* ── Chat panel ──────────────────────────────────────── */
+    .chat {
+      position: fixed;
+      bottom: 88px;
+      right: 28px;
+      width: 380px;
+      max-width: calc(100vw - 40px);
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: var(--shl);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      max-height: 580px;
+      overflow: hidden
+    }
+
+    .chat.open {
+      display: flex
+    }
+
+    .chat-head {
+      padding: 16px 18px;
+      background: var(--g700);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .chat-head-txt h3 {
+      font-size: .9rem;
+      font-weight: 700
+    }
+
+    .chat-head-txt p {
+      font-size: .72rem;
+      opacity: .75
+    }
+
+    .chat-close {
+      margin-left: auto;
+      background: rgba(255, 255, 255, .15);
+      border: none;
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .msg {
+      max-width: 88%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: .84rem;
+      line-height: 1.45
+    }
+
+    .msg.bot {
+      background: var(--g50);
+      border: 1px solid var(--g100);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px
+    }
+
+    .msg.user {
+      background: var(--g700);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px
+    }
+
+    .chat-inp {
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px
+    }
+
+    .chat-inp input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: .84rem;
+      outline: none;
+      transition: .15s
+    }
+
+    .chat-inp input:focus {
+      border-color: var(--g500)
+    }
+
+    .send-btn {
+      background: var(--g700);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      transition: .15s
+    }
+
+    .send-btn:hover {
+      background: var(--g900)
+    }
+
+    .typing {
+      display: flex;
+      gap: 5px;
+      padding: 10px 14px;
+      background: var(--g50);
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start
+    }
+
+    .td {
+      width: 8px;
+      height: 8px;
+      background: var(--g500);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite
+    }
+
+    .td:nth-child(2) {
+      animation-delay: .2s
+    }
+
+    .td:nth-child(3) {
+      animation-delay: .4s
+    }
+
+    @keyframes bounce {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+        opacity: .5
+      }
+
+      30% {
+        transform: translateY(-7px);
+        opacity: 1
+      }
+    }
+
+    /* ── API Key modal ───────────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 22px;
+      padding: 32px;
+      max-width: 460px;
+      width: 100%;
+      box-shadow: var(--shl)
+    }
+
+    .modal h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 8px
+    }
+
+    .modal p {
+      color: var(--muted);
+      font-size: .85rem;
+      line-height: 1.5;
+      margin-bottom: 20px
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      margin-bottom: 16px;
+      outline: none;
+      transition: .15s
+    }
+
+    .modal input:focus {
+      border-color: var(--g500)
+    }
+
+    .mbtn-row {
+      display: flex;
+      gap: 10px
+    }
+
+    .btn-p {
+      flex: 1;
+      background: var(--g700);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .btn-p:hover {
+      background: var(--g900)
+    }
+
+    .btn-s {
+      flex: 1;
+      background: var(--g50);
+      color: var(--g700);
+      border: 2px solid var(--g300);
+      padding: 12px;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      background: var(--g900);
+      color: #fff;
+      padding: 32px 24px;
+      text-align: center;
+      margin-top: 60px
+    }
+
+    footer p {
+      opacity: .6;
+      font-size: .82rem;
+      margin-top: 6px
+    }
+
+    .no-r {
+      text-align: center;
+      padding: 60px;
+      color: var(--muted);
+      grid-column: 1/-1
+    }
+
+    .no-r-i {
+      font-size: 3rem;
+      margin-bottom: 12px
+    }
+
+    @media(max-width:600px) {
+      .hero h1 {
+        font-size: 1.7rem
+      }
+
+      .hstat-v {
+        font-size: 1.5rem
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .fab {
+        padding: 12px 18px;
+        font-size: .85rem
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<header>
-  <div class="hinner">
-    <a class="logo" href="#">
-      <div class="logo-box">🌿</div>
-      EcoScan
-    </a>
-    <div style="display:flex;align-items:center;gap:12px">
-      <span class="loc-badge">📍 Barcelona</span>
-      <button class="cfg-btn" onclick="openModal()" title="Configurar IA">⚙️</button>
+  <header>
+    <div class="hinner">
+      <a class="logo" href="#">
+        <div class="logo-box">🌿</div>
+        EcoScan
+      </a>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="loc-badge">📍 Barcelona</span>
+        <div class="lang-sw">
+          <button class="lang-btn active" id="btn-es" onclick="changeLang('es')">ES</button>
+          <button class="lang-btn" id="btn-en" onclick="changeLang('en')">EN</button>
+          <button class="lang-btn" id="btn-ca" onclick="changeLang('ca')">CA</button>
+        </div>
+        <button class="cfg-btn" onclick="openModal()" title="IA">&#9881;&#65039;</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Consume mejor,<br><span data-i18n="hero_h1_span">elige lo que importa</span></h1>
+    <p data-i18n="hero_p">Productos ecológicos de proximidad con calidad verificada, Nutriscore y huella de carbono real
+    </p>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" data-i18n-ph="search_placeholder"
+        placeholder="Busca... yogur, jabón, aceite, pasta…" oninput="refresh()">
+      <button class="search-btn" onclick="refresh()" data-i18n="search_btn">Buscar</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-v" id="statN">14</div>
+        <div class="hstat-l" data-i18n="stat_products">Productos</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-v">68%</div>
+        <div class="hstat-l" data-i18n="stat_local">Locales &lt;100km</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-v" style="color:#95d5b2">A</div>
+        <div class="hstat-l" data-i18n="stat_nutriscore">Nutriscore medio</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-v">2.4t</div>
+        <div class="hstat-l" data-i18n="stat_co2">CO₂ ahorrado/año</div>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <div class="filters">
+      <button class="chip on" data-cat="all" onclick="setCat('all',this)" data-i18n="cat_all">Todos</button>
+      <button class="chip" data-cat="Alimentación" onclick="setCat('Alimentación',this)" data-i18n="cat_food">🥦
+        Alimentación</button>
+      <button class="chip" data-cat="Lácteos" onclick="setCat('Lácteos',this)" data-i18n="cat_dairy">🥛 Lácteos</button>
+      <button class="chip" data-cat="Panadería" onclick="setCat('Panadería',this)" data-i18n="cat_bakery">🍞
+        Panadería</button>
+      <button class="chip" data-cat="Bebidas" onclick="setCat('Bebidas',this)" data-i18n="cat_drinks">🍵
+        Bebidas</button>
+      <button class="chip" data-cat="Cosmética" onclick="setCat('Cosmética',this)" data-i18n="cat_cosmetics">🌸
+        Cosmética</button>
+      <button class="chip" data-cat="Limpieza" onclick="setCat('Limpieza',this)" data-i18n="cat_cleaning">🧴
+        Limpieza</button>
+      <select class="sort" id="sortSelect" onchange="setSort(this.value)">
+        <option value="distance" data-i18n="sort_proximity">Ordenar: Proximidad</option>
+        <option value="nutriscore" data-i18n="sort_nutriscore">Nutriscore</option>
+        <option value="ecoscore" data-i18n="sort_ecoscore">Ecoscore</option>
+        <option value="price" data-i18n="sort_price">Precio</option>
+      </select>
+    </div>
+    <div class="sh">
+      <h2 data-i18n="products_available">Productos disponibles</h2>
+      <span class="sh-count" id="cnt">14 productos</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <button class="fab" onclick="toggleChat()">
+    <div class="fab-dot"></div>
+    <span data-i18n="ai_assistant">Asistente IA</span>
+  </button>
+
+  <div class="chat" id="chatPanel">
+    <div class="chat-head">
+      <span style="font-size:1.6rem">🌿</span>
+      <div class="chat-head-txt">
+        <h3 data-i18n="chat_title">EcoAdvisor IA</h3>
+        <p data-i18n="chat_subtitle">Asistente inteligente · Gemini AI</p>
+      </div>
+      <button class="chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="chat-inp">
+      <input type="text" id="chatIn" data-i18n-ph="chat_placeholder" placeholder="Pregunta sobre productos…"
+        onkeydown="if(event.key==='Enter')send()">
+      <button class="send-btn" onclick="send()">➤</button>
     </div>
   </div>
-</header>
 
-<section class="hero">
-  <h1>Consume mejor,<br><span>elige lo que importa</span></h1>
-  <p>Productos ecológicos de proximidad con calidad verificada, Nutriscore y huella de carbono real</p>
-  <div class="search-wrap">
-    <input type="text" id="searchInput" placeholder="Busca... yogur, jabón, aceite, pasta…" oninput="refresh()">
-    <button class="search-btn" onclick="refresh()">Buscar</button>
-  </div>
-  <div class="hero-stats">
-    <div class="hstat"><div class="hstat-v" id="statN">14</div><div class="hstat-l">Productos</div></div>
-    <div class="hstat"><div class="hstat-v">68%</div><div class="hstat-l">Locales &lt;100km</div></div>
-    <div class="hstat"><div class="hstat-v" style="color:#95d5b2">A</div><div class="hstat-l">Nutriscore medio</div></div>
-    <div class="hstat"><div class="hstat-v">2.4t</div><div class="hstat-l">CO₂ ahorrado/año</div></div>
-  </div>
-</section>
-
-<main class="main">
-  <div class="filters">
-    <button class="chip on" onclick="setCat('all',this)">Todos</button>
-    <button class="chip" onclick="setCat('Alimentación',this)">🥦 Alimentación</button>
-    <button class="chip" onclick="setCat('Lácteos',this)">🥛 Lácteos</button>
-    <button class="chip" onclick="setCat('Panadería',this)">🍞 Panadería</button>
-    <button class="chip" onclick="setCat('Bebidas',this)">🍵 Bebidas</button>
-    <button class="chip" onclick="setCat('Cosmética',this)">🌸 Cosmética</button>
-    <button class="chip" onclick="setCat('Limpieza',this)">🧴 Limpieza</button>
-    <select class="sort" onchange="setSort(this.value)">
-      <option value="distance">Ordenar: Proximidad</option>
-      <option value="nutriscore">Nutriscore</option>
-      <option value="ecoscore">Ecoscore</option>
-      <option value="price">Precio</option>
-    </select>
-  </div>
-  <div class="sh">
-    <h2>Productos disponibles</h2>
-    <span class="sh-count" id="cnt">14 productos</span>
-  </div>
-  <div class="grid" id="grid"></div>
-</main>
-
-<button class="fab" onclick="toggleChat()">
-  <div class="fab-dot"></div>
-  <span>Asistente IA</span>
-</button>
-
-<div class="chat" id="chatPanel">
-  <div class="chat-head">
-    <span style="font-size:1.6rem">🌿</span>
-    <div class="chat-head-txt">
-      <h3>EcoAdvisor IA</h3>
-      <p>Asistente inteligente · Gemini AI</p>
-    </div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
-  </div>
-  <div class="chat-msgs" id="chatMsgs"></div>
-  <div class="chat-inp">
-    <input type="text" id="chatIn" placeholder="Pregunta sobre productos…" onkeydown="if(event.key==='Enter')send()">
-    <button class="send-btn" onclick="send()">➤</button>
-  </div>
-</div>
-
-<div class="overlay" id="apiOverlay">
-  <div class="modal">
-    <h2>🤖 EcoAdvisor · Gemini AI</h2>
-    <p>El asistente usa <strong>Google Gemini 2.0 Flash</strong> para respuestas inteligentes sobre productos ecológicos, Nutriscore, proximidad y huella de carbono.<br><br>✅ IA activa y lista para usar.</p>
-    <div class="mbtn-row">
-      <button class="btn-p" onclick="closeModal()">Entendido</button>
+  <div class="overlay" id="apiOverlay">
+    <div class="modal">
+      <h2 data-i18n="modal_title">🤖 EcoAdvisor · Gemini AI</h2>
+      <p data-i18n-html="modal_text">El asistente usa <strong>Google Gemini 2.0 Flash</strong> para respuestas
+        inteligentes sobre productos ecológicos, Nutriscore, proximidad y huella de carbono.<br><br>✅ IA activa y lista
+        para usar.</p>
+      <div class="mbtn-row">
+        <button class="btn-p" onclick="closeModal()" data-i18n="modal_ok">Entendido</button>
+      </div>
     </div>
   </div>
-</div>
 
-<footer>
-  <div style="font-size:1.5rem;margin-bottom:6px">🌿 EcoScan</div>
-  <strong>Consume local. Vive mejor.</strong>
-  <p>Datos orientativos · Nutriscore según reglamento UE 2022 · Ecoscore basado en metodología ACV</p>
-</footer>
+  <footer>
+    <div style="font-size:1.5rem;margin-bottom:6px">🌿 EcoScan</div>
+    <strong data-i18n="footer_tagline">Consume local. Vive mejor.</strong>
+    <p data-i18n="footer_data">Datos orientativos · Nutriscore según reglamento UE 2022 · Ecoscore basado en metodología
+      ACV</p>
+  </footer>
 
-<script>
-// ────────────────────────────────────────────────────────────────
-//  DATA
-// ────────────────────────────────────────────────────────────────
-const P = [
-  {id:1,name:"Manzanas Bio Fuji",cat:"Alimentación",origin:"Lleida, Catalunya",km:140,price:3.20,unit:"kg",ns:"A",es:"A",certs:["Bio","Recogida a mano"],emoji:"🍎",season:"Sep–Mar",co2:0.9,
-   desc:"Cultivadas sin pesticidas en la huerta leridana. Transporte en furgoneta eléctrica.",bens:["Alto en fibra","Sin pesticidas","Recogida esta semana"]},
+  <script>
+    // ────────────────────────────────────────────────────────────────
+    //  I18N
+    // ────────────────────────────────────────────────────────────────
+    const TRANSLATIONS = {
+      es: {
+        title: 'EcoScan \u2014 Productos Ecol\u00f3gicos de Proximidad',
+        hero_h1_span: 'elige lo que importa',
+        hero_p: 'Productos ecol\u00f3gicos de proximidad con calidad verificada, Nutriscore y huella de carbono real',
+        search_placeholder: 'Busca... yogur, jab\u00f3n, aceite, pasta\u2026', search_btn: 'Buscar',
+        stat_products: 'Productos', stat_local: 'Locales &lt;100km', stat_nutriscore: 'Nutriscore medio', stat_co2: 'CO\u2082 ahorrado/a\u00f1o',
+        cat_all: 'Todos', cat_food: '\ud83e\udd66 Alimentaci\u00f3n', cat_dairy: '\ud83e\udd5b L\u00e1cteos', cat_bakery: '\ud83c\udf5e Panader\u00eda',
+        cat_drinks: '\ud83c\udf75 Bebidas', cat_cosmetics: '\ud83c\udf38 Cosm\u00e9tica', cat_cleaning: '\ud83e\uddf4 Limpieza',
+        sort_proximity: 'Ordenar: Proximidad', sort_nutriscore: 'Nutriscore', sort_ecoscore: 'Ecoscore', sort_price: 'Precio',
+        products_available: 'Productos disponibles',
+        ai_assistant: 'Asistente IA', chat_title: 'EcoAdvisor IA', chat_subtitle: 'Asistente inteligente \u00b7 Gemini AI',
+        chat_placeholder: 'Pregunta sobre productos\u2026',
+        rating_excellent: 'Excelente elecci\u00f3n', rating_good: 'Buena elecci\u00f3n', rating_acceptable: 'Aceptable', rating_consider: 'Considera alternativas',
+        dist_very_close: '\ud83d\udfe2 Muy cercano', dist_close: '\ud83d\udfe1 Cercano', dist_medium: '\ud83d\udfe0 Distancia media', dist_far: '\ud83d\udd34 Lejano', dist_very_far: '\u26d4 Muy lejano',
+        label_nutriscore: 'Nutriscore', label_ecoscore: 'Ecoscore',
+        no_results: 'Sin resultados', product_singular: 'producto', product_plural: 'productos',
+        modal_title: '\ud83e\udd16 EcoAdvisor \u00b7 Gemini AI',
+        modal_text: 'El asistente usa <strong>Google Gemini 2.0 Flash</strong> para respuestas inteligentes sobre productos ecol\u00f3gicos, Nutriscore, proximidad y huella de carbono.<br><br>\u2705 IA activa y lista para usar.',
+        modal_ok: 'Entendido',
+        footer_tagline: 'Consume local. Vive mejor.',
+        footer_data: 'Datos orientativos \u00b7 Nutriscore seg\u00fan reglamento UE 2022 \u00b7 Ecoscore basado en metodolog\u00eda ACV',
+        chat_init: '\u00a1Hola! \ud83d\udc4b Soy **EcoAdvisor**, tu asistente de productos ecol\u00f3gicos, impulsado por **Gemini AI**.\n\nPuedo ayudarte con:\n\u2022 \ud83c\udfc6 Mejores productos por Nutriscore o Ecoscore\n\u2022 \ud83d\udccd Opciones locales (Km0)\n\u2022 \ud83c\udf0d Impacto de CO\u2082\n\u2022 \ud83e\udd57 Recomendaciones personalizadas\n\n\u00bfEn qu\u00e9 puedo ayudarte?',
+        fb_top: 'Top recomendaciones', fb_top_sub: 'local + Ecoscore A', fb_top_footer: 'Todos bajo 100km con m\u00e1xima puntuaci\u00f3n ecol\u00f3gica.',
+        fb_near: 'M\u00e1s cercanos a ti', fb_near_sub: 'menos de 30km', fb_near_footer: '\u00a1El consumo local reduce el CO\u2082 hasta un 80%! \ud83c\udf31',
+        fb_nutri: 'Mejor Nutriscore (A)', fb_nutri_footer: 'Nutriscore A = perfil nutricional \u00f3ptimo.',
+        fb_co2: 'Impacto de CO\u2082', fb_co2_best: 'Mejor', fb_co2_worst: 'Peor', fb_co2_footer: 'El transporte es el factor cr\u00edtico. \u00a1Elige local!',
+        fb_saves: 'ahorra', fb_adds: 'suma',
+        fb_breakfast: 'Desayuno ecol\u00f3gico perfecto', fb_breakfast_footer: 'Todo de proximidad, sin aditivos. \u00a1100% local! \ud83c\udf31',
+        fb_cosm: 'Cosm\u00e9tica ecol\u00f3gica local', fb_cosm_footer: 'Ambos son de Barcelona, con certificaciones bio y sin qu\u00edmicos agresivos.',
+        fb_price: 'Mejor relaci\u00f3n calidad-precio', fb_price_footer: 'Todos con alta calidad nutricional o ecol\u00f3gica.',
+        fb_help: '\ud83e\udd14 Puedo ayudarte con:\n\n\u2022 **Proximidad** \u2014 \u00bfqu\u00e9 tengo cerca?\n\u2022 **Salud** \u2014 mejor Nutriscore\n\u2022 **Planeta** \u2014 menor CO\u2082\n\u2022 **Desayuno / cosm\u00e9tica / limpieza**\n\u2022 **Precio** \u2014 mejor relaci\u00f3n calidad-precio',
+        fb_did_you_know: 'sab\u00edas que el', fb_distance_away: 'est\u00e1 a solo', fb_away: 'km?', fb_ask: '\u00bfQu\u00e9 aspecto te importa m\u00e1s?'
+      },
+      en: {
+        title: 'EcoScan \u2014 Ecological Proximity Products',
+        hero_h1_span: 'choose what matters',
+        hero_p: 'Ecological proximity products with verified quality, Nutriscore and real carbon footprint',
+        search_placeholder: 'Search... yogurt, soap, oil, pasta\u2026', search_btn: 'Search',
+        stat_products: 'Products', stat_local: 'Local &lt;100km', stat_nutriscore: 'Avg Nutriscore', stat_co2: 'CO\u2082 saved/year',
+        cat_all: 'All', cat_food: '\ud83e\udd66 Food', cat_dairy: '\ud83e\udd5b Dairy', cat_bakery: '\ud83c\udf5e Bakery',
+        cat_drinks: '\ud83c\udf75 Drinks', cat_cosmetics: '\ud83c\udf38 Cosmetics', cat_cleaning: '\ud83e\uddf4 Cleaning',
+        sort_proximity: 'Sort: Proximity', sort_nutriscore: 'Nutriscore', sort_ecoscore: 'Ecoscore', sort_price: 'Price',
+        products_available: 'Available products',
+        ai_assistant: 'AI Assistant', chat_title: 'EcoAdvisor AI', chat_subtitle: 'Smart assistant \u00b7 Gemini AI',
+        chat_placeholder: 'Ask about products\u2026',
+        rating_excellent: 'Excellent choice', rating_good: 'Good choice', rating_acceptable: 'Acceptable', rating_consider: 'Consider alternatives',
+        dist_very_close: '\ud83d\udfe2 Very close', dist_close: '\ud83d\udfe1 Close', dist_medium: '\ud83d\udfe0 Medium distance', dist_far: '\ud83d\udd34 Far', dist_very_far: '\u26d4 Very far',
+        label_nutriscore: 'Nutriscore', label_ecoscore: 'Ecoscore',
+        no_results: 'No results', product_singular: 'product', product_plural: 'products',
+        modal_title: '\ud83e\udd16 EcoAdvisor \u00b7 Gemini AI',
+        modal_text: 'The assistant uses <strong>Google Gemini 2.0 Flash</strong> for smart responses about ecological products, Nutriscore, proximity and carbon footprint.<br><br>\u2705 AI active and ready to use.',
+        modal_ok: 'Got it',
+        footer_tagline: 'Buy local. Live better.',
+        footer_data: 'Indicative data \u00b7 Nutriscore per EU regulation 2022 \u00b7 Ecoscore based on LCA methodology',
+        chat_init: 'Hi! \ud83d\udc4b I\u2019m **EcoAdvisor**, your ecological products assistant, powered by **Gemini AI**.\n\nI can help you with:\n\u2022 \ud83c\udfc6 Best products by Nutriscore or Ecoscore\n\u2022 \ud83d\udccd Local options (Km0)\n\u2022 \ud83c\udf0d CO\u2082 impact\n\u2022 \ud83e\udd57 Personalised recommendations\n\nHow can I help?',
+        fb_top: 'Top recommendations', fb_top_sub: 'local + Ecoscore A', fb_top_footer: 'All under 100km with top ecological score.',
+        fb_near: 'Nearest to you', fb_near_sub: 'less than 30km', fb_near_footer: 'Local consumption cuts CO\u2082 by up to 80%! \ud83c\udf31',
+        fb_nutri: 'Best Nutriscore (A)', fb_nutri_footer: 'Nutriscore A = optimal nutritional profile.',
+        fb_co2: 'CO\u2082 Impact', fb_co2_best: 'Best', fb_co2_worst: 'Worst', fb_co2_footer: 'Transport is the critical factor. Choose local!',
+        fb_saves: 'saves', fb_adds: 'adds',
+        fb_breakfast: 'Perfect ecological breakfast', fb_breakfast_footer: 'All local, no additives. 100% local! \ud83c\udf31',
+        fb_cosm: 'Local ecological cosmetics', fb_cosm_footer: 'Both from Barcelona, bio certifications and no harsh chemicals.',
+        fb_price: 'Best value for money', fb_price_footer: 'All with high nutritional or ecological quality.',
+        fb_help: '\ud83e\udd14 I can help you with:\n\n\u2022 **Proximity** \u2014 what\u2019s near me?\n\u2022 **Health** \u2014 best Nutriscore\n\u2022 **Planet** \u2014 lowest CO\u2082\n\u2022 **Breakfast / cosmetics / cleaning**\n\u2022 **Price** \u2014 best value',
+        fb_did_you_know: 'did you know that', fb_distance_away: 'is only', fb_away: 'km away?', fb_ask: 'What aspect matters most to you?'
+      },
+      ca: {
+        title: 'EcoScan \u2014 Productes Ecol\u00f2gics de Proximitat',
+        hero_h1_span: 'tria el que importa',
+        hero_p: 'Productes ecol\u00f2gics de proximitat amb qualitat verificada, Nutriscore i petjada de carboni real',
+        search_placeholder: 'Cerca... iogurt, sab\u00f3, oli, pasta\u2026', search_btn: 'Cercar',
+        stat_products: 'Productes', stat_local: 'Locals &lt;100km', stat_nutriscore: 'Nutriscore mitj\u00e0', stat_co2: 'CO\u2082 estalviat/any',
+        cat_all: 'Tots', cat_food: '\ud83e\udd66 Alimentaci\u00f3', cat_dairy: '\ud83e\udd5b L\u00e0ctics', cat_bakery: '\ud83c\udf5e Fleca',
+        cat_drinks: '\ud83c\udf75 Begudes', cat_cosmetics: '\ud83c\udf38 Cosm\u00e8tica', cat_cleaning: '\ud83e\uddf4 Neteja',
+        sort_proximity: 'Ordenar: Proximitat', sort_nutriscore: 'Nutriscore', sort_ecoscore: 'Ecoscore', sort_price: 'Preu',
+        products_available: 'Productes disponibles',
+        ai_assistant: 'Assistent IA', chat_title: 'EcoAdvisor IA', chat_subtitle: 'Assistent intel\u00b7ligent \u00b7 Gemini AI',
+        chat_placeholder: 'Pregunta sobre productes\u2026',
+        rating_excellent: 'Excel\u00b7lent elecci\u00f3', rating_good: 'Bona elecci\u00f3', rating_acceptable: 'Acceptable', rating_consider: 'Considera alternatives',
+        dist_very_close: '\ud83d\udfe2 Molt proper', dist_close: '\ud83d\udfe1 Proper', dist_medium: '\ud83d\udfe0 Dist\u00e0ncia mitjana', dist_far: '\ud83d\udd34 Llunya\u00e0', dist_very_far: '\u26d4 Molt llunya\u00e0',
+        label_nutriscore: 'Nutriscore', label_ecoscore: 'Ecoscore',
+        no_results: 'Sense resultats', product_singular: 'producte', product_plural: 'productes',
+        modal_title: '\ud83e\udd16 EcoAdvisor \u00b7 Gemini AI',
+        modal_text: 'L\u2019assistent fa servir <strong>Google Gemini 2.0 Flash</strong> per a respostes intel\u00b7ligents sobre productes ecol\u00f2gics, Nutriscore, proximitat i petjada de carboni.<br><br>\u2705 IA activa i llesta per usar.',
+        modal_ok: 'Ent\u00e8s',
+        footer_tagline: 'Consumeix local. Viu millor.',
+        footer_data: 'Dades orientatives \u00b7 Nutriscore segons reglament UE 2022 \u00b7 Ecoscore basat en metodologia ACV',
+        chat_init: 'Hola! \ud83d\udc4b S\u00f3c **EcoAdvisor**, el teu assistent de productes ecol\u00f2gics, impulsat per **Gemini AI**.\n\nPuc ajudar-te amb:\n\u2022 \ud83c\udfc6 Millors productes per Nutriscore o Ecoscore\n\u2022 \ud83d\udccd Opcions locals (Km0)\n\u2022 \ud83c\udf0d Impacte de CO\u2082\n\u2022 \ud83e\udd57 Recomanacions personalitzades\n\nEn qu\u00e8 et puc ajudar?',
+        fb_top: 'Top recomanacions', fb_top_sub: 'local + Ecoscore A', fb_top_footer: 'Tots per sota de 100km amb la m\u00e0xima puntuaci\u00f3 ecol\u00f2gica.',
+        fb_near: 'M\u00e9s propers a tu', fb_near_sub: 'menys de 30km', fb_near_footer: 'El consum local redueix el CO\u2082 fins un 80%! \ud83c\udf31',
+        fb_nutri: 'Millor Nutriscore (A)', fb_nutri_footer: 'Nutriscore A = perfil nutricional \u00f2ptim.',
+        fb_co2: 'Impacte de CO\u2082', fb_co2_best: 'Millor', fb_co2_worst: 'Pitjor', fb_co2_footer: 'El transport \u00e9s el factor cr\u00edtic. Tria local!',
+        fb_saves: 'estalvia', fb_adds: 'afegeix',
+        fb_breakfast: 'Esmorzar ecol\u00f2gic perfecte', fb_breakfast_footer: 'Tot de proximitat, sense additius. 100% local! \ud83c\udf31',
+        fb_cosm: 'Cosm\u00e8tica ecol\u00f2gica local', fb_cosm_footer: 'Tots dos s\u00f3n de Barcelona, amb certificacions bio i sense qu\u00edmics agreusius.',
+        fb_price: 'Millor relaci\u00f3 qualitat-preu', fb_price_footer: 'Tots amb alta qualitat nutricional o ecol\u00f2gica.',
+        fb_help: '\ud83e\udd14 Puc ajudar-te amb:\n\n\u2022 **Proximitat** \u2014 qu\u00e8 tinc a prop?\n\u2022 **Salut** \u2014 millor Nutriscore\n\u2022 **Planeta** \u2014 menys CO\u2082\n\u2022 **Esmorzar / cosm\u00e8tica / neteja**\n\u2022 **Preu** \u2014 millor relaci\u00f3 qualitat-preu',
+        fb_did_you_know: 'sabies que el', fb_distance_away: 'nom\u00e9s est\u00e0 a', fb_away: 'km?', fb_ask: 'Quin aspecte t\u2019importa m\u00e9s?'
+      }
+    };
 
-  {id:2,name:"Pan de Espelta Artesano",cat:"Panadería",origin:"Gracia, Barcelona",km:2,price:4.50,unit:"ud",ns:"A",es:"A",certs:["Km0","Artesano","Sin aditivos"],emoji:"🍞",season:"Todo el año",co2:1.2,
-   desc:"Elaborado a diario con espelta ecológica, fermentación de 18h y cocción en horno de piedra.",bens:["Fermentación larga","Harina integral local","Sin conservantes"]},
+    let lang = localStorage.getItem('ecoscan_lang') || 'es';
 
-  {id:3,name:"Yogur Natural Bio",cat:"Lácteos",origin:"Osona, Barcelona",km:72,price:1.80,unit:"ud",ns:"A",es:"A",certs:["Bio","Pastoreo","Certificado"],emoji:"🥛",season:"Todo el año",co2:0.5,
-   desc:"Leche fresca de vacas en pastoreo extensivo en Osona, sin espesantes ni aromas.",bens:["Vacas en pastoreo","Sin azúcares añadidos","Probióticos naturales"]},
+    function t(key) { return (TRANSLATIONS[lang] || TRANSLATIONS.es)[key] || key; }
 
-  {id:4,name:"Aceite de Oliva Virgen Extra",cat:"Alimentación",origin:"Baena, Córdoba",km:900,price:8.90,unit:"500ml",ns:"B",es:"A",certs:["Bio","DO Baena","Prensa fría"],emoji:"🫒",season:"Nov–Feb",co2:0.3,
-   desc:"Picual de cosecha temprana, primera prensa en frío. Máximo contenido en polifenoles.",bens:["Grasas saludables","Polifenoles","DO protegida"]},
+    function applyLang(l) {
+      lang = l;
+      localStorage.setItem('ecoscan_lang', l);
+      document.getElementById('html-root').lang = l;
+      document.getElementById('page-title').textContent = t('title');
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+      document.querySelectorAll('#sortSelect option[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+      ['es', 'en', 'ca'].forEach(code => {
+        const btn = document.getElementById('btn-' + code);
+        if (btn) btn.classList.toggle('active', code === l);
+      });
+      refresh();
+    }
 
-  {id:5,name:"Bebida de Almendras",cat:"Bebidas",origin:"Camp de Tarragona",km:95,price:2.40,unit:"litro",ns:"B",es:"A",certs:["Bio","Sin azúcar","Local"],emoji:"🌰",season:"Todo el año",co2:0.7,
-   desc:"Elaborada con almendras del Camp de Tarragona, sin carragenanos ni azúcares.",bens:["Bajo en calorías","Sin lactosa","Almendras locales"]},
+    function changeLang(l) { applyLang(l); }
 
-  {id:6,name:"Tomates Cherry Bio",cat:"Alimentación",origin:"Maresme, Barcelona",km:35,price:2.80,unit:"250g",ns:"A",es:"A",certs:["Bio","Km Cercano","Temporada"],emoji:"🍅",season:"Jun–Oct",co2:1.0,
-   desc:"Cultivados al aire libre en el Maresme, recogidos en su punto óptimo de maduración.",bens:["Licopeno natural","Sin invernadero","Sabor auténtico"]},
+    // ────────────────────────────────────────────────────────────────
+    //  DATA
+    // ────────────────────────────────────────────────────────────────
+    const P = [
+      {
+        id: 1, name: "Manzanas Bio Fuji", cat: "Alimentación", origin: "Lleida, Catalunya", km: 140, price: 3.20, unit: "kg", ns: "A", es: "A", certs: ["Bio", "Recogida a mano"], emoji: "🍎", season: "Sep–Mar", co2: 0.9,
+        desc: "Cultivadas sin pesticidas en la huerta leridana. Transporte en furgoneta eléctrica.", bens: ["Alto en fibra", "Sin pesticidas", "Recogida esta semana"]
+      },
 
-  {id:7,name:"Miel Cruda de Collserola",cat:"Alimentación",origin:"Collserola, Barcelona",km:15,price:9.50,unit:"500g",ns:"C",es:"A",certs:["Bio","Km0","Sin filtrar"],emoji:"🍯",season:"Jul–Sep",co2:0.8,
-   desc:"Extraída en frío del parque de Collserola, sin pasteurizar. Florales de lavanda y tomillo.",bens:["Antioxidantes","Enzimas activas","Apoyo local"]},
+      {
+        id: 2, name: "Pan de Espelta Artesano", cat: "Panadería", origin: "Gracia, Barcelona", km: 2, price: 4.50, unit: "ud", ns: "A", es: "A", certs: ["Km0", "Artesano", "Sin aditivos"], emoji: "🍞", season: "Todo el año", co2: 1.2,
+        desc: "Elaborado a diario con espelta ecológica, fermentación de 18h y cocción en horno de piedra.", bens: ["Fermentación larga", "Harina integral local", "Sin conservantes"]
+      },
 
-  {id:8,name:"Granola Artesanal",cat:"Panadería",origin:"Sant Gervasi, Barcelona",km:5,price:5.60,unit:"400g",ns:"B",es:"A",certs:["Bio","Artesano","Sin palma"],emoji:"🌾",season:"Todo el año",co2:0.6,
-   desc:"Tostada al horno con avena integral ecológica, aceite de coco y frutos secos de proximidad.",bens:["Sin aceite de palma","Copos integrales","Frutos secos locales"]},
+      {
+        id: 3, name: "Yogur Natural Bio", cat: "Lácteos", origin: "Osona, Barcelona", km: 72, price: 1.80, unit: "ud", ns: "A", es: "A", certs: ["Bio", "Pastoreo", "Certificado"], emoji: "🥛", season: "Todo el año", co2: 0.5,
+        desc: "Leche fresca de vacas en pastoreo extensivo en Osona, sin espesantes ni aromas.", bens: ["Vacas en pastoreo", "Sin azúcares añadidos", "Probióticos naturales"]
+      },
 
-  {id:9,name:"Chocolate Negro 85%",cat:"Alimentación",origin:"Vic, Barcelona",km:75,price:3.90,unit:"100g",ns:"C",es:"B",certs:["Fairtrade","Bio","Sin lecitina"],emoji:"🍫",season:"Todo el año",co2:0.2,
-   desc:"Cacao de Ghana (Fairtrade), elaborado por chocolatería artesanal catalana. Sin emulgentes.",bens:["Alto en cacao","Comercio justo","Sin azúcar añadido"]},
+      {
+        id: 4, name: "Aceite de Oliva Virgen Extra", cat: "Alimentación", origin: "Baena, Córdoba", km: 900, price: 8.90, unit: "500ml", ns: "B", es: "A", certs: ["Bio", "DO Baena", "Prensa fría"], emoji: "🫒", season: "Nov–Feb", co2: 0.3,
+        desc: "Picual de cosecha temprana, primera prensa en frío. Máximo contenido en polifenoles.", bens: ["Grasas saludables", "Polifenoles", "DO protegida"]
+      },
 
-  {id:10,name:"Jabón de Lavanda Artesano",cat:"Cosmética",origin:"Esplugues, Barcelona",km:10,price:5.20,unit:"ud",ns:null,es:"A",certs:["Bio","Vegano","Km0"],emoji:"🧼",season:"Todo el año",co2:0.4,
-   desc:"Aceite de oliva virgen, manteca de karité y aceite esencial de lavanda provenzal. pH neutro.",bens:["Sin sulfatos","Biodegradable","Aceites esenciales"]},
+      {
+        id: 5, name: "Bebida de Almendras", cat: "Bebidas", origin: "Camp de Tarragona", km: 95, price: 2.40, unit: "litro", ns: "B", es: "A", certs: ["Bio", "Sin azúcar", "Local"], emoji: "🌰", season: "Todo el año", co2: 0.7,
+        desc: "Elaborada con almendras del Camp de Tarragona, sin carragenanos ni azúcares.", bens: ["Bajo en calorías", "Sin lactosa", "Almendras locales"]
+      },
 
-  {id:11,name:"Crema Facial Hidratante",cat:"Cosmética",origin:"Eixample, Barcelona",km:3,price:22.00,unit:"50ml",ns:null,es:"A",certs:["Cosmos Organic","Vegano","Km0"],emoji:"✨",season:"Todo el año",co2:0.1,
-   desc:"Aloe vera, aceite de argán bio y rosa mosqueta. Formulada por cosmética natural local.",bens:["Cosmos Organic","Sin parabenos","Envase reciclable"]},
+      {
+        id: 6, name: "Tomates Cherry Bio", cat: "Alimentación", origin: "Maresme, Barcelona", km: 35, price: 2.80, unit: "250g", ns: "A", es: "A", certs: ["Bio", "Km Cercano", "Temporada"], emoji: "🍅", season: "Jun–Oct", co2: 1.0,
+        desc: "Cultivados al aire libre en el Maresme, recogidos en su punto óptimo de maduración.", bens: ["Licopeno natural", "Sin invernadero", "Sabor auténtico"]
+      },
 
-  {id:12,name:"Detergente Ecológico",cat:"Limpieza",origin:"Múnich, Alemania",km:1400,price:12.00,unit:"litro",ns:null,es:"B",certs:["Ecolabel","Concentrado","Vegetal"],emoji:"🧴",season:"Todo el año",co2:-0.3,
-   desc:"Ingredientes de origen vegetal, concentrado x10. Certificado Ecolabel europeo.",bens:["100% biodegradable","Sin fosfatos","Concentrado"]},
+      {
+        id: 7, name: "Miel Cruda de Collserola", cat: "Alimentación", origin: "Collserola, Barcelona", km: 15, price: 9.50, unit: "500g", ns: "C", es: "A", certs: ["Bio", "Km0", "Sin filtrar"], emoji: "🍯", season: "Jul–Sep", co2: 0.8,
+        desc: "Extraída en frío del parque de Collserola, sin pasteurizar. Florales de lavanda y tomillo.", bens: ["Antioxidantes", "Enzimas activas", "Apoyo local"]
+      },
 
-  {id:13,name:"Té Verde Sencha Orgánico",cat:"Bebidas",origin:"Uji, Japón",km:10200,price:7.80,unit:"50g",ns:"A",es:"C",certs:["Bio JAS","Fairtrade"],emoji:"🍵",season:"Abr–May",co2:-1.2,
-   desc:"Primera cosecha Uji, sin pesticidas. Huella de carbono elevada por transporte transoceánico.",bens:["Alto en catequinas","Certificación JAS","Recolección manual"]},
+      {
+        id: 8, name: "Granola Artesanal", cat: "Panadería", origin: "Sant Gervasi, Barcelona", km: 5, price: 5.60, unit: "400g", ns: "B", es: "A", certs: ["Bio", "Artesano", "Sin palma"], emoji: "🌾", season: "Todo el año", co2: 0.6,
+        desc: "Tostada al horno con avena integral ecológica, aceite de coco y frutos secos de proximidad.", bens: ["Sin aceite de palma", "Copos integrales", "Frutos secos locales"]
+      },
 
-  {id:14,name:"Pasta Integral Orgánica",cat:"Alimentación",origin:"Gragnano, Italia",km:1100,price:3.10,unit:"500g",ns:"A",es:"A",certs:["Bio EU","IGP Gragnano"],emoji:"🍝",season:"Todo el año",co2:0.4,
-   desc:"Sémola de trigo duro ecológico, extrusión en bronce y secado lento 48h.",bens:["Trigo duro bio","Extrusión en bronce","Secado lento"]}
-];
+      {
+        id: 9, name: "Chocolate Negro 85%", cat: "Alimentación", origin: "Vic, Barcelona", km: 75, price: 3.90, unit: "100g", ns: "C", es: "B", certs: ["Fairtrade", "Bio", "Sin lecitina"], emoji: "🍫", season: "Todo el año", co2: 0.2,
+        desc: "Cacao de Ghana (Fairtrade), elaborado por chocolatería artesanal catalana. Sin emulgentes.", bens: ["Alto en cacao", "Comercio justo", "Sin azúcar añadido"]
+      },
 
-const SO = {A:1,B:2,C:3,D:4,E:5};
-let cat='all', sortBy='distance', q='';
+      {
+        id: 10, name: "Jabón de Lavanda Artesano", cat: "Cosmética", origin: "Esplugues, Barcelona", km: 10, price: 5.20, unit: "ud", ns: null, es: "A", certs: ["Bio", "Vegano", "Km0"], emoji: "🧼", season: "Todo el año", co2: 0.4,
+        desc: "Aceite de oliva virgen, manteca de karité y aceite esencial de lavanda provenzal. pH neutro.", bens: ["Sin sulfatos", "Biodegradable", "Aceites esenciales"]
+      },
 
-// ────────────────────────────────────────────────────────────────
-//  RENDER
-// ────────────────────────────────────────────────────────────────
-function scoreColor(s){return{A:'#038141',B:'#85BB2F',C:'#FECB02',D:'#EF7D00',E:'#E63312'}[s]||'#9CA3AF'}
+      {
+        id: 11, name: "Crema Facial Hidratante", cat: "Cosmética", origin: "Eixample, Barcelona", km: 3, price: 22.00, unit: "50ml", ns: null, es: "A", certs: ["Cosmos Organic", "Vegano", "Km0"], emoji: "✨", season: "Todo el año", co2: 0.1,
+        desc: "Aloe vera, aceite de argán bio y rosa mosqueta. Formulada por cosmética natural local.", bens: ["Cosmos Organic", "Sin parabenos", "Envase reciclable"]
+      },
 
-function distColor(d){
-  if(d<50)return'#038141';if(d<150)return'#85BB2F';if(d<500)return'#FECB02';if(d<1000)return'#EF7D00';return'#E63312';
-}
-function distPct(d){return Math.min(100,Math.log10(Math.max(d,1))/Math.log10(12000)*100)}
-function distLabel(d){
-  if(d<50)return'🟢 Muy cercano';if(d<150)return'🟡 Cercano';if(d<500)return'🟠 Distancia media';if(d<1000)return'🔴 Lejano';return'⛔ Muy lejano';
-}
+      {
+        id: 12, name: "Detergente Ecológico", cat: "Limpieza", origin: "Múnich, Alemania", km: 1400, price: 12.00, unit: "litro", ns: null, es: "B", certs: ["Ecolabel", "Concentrado", "Vegetal"], emoji: "🧴", season: "Todo el año", co2: -0.3,
+        desc: "Ingredientes de origen vegetal, concentrado x10. Certificado Ecolabel europeo.", bens: ["100% biodegradable", "Sin fosfatos", "Concentrado"]
+      },
 
-function rating(p){
-  const n=SO[p.ns]||2.5, e=SO[p.es]||3;
-  const d=p.km<50?1:p.km<200?2:p.km<800?3:4;
-  const avg=(n+e+d)/3;
-  if(avg<=1.5)return{txt:'Excelente elección',bg:'#D8F3DC',col:'#1B5E3B'};
-  if(avg<=2.3)return{txt:'Buena elección',bg:'#E9F5DB',col:'#2D6A4F'};
-  if(avg<=3.0)return{txt:'Aceptable',bg:'#FFF9C4',col:'#795548'};
-  return{txt:'Considera alternativas',bg:'#FFEBEE',col:'#C62828'};
-}
+      {
+        id: 13, name: "Té Verde Sencha Orgánico", cat: "Bebidas", origin: "Uji, Japón", km: 10200, price: 7.80, unit: "50g", ns: "A", es: "C", certs: ["Bio JAS", "Fairtrade"], emoji: "🍵", season: "Abr–May", co2: -1.2,
+        desc: "Primera cosecha Uji, sin pesticidas. Huella de carbono elevada por transporte transoceánico.", bens: ["Alto en catequinas", "Certificación JAS", "Recolección manual"]
+      },
 
-function nsScale(val){
-  if(!val) return `<div class="ns-scale"><span class="ns-l nl-x na active">N/A</span></div>`;
-  return `<div class="ns-scale">${['A','B','C','D','E'].map(l=>{
-    const cl=`nl-${l.toLowerCase()}`;
-    const ac=l===val?'active':'';
-    return `<span class="ns-l ${cl} ${ac}">${l}</span>`;
-  }).join('')}</div>`;
-}
+      {
+        id: 14, name: "Pasta Integral Orgánica", cat: "Alimentación", origin: "Gragnano, Italia", km: 1100, price: 3.10, unit: "500g", ns: "A", es: "A", certs: ["Bio EU", "IGP Gragnano"], emoji: "🍝", season: "Todo el año", co2: 0.4,
+        desc: "Sémola de trigo duro ecológico, extrusión en bronce y secado lento 48h.", bens: ["Trigo duro bio", "Extrusión en bronce", "Secado lento"]
+      }
+    ];
 
-function render(list){
-  const g=document.getElementById('grid');
-  const cnt=document.getElementById('cnt');
-  cnt.textContent=list.length+' producto'+(list.length!==1?'s':'');
-  if(!list.length){
-    g.innerHTML='<div class="no-r"><div class="no-r-i">🔍</div><p style="font-weight:600">Sin resultados</p></div>';
-    return;
-  }
-  g.innerHTML=list.map(p=>{
-    const r=rating(p);
-    const dc=distColor(p.km);
-    const dp=distPct(p.km);
-    const dl=distLabel(p.km);
-    const kmStr=p.km<1000?p.km+'km':(p.km/1000).toFixed(1)+'k km';
-    const co2=p.co2>0
-      ?`<div class="co2-tag" style="color:#1B5E3B">🌱 −${p.co2}kg CO₂</div>`
-      :`<div class="co2-tag" style="color:#C62828">⚠ +${Math.abs(p.co2)}kg CO₂</div>`;
-    return `
+    const SO = { A: 1, B: 2, C: 3, D: 4, E: 5 };
+    let cat = 'all', sortBy = 'distance', q = '';
+
+    // ────────────────────────────────────────────────────────────────
+    //  RENDER
+    // ────────────────────────────────────────────────────────────────
+    function scoreColor(s) { return { A: '#038141', B: '#85BB2F', C: '#FECB02', D: '#EF7D00', E: '#E63312' }[s] || '#9CA3AF' }
+
+    function distColor(d) {
+      if (d < 50) return '#038141'; if (d < 150) return '#85BB2F'; if (d < 500) return '#FECB02'; if (d < 1000) return '#EF7D00'; return '#E63312';
+    }
+    function distPct(d) { return Math.min(100, Math.log10(Math.max(d, 1)) / Math.log10(12000) * 100) }
+    function distLabel(d) {
+      if (d < 50) return t('dist_very_close'); if (d < 150) return t('dist_close'); if (d < 500) return t('dist_medium'); if (d < 1000) return t('dist_far'); return t('dist_very_far');
+    }
+
+    function rating(p) {
+      const n = SO[p.ns] || 2.5, e = SO[p.es] || 3;
+      const d = p.km < 50 ? 1 : p.km < 200 ? 2 : p.km < 800 ? 3 : 4;
+      const avg = (n + e + d) / 3;
+      if (avg <= 1.5) return { txt: t('rating_excellent'), bg: '#D8F3DC', col: '#1B5E3B' };
+      if (avg <= 2.3) return { txt: t('rating_good'), bg: '#E9F5DB', col: '#2D6A4F' };
+      if (avg <= 3.0) return { txt: t('rating_acceptable'), bg: '#FFF9C4', col: '#795548' };
+      return { txt: t('rating_consider'), bg: '#FFEBEE', col: '#C62828' };
+    }
+
+    function nsScale(val) {
+      if (!val) return `<div class="ns-scale"><span class="ns-l nl-x na active">N/A</span></div>`;
+      return `<div class="ns-scale">${['A', 'B', 'C', 'D', 'E'].map(l => {
+        const cl = `nl-${l.toLowerCase()}`;
+        const ac = l === val ? 'active' : '';
+        return `<span class="ns-l ${cl} ${ac}">${l}</span>`;
+      }).join('')}</div>`;
+    }
+
+    function render(list) {
+      const g = document.getElementById('grid');
+      const cnt = document.getElementById('cnt');
+      cnt.textContent = list.length + ' ' + (list.length !== 1 ? t('product_plural') : t('product_singular'));
+      if (!list.length) {
+        g.innerHTML = `<div class="no-r"><div class="no-r-i">🔍</div><p style="font-weight:600">${t('no_results')}</p></div>`;
+        return;
+      }
+      g.innerHTML = list.map(p => {
+        const r = rating(p);
+        const dc = distColor(p.km);
+        const dp = distPct(p.km);
+        const dl = distLabel(p.km);
+        const kmStr = p.km < 1000 ? p.km + 'km' : (p.km / 1000).toFixed(1) + 'k km';
+        const co2 = p.co2 > 0
+          ? `<div class="co2-tag" style="color:#1B5E3B">🌱 −${p.co2}kg CO₂</div>`
+          : `<div class="co2-tag" style="color:#C62828">⚠ +${Math.abs(p.co2)}kg CO₂</div>`;
+        return `
     <div class="card" onclick="cardClick(${p.id})">
       <div class="card-top">
         <div class="p-emoji">${p.emoji}</div>
@@ -346,18 +1272,18 @@ function render(list){
           <div class="p-name">${p.name}</div>
           <div class="p-origin">📍 ${p.origin}</div>
         </div>
-        ${p.season!=='Todo el año'?`<div class="season">${p.season}</div>`:''}
+        ${p.season !== 'Todo el año' ? `<div class="season">${p.season}</div>` : ''}
       </div>
       <div class="rating-bar" style="background:${r.bg};color:${r.col}">
         <span style="font-size:.9rem">●</span> ${r.txt}
       </div>
       <div class="scores-row">
         <div class="score-col">
-          <div class="score-label">Nutriscore</div>
+          <div class="score-label">${t('label_nutriscore')}</div>
           ${nsScale(p.ns)}
         </div>
         <div class="score-col">
-          <div class="score-label">Ecoscore</div>
+          <div class="score-label">${t('label_ecoscore')}</div>
           ${nsScale(p.es)}
         </div>
         <div class="price-col">
@@ -372,151 +1298,153 @@ function render(list){
         </div>
         <div class="dist-bar"><div class="dist-fill" style="width:${dp}%;background:${dc}"></div></div>
       </div>
-      <div class="card-foot">${p.certs.slice(0,3).map(c=>`<span class="cert">${c}</span>`).join('')}</div>
+      <div class="card-foot">${p.certs.slice(0, 3).map(c => `<span class="cert">${c}</span>`).join('')}</div>
     </div>`;
-  }).join('');
-}
-
-function list(){
-  let r=[...P];
-  if(cat!=='all') r=r.filter(p=>p.cat===cat);
-  if(q){const lq=q.toLowerCase();r=r.filter(p=>p.name.toLowerCase().includes(lq)||p.cat.toLowerCase().includes(lq)||p.origin.toLowerCase().includes(lq)||p.desc.toLowerCase().includes(lq))}
-  r.sort((a,b)=>{
-    switch(sortBy){
-      case'distance':return a.km-b.km;
-      case'nutriscore':return(SO[a.ns]||9)-(SO[b.ns]||9);
-      case'ecoscore':return(SO[a.es]||9)-(SO[b.es]||9);
-      case'price':return a.price-b.price;
+      }).join('');
     }
-  });
-  return r;
-}
 
-function refresh(){q=document.getElementById('searchInput').value;render(list())}
-function setCat(c,btn){cat=c;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));btn.classList.add('on');render(list())}
-function setSort(v){sortBy=v;render(list())}
+    function list() {
+      let r = [...P];
+      if (cat !== 'all') r = r.filter(p => p.cat === cat);
+      if (q) { const lq = q.toLowerCase(); r = r.filter(p => p.name.toLowerCase().includes(lq) || p.cat.toLowerCase().includes(lq) || p.origin.toLowerCase().includes(lq) || p.desc.toLowerCase().includes(lq)) }
+      r.sort((a, b) => {
+        switch (sortBy) {
+          case 'distance': return a.km - b.km;
+          case 'nutriscore': return (SO[a.ns] || 9) - (SO[b.ns] || 9);
+          case 'ecoscore': return (SO[a.es] || 9) - (SO[b.es] || 9);
+          case 'price': return a.price - b.price;
+        }
+      });
+      return r;
+    }
 
-function cardClick(id){
-  const p=P.find(x=>x.id===id);
-  if(!p)return;
-  addMsg('bot',`${p.emoji} **${p.name}**\n\n${p.desc}\n\n✅ ${p.bens.join(' · ')}\n\n📍 ${p.origin} (${p.km}km) · ${p.price.toFixed(2)}€/${p.unit}`);
-  openChat();
-}
+    function refresh() { q = document.getElementById('searchInput').value; render(list()) }
+    function setCat(c, btn) { cat = c; document.querySelectorAll('.chip').forEach(x => x.classList.remove('on')); btn.classList.add('on'); render(list()) }
+    function setSort(v) { sortBy = v; render(list()) }
 
-// ────────────────────────────────────────────────────────────────
-//  CHAT
-// ────────────────────────────────────────────────────────────────
-const GEMINI_KEY='AIzaSyCNJymSfGQeyfvQdkVZfdH0G_cDtq2Hf6I';
-let chatOpen=false, inited=false;
+    function cardClick(id) {
+      const p = P.find(x => x.id === id);
+      if (!p) return;
+      addMsg('bot', `${p.emoji} **${p.name}**\n\n${p.desc}\n\n✅ ${p.bens.join(' · ')}\n\n📍 ${p.origin} (${p.km}km) · ${p.price.toFixed(2)}€/${p.unit}`);
+      openChat();
+    }
 
-function toggleChat(){chatOpen=!chatOpen;document.getElementById('chatPanel').classList.toggle('open',chatOpen);if(chatOpen&&!inited)initChat()}
-function openChat(){chatOpen=true;document.getElementById('chatPanel').classList.add('open');if(!inited)initChat()}
+    // ────────────────────────────────────────────────────────────────
+    //  CHAT
+    // ────────────────────────────────────────────────────────────────
+    const GEMINI_KEY = 'AIzaSyCNJymSfGQeyfvQdkVZfdH0G_cDtq2Hf6I';
+    let chatOpen = false, inited = false;
 
-function initChat(){
-  inited=true;
-  addMsg('bot','¡Hola! 👋 Soy **EcoAdvisor**, tu asistente de productos ecológicos, impulsado por **Gemini AI**.\n\nPuedo ayudarte con:\n• 🏆 Mejores productos por Nutriscore o Ecoscore\n• 📍 Opciones locales (Km0)\n• 🌍 Impacto de CO₂\n• 🥗 Recomendaciones personalizadas\n\n¿En qué puedo ayudarte?');
-}
+    function toggleChat() { chatOpen = !chatOpen; document.getElementById('chatPanel').classList.toggle('open', chatOpen); if (chatOpen && !inited) initChat() }
+    function openChat() { chatOpen = true; document.getElementById('chatPanel').classList.add('open'); if (!inited) initChat() }
 
-function addMsg(role,text){
-  const m=document.getElementById('chatMsgs');
-  const d=document.createElement('div');
-  d.className='msg '+role;
-  d.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
+    function initChat() {
+      inited = true;
+      addMsg('bot', t('chat_init'));
+    }
 
-function addTyping(){
-  const m=document.getElementById('chatMsgs');
-  const d=document.createElement('div');
-  d.className='typing';d.id='typ';
-  d.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function rmTyping(){const t=document.getElementById('typ');if(t)t.remove()}
+    function addMsg(role, text) {
+      const m = document.getElementById('chatMsgs');
+      const d = document.createElement('div');
+      d.className = 'msg ' + role;
+      d.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+      m.appendChild(d); m.scrollTop = m.scrollHeight;
+    }
 
-async function send(){
-  const inp=document.getElementById('chatIn');
-  const txt=inp.value.trim();if(!txt)return;
-  addMsg('user',txt);inp.value='';
-  addTyping();
-  await callGemini(txt);
-  rmTyping();
-}
+    function addTyping() {
+      const m = document.getElementById('chatMsgs');
+      const d = document.createElement('div');
+      d.className = 'typing'; d.id = 'typ';
+      d.innerHTML = '<div class="td"></div><div class="td"></div><div class="td"></div>';
+      m.appendChild(d); m.scrollTop = m.scrollHeight;
+    }
+    function rmTyping() { const t = document.getElementById('typ'); if (t) t.remove() }
 
-async function callGemini(msg){
-  const sys=`Eres EcoAdvisor, asistente experto en productos ecológicos de proximidad integrado en EcoScan (Barcelona).
+    async function send() {
+      const inp = document.getElementById('chatIn');
+      const txt = inp.value.trim(); if (!txt) return;
+      addMsg('user', txt); inp.value = '';
+      addTyping();
+      await callGemini(txt);
+      rmTyping();
+    }
+
+    async function callGemini(msg) {
+      const langInstr = lang === 'en' ? 'Reply in English' : lang === 'ca' ? 'Respon en català' : 'Responde en español';
+      const sys = `Eres EcoAdvisor, asistente experto en productos ecológicos de proximidad integrado en EcoScan (Barcelona).
 
 CATÁLOGO:
-${JSON.stringify(P.map(p=>({id:p.id,name:p.name,cat:p.cat,origin:p.origin,km:p.km,price:p.price,unit:p.unit,nutriscore:p.ns,ecoscore:p.es,certs:p.certs,benefits:p.bens,desc:p.desc,co2Saved:p.co2})))}
+${JSON.stringify(P.map(p => ({ id: p.id, name: p.name, cat: p.cat, origin: p.origin, km: p.km, price: p.price, unit: p.unit, nutriscore: p.ns, ecoscore: p.es, certs: p.certs, benefits: p.bens, desc: p.desc, co2Saved: p.co2 })))}
 
-Responde en español, máx 160 palabras. Usa emojis con moderación. Prioriza locales (<100km). Si recomiendas, menciona nombre, scores y distancia.`;
+${langInstr}, máx 160 palabras. Usa emojis con moderación. Prioriza locales (<100km). Si recomiendas, menciona nombre, scores y distancia.`;
 
-  try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        systemInstruction:{parts:[{text:sys}]},
-        contents:[{role:'user',parts:[{text:msg}]}],
-        generationConfig:{maxOutputTokens:350}
-      })
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: sys }] },
+            contents: [{ role: 'user', parts: [{ text: msg }] }],
+            generationConfig: { maxOutputTokens: 350 }
+          })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const d = await res.json();
+        addMsg('bot', d.candidates[0].content.parts[0].text);
+      } catch (e) { console.error(e); await fallback(msg) }
+    }
+
+    async function fallback(msg) {
+      await new Promise(r => setTimeout(r, 900));
+      const m = msg.toLowerCase();
+
+      if (m.includes('mejor') || m.includes('recomien') || m.includes('best') || m.includes('recommend') || m.includes('millor') || m.includes('recoman')) {
+        const top = P.filter(p => p.es === 'A' && p.km < 100);
+        addMsg('bot', `🌟 **${t('fb_top')}** (${t('fb_top_sub')}):\n\n${top.slice(0, 3).map(p => `${p.emoji} **${p.name}** — Nutri:${p.ns || 'N/A'} Eco:${p.es} · ${p.km}km`).join('\n')}\n\n${t('fb_top_footer')}`); return;
+      }
+      if (m.includes('cerca') || m.includes('local') || m.includes('km0') || m.includes('near') || m.includes('prop')) {
+        const near = P.filter(p => p.km < 30).sort((a, b) => a.km - b.km);
+        addMsg('bot', `📍 **${t('fb_near')}** (${t('fb_near_sub')}):\n\n${near.map(p => `${p.emoji} **${p.name}** — ${p.km}km (${p.origin})`).join('\n')}\n\n${t('fb_near_footer')}`); return;
+      }
+      if (m.includes('nutri') || m.includes('saludable') || m.includes('sano') || m.includes('healthy') || m.includes('salut')) {
+        const ns = P.filter(p => p.ns === 'A').sort((a, b) => a.km - b.km).slice(0, 4);
+        addMsg('bot', `🥗 **${t('fb_nutri')}:**\n\n${ns.map(p => `${p.emoji} **${p.name}** · ${p.km}km`).join('\n')}\n\n${t('fb_nutri_footer')}`); return;
+      }
+      if (m.includes('co2') || m.includes('carbono') || m.includes('carbon') || m.includes('medioamb') || m.includes('planeta') || m.includes('planet') || m.includes('medi ambient')) {
+        const best = P.filter(p => p.co2 > 0).sort((a, b) => b.co2 - a.co2)[0];
+        const worst = P.filter(p => p.co2 < 0).sort((a, b) => a.co2 - b.co2)[0];
+        addMsg('bot', `🌍 **${t('fb_co2')}:**\n\n✅ ${t('fb_co2_best')}: ${best.emoji} **${best.name}** ${t('fb_saves')} ${best.co2}kg CO₂\n❌ ${t('fb_co2_worst')}: ${worst.emoji} **${worst.name}** ${t('fb_adds')} ${Math.abs(worst.co2)}kg CO₂\n\n${t('fb_co2_footer')}`); return;
+      }
+      if (m.includes('desayun') || m.includes('breakfast') || m.includes('esmorzar')) {
+        addMsg('bot', `☕ **${t('fb_breakfast')}:**\n\n🍞 **Pan de Espelta** (2km, Nutri A)\n🥛 **Yogur Natural Bio** (72km, Nutri A)\n🌾 **Granola Artesanal** (5km, Nutri B)\n🍵 **Bebida de Almendras** (95km)\n\n${t('fb_breakfast_footer')}`); return;
+      }
+      if (m.includes('cosm') || m.includes('jab') || m.includes('soap') || m.includes('crema') || m.includes('cream') || m.includes('skin') || m.includes('pell')) {
+        const cosm = P.filter(p => p.cat === 'Cosmética');
+        addMsg('bot', `✨ **${t('fb_cosm')}:**\n\n${cosm.map(p => `${p.emoji} **${p.name}** — ${p.price.toFixed(2)}€/${p.unit} · ${p.km}km\n${p.certs.join(' · ')}`).join('\n\n')}\n\n${t('fb_cosm_footer')}`); return;
+      }
+      if (m.includes('precio') || m.includes('barato') || m.includes('price') || m.includes('cheap') || m.includes('preu') || m.includes('econom')) {
+        const cheap = [...P].filter(p => p.ns === 'A' || p.es === 'A').sort((a, b) => a.price - b.price).slice(0, 4);
+        addMsg('bot', `💰 **${t('fb_price')}:**\n\n${cheap.map(p => `${p.emoji} **${p.name}** — ${p.price.toFixed(2)}€/${p.unit}`).join('\n')}\n\n${t('fb_price_footer')}`); return;
+      }
+
+      const r = P[Math.floor(Math.random() * P.length)];
+      addMsg('bot', `${t('fb_help')}\n\n${t('fb_did_you_know')} ${r.emoji} **${r.name}** ${t('fb_distance_away')} ${r.km}${t('fb_away')} ${t('fb_ask')}`);
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  API KEY MODAL
+    // ────────────────────────────────────────────────────────────────
+    function openModal() { document.getElementById('apiOverlay').classList.add('open') }
+    function closeModal() { document.getElementById('apiOverlay').classList.remove('open') }
+
+    // ────────────────────────────────────────────────────────────────
+    //  INIT
+    // ────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('statN').textContent = P.length;
+      applyLang(lang);
     });
-    if(!res.ok) throw new Error(await res.text());
-    const d=await res.json();
-    addMsg('bot',d.candidates[0].content.parts[0].text);
-  }catch(e){console.error(e);await fallback(msg)}
-}
-
-async function fallback(msg){
-  await new Promise(r=>setTimeout(r,900));
-  const m=msg.toLowerCase();
-
-  if(m.includes('mejor')||m.includes('recomien')||m.includes('qué compro')){
-    const t=P.filter(p=>p.es==='A'&&p.km<100);
-    addMsg('bot',`🌟 **Top recomendaciones** (local + Ecoscore A):\n\n${t.slice(0,3).map(p=>`${p.emoji} **${p.name}** — Nutri:${p.ns||'N/A'} Eco:${p.es} · ${p.km}km`).join('\n')}\n\nTodos bajo 100km con máxima puntuación ecológica.`);return;
-  }
-  if(m.includes('cerca')||m.includes('local')||m.includes('km0')){
-    const t=P.filter(p=>p.km<30).sort((a,b)=>a.km-b.km);
-    addMsg('bot',`📍 **Más cercanos a ti** (menos de 30km):\n\n${t.map(p=>`${p.emoji} **${p.name}** — ${p.km}km (${p.origin})`).join('\n')}\n\n¡El consumo local reduce el CO₂ hasta un 80%! 🌱`);return;
-  }
-  if(m.includes('nutri')||m.includes('saludable')||m.includes('sano')){
-    const t=P.filter(p=>p.ns==='A').sort((a,b)=>a.km-b.km).slice(0,4);
-    addMsg('bot',`🥗 **Mejor Nutriscore (A):**\n\n${t.map(p=>`${p.emoji} **${p.name}** · ${p.km}km`).join('\n')}\n\nNutriscore A = perfil nutricional óptimo.`);return;
-  }
-  if(m.includes('co2')||m.includes('carbono')||m.includes('medioamb')||m.includes('planeta')){
-    const best=P.filter(p=>p.co2>0).sort((a,b)=>b.co2-a.co2)[0];
-    const worst=P.filter(p=>p.co2<0).sort((a,b)=>a.co2-b.co2)[0];
-    addMsg('bot',`🌍 **Impacto de CO₂:**\n\n✅ Mejor: ${best.emoji} **${best.name}** ahorra ${best.co2}kg CO₂\n❌ Peor: ${worst.emoji} **${worst.name}** suma ${Math.abs(worst.co2)}kg CO₂\n\nEl transporte es el factor crítico. ¡Elige local!`);return;
-  }
-  if(m.includes('desayun')){
-    addMsg('bot',`☕ **Desayuno ecológico perfecto:**\n\n🍞 **Pan de Espelta** (2km, Nutri A)\n🥛 **Yogur Natural Bio** (72km, Nutri A)\n🌾 **Granola Artesanal** (5km, Nutri B)\n🍵 **Bebida de Almendras** (95km)\n\nTodo de proximidad, sin aditivos. ¡100% local! 🌱`);return;
-  }
-  if(m.includes('cosmétic')||m.includes('jabón')||m.includes('crema')||m.includes('piel')){
-    const t=P.filter(p=>p.cat==='Cosmética');
-    addMsg('bot',`✨ **Cosmética ecológica local:**\n\n${t.map(p=>`${p.emoji} **${p.name}** — ${p.price.toFixed(2)}€/${p.unit} · ${p.km}km\n${p.certs.join(' · ')}`).join('\n\n')}\n\nAmbos son de Barcelona, con certificaciones bio y sin químicos agresivos.`);return;
-  }
-  if(m.includes('precio')||m.includes('barato')||m.includes('econom')){
-    const t=[...P].filter(p=>p.ns==='A'||p.es==='A').sort((a,b)=>a.price-b.price).slice(0,4);
-    addMsg('bot',`💰 **Mejor relación calidad-precio:**\n\n${t.map(p=>`${p.emoji} **${p.name}** — ${p.price.toFixed(2)}€/${p.unit}`).join('\n')}\n\nTodos con alta calidad nutricional o ecológica.`);return;
-  }
-
-  const r=P[Math.floor(Math.random()*P.length)];
-  addMsg('bot',`🤔 Puedo ayudarte con:\n\n• **Proximidad** — ¿qué tengo cerca?\n• **Salud** — mejor Nutriscore\n• **Planeta** — menor CO₂\n• **Desayuno / cosmética / limpieza**\n• **Precio** — mejor relación calidad-precio\n\nPor ejemplo, ¿sabías que el ${r.emoji} **${r.name}** está a solo ${r.km}km? ¿Qué aspecto te importa más?`);
-}
-
-// ────────────────────────────────────────────────────────────────
-//  API KEY MODAL
-// ────────────────────────────────────────────────────────────────
-function openModal(){document.getElementById('apiOverlay').classList.add('open')}
-function closeModal(){document.getElementById('apiOverlay').classList.remove('open')}
-
-// ────────────────────────────────────────────────────────────────
-//  INIT
-// ────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{
-  render(list());
-  document.getElementById('statN').textContent=P.length;
-});
-</script>
+  </script>
 </body>
+
 </html>
