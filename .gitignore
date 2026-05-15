@@ -3,3 +3,18 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# API / vendor docs (local reference only)
+api_doc_off.pdf
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# OFF dataset cache (large files)
+*.csv.gz
+*.jsonl.gz
+off_dataset/

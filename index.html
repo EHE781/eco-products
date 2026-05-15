@@ -870,22 +870,28 @@
     }
 
     @media(max-width:600px) {
-      .hero h1 {
-        font-size: 1.7rem
-      }
-
-      .hstat-v {
-        font-size: 1.5rem
-      }
-
-      .grid {
-        grid-template-columns: 1fr
-      }
-
-      .fab {
-        padding: 12px 18px;
-        font-size: .85rem
-      }
+      header { padding: 0 12px }
+      .hinner { height: 52px }
+      .logo { font-size: 1rem; gap: 7px }
+      .logo-box { width: 30px; height: 30px; font-size: 15px }
+      .loc-badge { font-size: .68rem; padding: 4px 10px }
+      .lang-btn { font-size: .68rem; padding: 3px 6px }
+      .hero { padding: 28px 16px 24px }
+      .hero h1 { font-size: 1.7rem }
+      .hero p { font-size: .9rem; margin-bottom: 20px }
+      .search-wrap { max-width: 100% }
+      .search-wrap input { padding: 13px 96px 13px 16px; font-size: .9rem }
+      .search-btn { font-size: .78rem; padding: 8px 14px }
+      .hstat-v { font-size: 1.5rem }
+      .hero-stats { gap: 14px; margin-top: 22px }
+      .main { padding: 20px 12px }
+      .filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none }
+      .filters::-webkit-scrollbar { display: none }
+      .chip { flex-shrink: 0 }
+      .sort { flex-shrink: 0; margin-left: 8px }
+      .grid { grid-template-columns: 1fr }
+      .fab { padding: 12px 18px; font-size: .85rem; bottom: 16px; right: 16px }
+      .chat { position: fixed; inset: 0; width: 100%; max-width: 100%; border-radius: 0; max-height: 100dvh }
     }
   </style>
 </head>
@@ -899,7 +905,7 @@
         EcoScan
       </a>
       <div style="display:flex;align-items:center;gap:12px">
-        <span class="loc-badge">📍 Barcelona</span>
+        <span class="loc-badge" id="locBadge" title="Click to use your location" style="cursor:pointer">📍 Barcelona</span>
         <div class="lang-sw">
           <button class="lang-btn active" id="btn-es" onclick="changeLang('es')">ES</button>
           <button class="lang-btn" id="btn-en" onclick="changeLang('en')">EN</button>
@@ -1141,78 +1147,250 @@
     // ────────────────────────────────────────────────────────────────
     const P = [
       {
-        id: 1, name: "Manzanas Bio Fuji", cat: "Alimentación", origin: "Lleida, Catalunya", km: 140, price: 3.20, unit: "kg", ns: "A", es: "A", certs: ["Bio", "Recogida a mano"], emoji: "🍎", season: "Sep–Mar", co2: 0.9,
-        desc: "Cultivadas sin pesticidas en la huerta leridana. Transporte en furgoneta eléctrica.", bens: ["Alto en fibra", "Sin pesticidas", "Recogida esta semana"]
+        id: 1, name: "Manzanas Bio Fuji", name_en: "Bio Fuji Apples", name_ca: "Pomes Bio Fuji",
+        cat: "Alimentación", origin: "Lleida, Catalunya", km: 140, lat: 41.6176, lon: 0.6200,
+        price: 3.20, unit: "kg", ns: "A", es: "A",
+        certs: ["Bio", "Recogida a mano"], certs_en: ["Bio", "Hand-picked"], certs_ca: ["Bio", "Collida a mà"],
+        emoji: "🍎", season: "Sep–Mar", yearRound: false, co2: 0.9,
+        desc: "Cultivadas sin pesticidas en la huerta leridana. Transporte en furgoneta eléctrica.",
+        desc_en: "Grown without pesticides in Lleida's orchards. Transported by electric van.",
+        desc_ca: "Cultivades sense pesticides a l'horta lleidatana. Transport en furgoneta elèctrica.",
+        bens: ["Alto en fibra", "Sin pesticidas", "Recogida esta semana"],
+        bens_en: ["High in fibre", "Pesticide-free", "Harvested this week"],
+        bens_ca: ["Alt en fibra", "Sense pesticides", "Collita d'aquesta setmana"]
       },
-
       {
-        id: 2, name: "Pan de Espelta Artesano", cat: "Panadería", origin: "Gracia, Barcelona", km: 2, price: 4.50, unit: "ud", ns: "A", es: "A", certs: ["Km0", "Artesano", "Sin aditivos"], emoji: "🍞", season: "Todo el año", co2: 1.2,
-        desc: "Elaborado a diario con espelta ecológica, fermentación de 18h y cocción en horno de piedra.", bens: ["Fermentación larga", "Harina integral local", "Sin conservantes"]
+        id: 2, name: "Pan de Espelta Artesano", name_en: "Artisan Spelt Bread", name_ca: "Pa d'Espelta Artesà",
+        cat: "Panadería", origin: "Gracia, Barcelona", km: 2, lat: 41.4033, lon: 2.1563,
+        price: 4.50, unit: "ud", ns: "A", es: "A",
+        certs: ["Km0", "Artesano", "Sin aditivos"], certs_en: ["Km0", "Artisan", "No additives"], certs_ca: ["Km0", "Artesà", "Sense additius"],
+        emoji: "🍞", season: "Todo el año", yearRound: true, co2: 1.2,
+        desc: "Elaborado a diario con espelta ecológica, fermentación de 18h y cocción en horno de piedra.",
+        desc_en: "Made daily with organic spelt, 18h fermentation and stone oven baking.",
+        desc_ca: "Elaborat diàriament amb espelta ecològica, fermentació de 18h i cocció en forn de pedra.",
+        bens: ["Fermentación larga", "Harina integral local", "Sin conservantes"],
+        bens_en: ["Long fermentation", "Local wholemeal flour", "No preservatives"],
+        bens_ca: ["Fermentació llarga", "Farina integral local", "Sense conservants"]
       },
-
       {
-        id: 3, name: "Yogur Natural Bio", cat: "Lácteos", origin: "Osona, Barcelona", km: 72, price: 1.80, unit: "ud", ns: "A", es: "A", certs: ["Bio", "Pastoreo", "Certificado"], emoji: "🥛", season: "Todo el año", co2: 0.5,
-        desc: "Leche fresca de vacas en pastoreo extensivo en Osona, sin espesantes ni aromas.", bens: ["Vacas en pastoreo", "Sin azúcares añadidos", "Probióticos naturales"]
+        id: 3, name: "Yogur Natural Bio", name_en: "Bio Natural Yoghurt", name_ca: "Iogurt Natural Bio",
+        cat: "Lácteos", origin: "Osona, Barcelona", km: 72, lat: 41.9302, lon: 2.2548,
+        price: 1.80, unit: "ud", ns: "A", es: "A",
+        certs: ["Bio", "Pastoreo", "Certificado"], certs_en: ["Bio", "Free-range", "Certified"], certs_ca: ["Bio", "Pasturatge", "Certificat"],
+        emoji: "🥛", season: "Todo el año", yearRound: true, co2: 0.5,
+        desc: "Leche fresca de vacas en pastoreo extensivo en Osona, sin espesantes ni aromas.",
+        desc_en: "Fresh milk from free-range cows in Osona, no thickeners or flavourings.",
+        desc_ca: "Llet fresca de vaques en pasturatge extensiu a Osona, sense espessants ni aromes.",
+        bens: ["Vacas en pastoreo", "Sin azúcares añadidos", "Probióticos naturales"],
+        bens_en: ["Free-range cows", "No added sugars", "Natural probiotics"],
+        bens_ca: ["Vaques en pasturatge", "Sense sucres afegits", "Probiòtics naturals"]
       },
-
       {
-        id: 4, name: "Aceite de Oliva Virgen Extra", cat: "Alimentación", origin: "Baena, Córdoba", km: 900, price: 8.90, unit: "500ml", ns: "B", es: "A", certs: ["Bio", "DO Baena", "Prensa fría"], emoji: "🫒", season: "Nov–Feb", co2: 0.3,
-        desc: "Picual de cosecha temprana, primera prensa en frío. Máximo contenido en polifenoles.", bens: ["Grasas saludables", "Polifenoles", "DO protegida"]
+        id: 4, name: "Aceite de Oliva Virgen Extra", name_en: "Extra Virgin Olive Oil", name_ca: "Oli d'Oliva Verge Extra",
+        cat: "Alimentación", origin: "Baena, Córdoba", km: 900, lat: 37.6166, lon: -4.3167,
+        price: 8.90, unit: "500ml", ns: "B", es: "A",
+        certs: ["Bio", "DO Baena", "Prensa fría"], certs_en: ["Bio", "DO Baena", "Cold press"], certs_ca: ["Bio", "DO Baena", "Premsa freda"],
+        emoji: "🫒", season: "Nov–Feb", yearRound: false, co2: 0.3,
+        desc: "Picual de cosecha temprana, primera prensa en frío. Máximo contenido en polifenoles.",
+        desc_en: "Early harvest Picual, first cold press. Maximum polyphenol content.",
+        desc_ca: "Picual de collita primerenca, primera premsa en fred. Màxim contingut en polifenols.",
+        bens: ["Grasas saludables", "Polifenoles", "DO protegida"],
+        bens_en: ["Healthy fats", "Polyphenols", "Protected designation"],
+        bens_ca: ["Greixos saludables", "Polifenols", "DO protegida"]
       },
-
       {
-        id: 5, name: "Bebida de Almendras", cat: "Bebidas", origin: "Camp de Tarragona", km: 95, price: 2.40, unit: "litro", ns: "B", es: "A", certs: ["Bio", "Sin azúcar", "Local"], emoji: "🌰", season: "Todo el año", co2: 0.7,
-        desc: "Elaborada con almendras del Camp de Tarragona, sin carragenanos ni azúcares.", bens: ["Bajo en calorías", "Sin lactosa", "Almendras locales"]
+        id: 5, name: "Bebida de Almendras", name_en: "Almond Drink", name_ca: "Beguda d'Ametlles",
+        cat: "Bebidas", origin: "Camp de Tarragona", km: 95, lat: 41.1189, lon: 1.2445,
+        price: 2.40, unit: "litro", ns: "B", es: "A",
+        certs: ["Bio", "Sin azúcar", "Local"], certs_en: ["Bio", "No sugar", "Local"], certs_ca: ["Bio", "Sense sucre", "Local"],
+        emoji: "🌰", season: "Todo el año", yearRound: true, co2: 0.7,
+        desc: "Elaborada con almendras del Camp de Tarragona, sin carragenanos ni azúcares.",
+        desc_en: "Made with almonds from Camp de Tarragona, no carrageenan or sugars.",
+        desc_ca: "Elaborada amb ametlles del Camp de Tarragona, sense carragenans ni sucres.",
+        bens: ["Bajo en calorías", "Sin lactosa", "Almendras locales"],
+        bens_en: ["Low calorie", "Lactose-free", "Local almonds"],
+        bens_ca: ["Baix en calories", "Sense lactosa", "Ametlles locals"]
       },
-
       {
-        id: 6, name: "Tomates Cherry Bio", cat: "Alimentación", origin: "Maresme, Barcelona", km: 35, price: 2.80, unit: "250g", ns: "A", es: "A", certs: ["Bio", "Km Cercano", "Temporada"], emoji: "🍅", season: "Jun–Oct", co2: 1.0,
-        desc: "Cultivados al aire libre en el Maresme, recogidos en su punto óptimo de maduración.", bens: ["Licopeno natural", "Sin invernadero", "Sabor auténtico"]
+        id: 6, name: "Tomates Cherry Bio", name_en: "Bio Cherry Tomatoes", name_ca: "Tomàquets Cherry Bio",
+        cat: "Alimentación", origin: "Maresme, Barcelona", km: 35, lat: 41.5411, lon: 2.4378,
+        price: 2.80, unit: "250g", ns: "A", es: "A",
+        certs: ["Bio", "Km Cercano", "Temporada"], certs_en: ["Bio", "Near Km", "Seasonal"], certs_ca: ["Bio", "Km Proper", "Temporada"],
+        emoji: "🍅", season: "Jun–Oct", yearRound: false, co2: 1.0,
+        desc: "Cultivados al aire libre en el Maresme, recogidos en su punto óptimo de maduración.",
+        desc_en: "Grown outdoors in El Maresme, picked at peak ripeness.",
+        desc_ca: "Cultivats a l'aire lliure al Maresme, recollits en el seu punt òptim de maduració.",
+        bens: ["Licopeno natural", "Sin invernadero", "Sabor auténtico"],
+        bens_en: ["Natural lycopene", "No greenhouse", "Authentic flavour"],
+        bens_ca: ["Licopè natural", "Sense hivernacle", "Sabor autèntic"]
       },
-
       {
-        id: 7, name: "Miel Cruda de Collserola", cat: "Alimentación", origin: "Collserola, Barcelona", km: 15, price: 9.50, unit: "500g", ns: "C", es: "A", certs: ["Bio", "Km0", "Sin filtrar"], emoji: "🍯", season: "Jul–Sep", co2: 0.8,
-        desc: "Extraída en frío del parque de Collserola, sin pasteurizar. Florales de lavanda y tomillo.", bens: ["Antioxidantes", "Enzimas activas", "Apoyo local"]
+        id: 7, name: "Miel Cruda de Collserola", name_en: "Raw Collserola Honey", name_ca: "Mel Crua de Collserola",
+        cat: "Alimentación", origin: "Collserola, Barcelona", km: 15, lat: 41.4231, lon: 2.0840,
+        price: 9.50, unit: "500g", ns: "C", es: "A",
+        certs: ["Bio", "Km0", "Sin filtrar"], certs_en: ["Bio", "Km0", "Unfiltered"], certs_ca: ["Bio", "Km0", "Sense filtrar"],
+        emoji: "🍯", season: "Jul–Sep", yearRound: false, co2: 0.8,
+        desc: "Extraída en frío del parque de Collserola, sin pasteurizar. Florales de lavanda y tomillo.",
+        desc_en: "Cold-extracted from Collserola park, unpasteurised. Lavender and thyme florals.",
+        desc_ca: "Extreta en fred del parc de Collserola, sense pasteuritzar. Florals de lavanda i timó.",
+        bens: ["Antioxidantes", "Enzimas activas", "Apoyo local"],
+        bens_en: ["Antioxidants", "Active enzymes", "Local support"],
+        bens_ca: ["Antioxidants", "Enzims actius", "Suport local"]
       },
-
       {
-        id: 8, name: "Granola Artesanal", cat: "Panadería", origin: "Sant Gervasi, Barcelona", km: 5, price: 5.60, unit: "400g", ns: "B", es: "A", certs: ["Bio", "Artesano", "Sin palma"], emoji: "🌾", season: "Todo el año", co2: 0.6,
-        desc: "Tostada al horno con avena integral ecológica, aceite de coco y frutos secos de proximidad.", bens: ["Sin aceite de palma", "Copos integrales", "Frutos secos locales"]
+        id: 8, name: "Granola Artesanal", name_en: "Artisan Granola", name_ca: "Granola Artesanal",
+        cat: "Panadería", origin: "Sant Gervasi, Barcelona", km: 5, lat: 41.3944, lon: 2.1337,
+        price: 5.60, unit: "400g", ns: "B", es: "A",
+        certs: ["Bio", "Artesano", "Sin palma"], certs_en: ["Bio", "Artisan", "Palm-free"], certs_ca: ["Bio", "Artesanal", "Sense palma"],
+        emoji: "🌾", season: "Todo el año", yearRound: true, co2: 0.6,
+        desc: "Tostada al horno con avena integral ecológica, aceite de coco y frutos secos de proximidad.",
+        desc_en: "Oven-toasted with organic whole oats, coconut oil and local nuts.",
+        desc_ca: "Torrada al forn amb civada integral ecològica, oli de coco i fruits secs de proximitat.",
+        bens: ["Sin aceite de palma", "Copos integrales", "Frutos secos locales"],
+        bens_en: ["No palm oil", "Whole flakes", "Local nuts"],
+        bens_ca: ["Sense oli de palma", "Flocs integrals", "Fruits secs locals"]
       },
-
       {
-        id: 9, name: "Chocolate Negro 85%", cat: "Alimentación", origin: "Vic, Barcelona", km: 75, price: 3.90, unit: "100g", ns: "C", es: "B", certs: ["Fairtrade", "Bio", "Sin lecitina"], emoji: "🍫", season: "Todo el año", co2: 0.2,
-        desc: "Cacao de Ghana (Fairtrade), elaborado por chocolatería artesanal catalana. Sin emulgentes.", bens: ["Alto en cacao", "Comercio justo", "Sin azúcar añadido"]
+        id: 9, name: "Chocolate Negro 85%", name_en: "85% Dark Chocolate", name_ca: "Xocolata Negra 85%",
+        cat: "Alimentación", origin: "Vic, Barcelona", km: 75, lat: 41.9302, lon: 2.2548,
+        price: 3.90, unit: "100g", ns: "C", es: "B",
+        certs: ["Fairtrade", "Bio", "Sin lecitina"], certs_en: ["Fairtrade", "Bio", "No lecithin"], certs_ca: ["Fairtrade", "Bio", "Sense lecitina"],
+        emoji: "🍫", season: "Todo el año", yearRound: true, co2: 0.2,
+        desc: "Cacao de Ghana (Fairtrade), elaborado por chocolatería artesanal catalana. Sin emulgentes.",
+        desc_en: "Fairtrade Ghana cacao, crafted by a Catalan artisan chocolatier. No emulsifiers.",
+        desc_ca: "Cacau de Ghana (Fairtrade), elaborat per una xocolateria artesana catalana. Sense emulgents.",
+        bens: ["Alto en cacao", "Comercio justo", "Sin azúcar añadido"],
+        bens_en: ["High cacao content", "Fair trade", "No added sugar"],
+        bens_ca: ["Alt en cacau", "Comerç just", "Sense sucre afegit"]
       },
-
       {
-        id: 10, name: "Jabón de Lavanda Artesano", cat: "Cosmética", origin: "Esplugues, Barcelona", km: 10, price: 5.20, unit: "ud", ns: null, es: "A", certs: ["Bio", "Vegano", "Km0"], emoji: "🧼", season: "Todo el año", co2: 0.4,
-        desc: "Aceite de oliva virgen, manteca de karité y aceite esencial de lavanda provenzal. pH neutro.", bens: ["Sin sulfatos", "Biodegradable", "Aceites esenciales"]
+        id: 10, name: "Jabón de Lavanda Artesano", name_en: "Artisan Lavender Soap", name_ca: "Sabó de Lavanda Artesà",
+        cat: "Cosmética", origin: "Esplugues, Barcelona", km: 10, lat: 41.3762, lon: 2.0858,
+        price: 5.20, unit: "ud", ns: null, es: "A",
+        certs: ["Bio", "Vegano", "Km0"], certs_en: ["Bio", "Vegan", "Km0"], certs_ca: ["Bio", "Vegà", "Km0"],
+        emoji: "🧼", season: "Todo el año", yearRound: true, co2: 0.4,
+        desc: "Aceite de oliva virgen, manteca de karité y aceite esencial de lavanda provenzal. pH neutro.",
+        desc_en: "Virgin olive oil, shea butter and Provençal lavender essential oil. Neutral pH.",
+        desc_ca: "Oli d'oliva verge, mantega de karité i oli essencial de lavanda provençal. pH neutre.",
+        bens: ["Sin sulfatos", "Biodegradable", "Aceites esenciales"],
+        bens_en: ["Sulphate-free", "Biodegradable", "Essential oils"],
+        bens_ca: ["Sense sulfats", "Biodegradable", "Olis essencials"]
       },
-
       {
-        id: 11, name: "Crema Facial Hidratante", cat: "Cosmética", origin: "Eixample, Barcelona", km: 3, price: 22.00, unit: "50ml", ns: null, es: "A", certs: ["Cosmos Organic", "Vegano", "Km0"], emoji: "✨", season: "Todo el año", co2: 0.1,
-        desc: "Aloe vera, aceite de argán bio y rosa mosqueta. Formulada por cosmética natural local.", bens: ["Cosmos Organic", "Sin parabenos", "Envase reciclable"]
+        id: 11, name: "Crema Facial Hidratante", name_en: "Moisturising Face Cream", name_ca: "Crema Facial Hidratant",
+        cat: "Cosmética", origin: "Eixample, Barcelona", km: 3, lat: 41.3853, lon: 2.1538,
+        price: 22.00, unit: "50ml", ns: null, es: "A",
+        certs: ["Cosmos Organic", "Vegano", "Km0"], certs_en: ["Cosmos Organic", "Vegan", "Km0"], certs_ca: ["Cosmos Organic", "Vegà", "Km0"],
+        emoji: "✨", season: "Todo el año", yearRound: true, co2: 0.1,
+        desc: "Aloe vera, aceite de argán bio y rosa mosqueta. Formulada por cosmética natural local.",
+        desc_en: "Aloe vera, bio argan oil and rosehip. Formulated by a local natural cosmetics brand.",
+        desc_ca: "Aloe vera, oli d'argà bio i rosa mosqueta. Formulada per cosmètica natural local.",
+        bens: ["Cosmos Organic", "Sin parabenos", "Envase reciclable"],
+        bens_en: ["Cosmos Organic", "Paraben-free", "Recyclable packaging"],
+        bens_ca: ["Cosmos Organic", "Sense parabens", "Envàs reciclable"]
       },
-
       {
-        id: 12, name: "Detergente Ecológico", cat: "Limpieza", origin: "Múnich, Alemania", km: 1400, price: 12.00, unit: "litro", ns: null, es: "B", certs: ["Ecolabel", "Concentrado", "Vegetal"], emoji: "🧴", season: "Todo el año", co2: -0.3,
-        desc: "Ingredientes de origen vegetal, concentrado x10. Certificado Ecolabel europeo.", bens: ["100% biodegradable", "Sin fosfatos", "Concentrado"]
+        id: 12, name: "Detergente Ecológico", name_en: "Eco Laundry Detergent", name_ca: "Detergent Ecològic",
+        cat: "Limpieza", origin: "Múnich, Alemania", km: 1400, lat: 48.1351, lon: 11.5820,
+        price: 12.00, unit: "litro", ns: null, es: "B",
+        certs: ["Ecolabel", "Concentrado", "Vegetal"], certs_en: ["Ecolabel", "Concentrated", "Plant-based"], certs_ca: ["Ecolabel", "Concentrat", "Vegetal"],
+        emoji: "🧴", season: "Todo el año", yearRound: true, co2: -0.3,
+        desc: "Ingredientes de origen vegetal, concentrado x10. Certificado Ecolabel europeo.",
+        desc_en: "Plant-based ingredients, x10 concentrate. European Ecolabel certified.",
+        desc_ca: "Ingredients d'origen vegetal, concentrat x10. Certificat Ecolabel europeu.",
+        bens: ["100% biodegradable", "Sin fosfatos", "Concentrado"],
+        bens_en: ["100% biodegradable", "Phosphate-free", "Concentrated"],
+        bens_ca: ["100% biodegradable", "Sense fosfats", "Concentrat"]
       },
-
       {
-        id: 13, name: "Té Verde Sencha Orgánico", cat: "Bebidas", origin: "Uji, Japón", km: 10200, price: 7.80, unit: "50g", ns: "A", es: "C", certs: ["Bio JAS", "Fairtrade"], emoji: "🍵", season: "Abr–May", co2: -1.2,
-        desc: "Primera cosecha Uji, sin pesticidas. Huella de carbono elevada por transporte transoceánico.", bens: ["Alto en catequinas", "Certificación JAS", "Recolección manual"]
+        id: 13, name: "Té Verde Sencha Orgánico", name_en: "Organic Sencha Green Tea", name_ca: "Te Verd Sencha Orgànic",
+        cat: "Bebidas", origin: "Uji, Japón", km: 10200, lat: 34.8844, lon: 135.7997,
+        price: 7.80, unit: "50g", ns: "A", es: "C",
+        certs: ["Bio JAS", "Fairtrade"], certs_en: ["Bio JAS", "Fairtrade"], certs_ca: ["Bio JAS", "Fairtrade"],
+        emoji: "🍵", season: "Abr–May", yearRound: false, co2: -1.2,
+        desc: "Primera cosecha Uji, sin pesticidas. Huella de carbono elevada por transporte transoceánico.",
+        desc_en: "First harvest Uji, pesticide-free. High carbon footprint due to transoceanic transport.",
+        desc_ca: "Primera collita Uji, sense pesticides. Petjada de carboni elevada pel transport transoceànic.",
+        bens: ["Alto en catequinas", "Certificación JAS", "Recolección manual"],
+        bens_en: ["High in catechins", "JAS certification", "Hand-picked"],
+        bens_ca: ["Alt en catequines", "Certificació JAS", "Recol·lecció manual"]
       },
-
       {
-        id: 14, name: "Pasta Integral Orgánica", cat: "Alimentación", origin: "Gragnano, Italia", km: 1100, price: 3.10, unit: "500g", ns: "A", es: "A", certs: ["Bio EU", "IGP Gragnano"], emoji: "🍝", season: "Todo el año", co2: 0.4,
-        desc: "Sémola de trigo duro ecológico, extrusión en bronce y secado lento 48h.", bens: ["Trigo duro bio", "Extrusión en bronce", "Secado lento"]
+        id: 14, name: "Pasta Integral Orgánica", name_en: "Organic Wholemeal Pasta", name_ca: "Pasta Integral Orgànica",
+        cat: "Alimentación", origin: "Gragnano, Italia", km: 1100, lat: 40.6952, lon: 14.5218,
+        price: 3.10, unit: "500g", ns: "A", es: "A",
+        certs: ["Bio EU", "IGP Gragnano"], certs_en: ["Bio EU", "IGP Gragnano"], certs_ca: ["Bio EU", "IGP Gragnano"],
+        emoji: "🍝", season: "Todo el año", yearRound: true, co2: 0.4,
+        desc: "Sémola de trigo duro ecológico, extrusión en bronce y secado lento 48h.",
+        desc_en: "Organic durum wheat semolina, bronze die extrusion and 48h slow drying.",
+        desc_ca: "Sèmola de blat dur ecològic, extrusió en bronze i assecat lent 48h.",
+        bens: ["Trigo duro bio", "Extrusión en bronce", "Secado lento"],
+        bens_en: ["Bio durum wheat", "Bronze extrusion", "Slow dried"],
+        bens_ca: ["Blat dur bio", "Extrusió en bronze", "Assecat lent"]
       }
     ];
 
+    function pname(p) { return p['name_' + lang] || p.name; }
+    function pdesc(p) { return p['desc_' + lang] || p.desc; }
+    function pbens(p) { return p['bens_' + lang] || p.bens; }
+    function pcerts(p) { return p['certs_' + lang] || p.certs; }
+
+    const CAT_KEYS = {
+      'Alimentación': 'cat_food', 'Lácteos': 'cat_dairy', 'Panadería': 'cat_bakery',
+      'Bebidas': 'cat_drinks', 'Cosmética': 'cat_cosmetics', 'Limpieza': 'cat_cleaning'
+    };
+
     const SO = { A: 1, B: 2, C: 3, D: 4, E: 5 };
     let cat = 'all', sortBy = 'distance', q = '';
+
+    // ────────────────────────────────────────────────────────────────
+    //  GEOLOCATION
+    // ────────────────────────────────────────────────────────────────
+    const BARCELONA = { lat: 41.3851, lon: 2.1734 };
+    let userPos = { ...BARCELONA };
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    }
+
+    function recomputeKm() {
+      P.forEach(p => { p.km = haversine(userPos.lat, userPos.lon, p.lat, p.lon); });
+    }
+
+    async function onGeoSuccess(pos) {
+      userPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      recomputeKm();
+      const badge = document.getElementById('locBadge');
+      badge.innerHTML = '📍 ...';
+      try {
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userPos.lat}&lon=${userPos.lon}`,
+          { headers: { 'Accept-Language': lang } }
+        );
+        const d = await r.json();
+        const city = d.address?.city || d.address?.town || d.address?.village || d.address?.county || `${userPos.lat.toFixed(2)}°`;
+        badge.innerHTML = `📍 ${city}`;
+      } catch {
+        badge.innerHTML = `📍 ${userPos.lat.toFixed(2)}°, ${userPos.lon.toFixed(2)}°`;
+      }
+      refresh();
+    }
+
+    function initGeolocation() {
+      const badge = document.getElementById('locBadge');
+      badge.addEventListener('click', () => {
+        if (!navigator.geolocation) return;
+        badge.innerHTML = '📍 ...';
+        navigator.geolocation.getCurrentPosition(onGeoSuccess, () => { badge.innerHTML = '📍 Barcelona'; });
+      });
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(onGeoSuccess, () => {});
+      }
+    }
 
     // ────────────────────────────────────────────────────────────────
     //  RENDER
@@ -1269,10 +1447,10 @@
         <div class="p-emoji">${p.emoji}</div>
         <div class="p-meta">
           <div class="p-cat">${p.cat}</div>
-          <div class="p-name">${p.name}</div>
+          <div class="p-name">${pname(p)}</div>
           <div class="p-origin">📍 ${p.origin}</div>
         </div>
-        ${p.season !== 'Todo el año' ? `<div class="season">${p.season}</div>` : ''}
+        ${!p.yearRound ? `<div class="season">${p.season}</div>` : ''}
       </div>
       <div class="rating-bar" style="background:${r.bg};color:${r.col}">
         <span style="font-size:.9rem">●</span> ${r.txt}
@@ -1298,7 +1476,7 @@
         </div>
         <div class="dist-bar"><div class="dist-fill" style="width:${dp}%;background:${dc}"></div></div>
       </div>
-      <div class="card-foot">${p.certs.slice(0, 3).map(c => `<span class="cert">${c}</span>`).join('')}</div>
+      <div class="card-foot">${pcerts(p).slice(0, 3).map(c => `<span class="cert">${c}</span>`).join('')}</div>
     </div>`;
       }).join('');
     }
@@ -1306,7 +1484,13 @@
     function list() {
       let r = [...P];
       if (cat !== 'all') r = r.filter(p => p.cat === cat);
-      if (q) { const lq = q.toLowerCase(); r = r.filter(p => p.name.toLowerCase().includes(lq) || p.cat.toLowerCase().includes(lq) || p.origin.toLowerCase().includes(lq) || p.desc.toLowerCase().includes(lq)) }
+      if (q) {
+        const lq = q.toLowerCase();
+        r = r.filter(p => {
+          const catTrans = (t(CAT_KEYS[p.cat]) || '').replace(/[^\w\s]/g, '').toLowerCase();
+          return pname(p).toLowerCase().includes(lq) || p.cat.toLowerCase().includes(lq) || catTrans.includes(lq) || p.origin.toLowerCase().includes(lq) || pdesc(p).toLowerCase().includes(lq);
+        });
+      }
       r.sort((a, b) => {
         switch (sortBy) {
           case 'distance': return a.km - b.km;
@@ -1325,21 +1509,53 @@
     function cardClick(id) {
       const p = P.find(x => x.id === id);
       if (!p) return;
-      addMsg('bot', `${p.emoji} **${p.name}**\n\n${p.desc}\n\n✅ ${p.bens.join(' · ')}\n\n📍 ${p.origin} (${p.km}km) · ${p.price.toFixed(2)}€/${p.unit}`);
+      logInteraction(p.id, 'click');
+      addMsg('bot', `${p.emoji} **${pname(p)}**\n\n${pdesc(p)}\n\n✅ ${pbens(p).join(' · ')}\n\n📍 ${p.origin} (${p.km}km) · ${p.price.toFixed(2)}€/${p.unit}`);
       openChat();
     }
 
     // ────────────────────────────────────────────────────────────────
     //  CHAT
     // ────────────────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────────
+    //  BACKEND / INTERACTION TRACKING
+    // ────────────────────────────────────────────────────────────────
+    const API_BASE = '';  // set to backend URL when available, e.g. 'http://localhost:8000'
+    const sessionId = (() => {
+      const k = 'ecoscan_sid';
+      return sessionStorage.getItem(k) || (() => { const id = Math.random().toString(36).slice(2); sessionStorage.setItem(k, id); return id; })();
+    })();
+
+    async function logInteraction(productId, action, meta = {}) {
+      const payload = { product_id: productId, action, session_id: sessionId, user_lat: userPos.lat, user_lon: userPos.lon, lang, timestamp: new Date().toISOString(), ...meta };
+      const stored = JSON.parse(localStorage.getItem('ecoscan_interactions') || '[]');
+      stored.push(payload);
+      if (stored.length > 200) stored.splice(0, stored.length - 200);
+      localStorage.setItem('ecoscan_interactions', JSON.stringify(stored));
+      if (!API_BASE) return;
+      try { await fetch(`${API_BASE}/api/interactions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch {}
+    }
+
+    async function fetchProducts() {
+      if (!API_BASE) return;
+      try {
+        const r = await fetch(`${API_BASE}/api/products?lang=${lang}`);
+        if (!r.ok) return;
+        const data = await r.json();
+        P.length = 0; data.forEach(p => P.push(p));
+        refresh();
+      } catch {}
+    }
+
     const GEMINI_KEY = 'AIzaSyCNJymSfGQeyfvQdkVZfdH0G_cDtq2Hf6I';
-    let chatOpen = false, inited = false;
+    let chatOpen = false, inited = false, chatHistory = [];
 
     function toggleChat() { chatOpen = !chatOpen; document.getElementById('chatPanel').classList.toggle('open', chatOpen); if (chatOpen && !inited) initChat() }
     function openChat() { chatOpen = true; document.getElementById('chatPanel').classList.add('open'); if (!inited) initChat() }
 
     function initChat() {
       inited = true;
+      chatHistory = [];
       addMsg('bot', t('chat_init'));
     }
 
@@ -1364,6 +1580,7 @@
       const inp = document.getElementById('chatIn');
       const txt = inp.value.trim(); if (!txt) return;
       addMsg('user', txt); inp.value = '';
+      logInteraction(null, 'chat', { query: txt });
       addTyping();
       await callGemini(txt);
       rmTyping();
@@ -1371,12 +1588,20 @@
 
     async function callGemini(msg) {
       const langInstr = lang === 'en' ? 'Reply in English' : lang === 'ca' ? 'Respon en català' : 'Responde en español';
-      const sys = `Eres EcoAdvisor, asistente experto en productos ecológicos de proximidad integrado en EcoScan (Barcelona).
+      const isBarcelona = userPos.lat === BARCELONA.lat && userPos.lon === BARCELONA.lon;
+      const locStr = isBarcelona
+        ? 'Ubicación del usuario: Barcelona (por defecto)'
+        : `Ubicación del usuario: lat ${userPos.lat.toFixed(4)}, lon ${userPos.lon.toFixed(4)}. Las distancias ya reflejan su posición real.`;
+      const sys = `Eres EcoAdvisor, asistente experto en productos ecológicos de proximidad integrado en EcoScan.
+${locStr}
 
-CATÁLOGO:
-${JSON.stringify(P.map(p => ({ id: p.id, name: p.name, cat: p.cat, origin: p.origin, km: p.km, price: p.price, unit: p.unit, nutriscore: p.ns, ecoscore: p.es, certs: p.certs, benefits: p.bens, desc: p.desc, co2Saved: p.co2 })))}
+CATÁLOGO (con distancias actualizadas al usuario):
+${JSON.stringify(P.map(p => ({ id: p.id, name: pname(p), cat: p.cat, origin: p.origin, km: p.km, price: p.price, unit: p.unit, nutriscore: p.ns, ecoscore: p.es, certs: pcerts(p), benefits: pbens(p), desc: pdesc(p), co2Saved: p.co2 })))}
 
-${langInstr}, máx 160 palabras. Usa emojis con moderación. Prioriza locales (<100km). Si recomiendas, menciona nombre, scores y distancia.`;
+${langInstr}, máx 160 palabras. Usa emojis con moderación. Prioriza productos más cercanos al usuario. Si recomiendas, menciona nombre, scores y distancia real.`;
+
+      chatHistory.push({ role: 'user', parts: [{ text: msg }] });
+      const contents = chatHistory.slice(-20);
 
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
@@ -1384,14 +1609,20 @@ ${langInstr}, máx 160 palabras. Usa emojis con moderación. Prioriza locales (<
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: sys }] },
-            contents: [{ role: 'user', parts: [{ text: msg }] }],
+            contents,
             generationConfig: { maxOutputTokens: 350 }
           })
         });
         if (!res.ok) throw new Error(await res.text());
         const d = await res.json();
-        addMsg('bot', d.candidates[0].content.parts[0].text);
-      } catch (e) { console.error(e); await fallback(msg) }
+        const reply = d.candidates[0].content.parts[0].text;
+        chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+        addMsg('bot', reply);
+      } catch (e) {
+        console.error(e);
+        chatHistory.pop();
+        await fallback(msg);
+      }
     }
 
     async function fallback(msg) {
@@ -1443,6 +1674,7 @@ ${langInstr}, máx 160 palabras. Usa emojis con moderación. Prioriza locales (<
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('statN').textContent = P.length;
       applyLang(lang);
+      initGeolocation();
     });
   </script>
 </body>
