@@ -13,7 +13,7 @@ async function setCat(c) {
     document.querySelectorAll(".chip").forEach(ch => {
         ch.classList.toggle("on", ch.dataset.cat === c);
     });
-    await loadProducts(CAT_QUERIES[c] || "bio ecologico", 1);
+    await loadProducts(CAT_QUERIES[c] || "bio ecologico");
 }
 
 function setSort(val) {
@@ -21,15 +21,19 @@ function setSort(val) {
     list();
 }
 
-async function goToPage(page) {
-    const totalPages = Math.ceil(totalCount / PAGE_SIZE);
-    if (page < 1 || page > totalPages || isLoading) return;
-    await loadProducts(currentQuery, page);
+function goToPage(page) {
+    const totalDisplayPages = Math.ceil(P_ALL.length / PAGE_SIZE);
+    if (page < 1 || page > totalDisplayPages || isLoading) return;
+    currentPage = page;
+    list();
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (page === totalDisplayPages && P_ALL.length < totalApiCount) {
+        prefetchNext();
+    }
 }
 
 function cardClick(id) {
-    const p = P.find(x => x.id === id);
+    const p = P_ALL.find(x => x.id === id);
     if (!p) return;
     logInteraction(id, "view");
     const context = `🛒 ${pname(p)} (${p.cat}, ${p.origin}, ${p._km ?? 0}km)\nNutriscore: ${p.ns} | Ecoscore: ${p.es}\n${pdesc(p)}\nBeneficios: ${pbens(p).join(", ")}`;
@@ -55,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             clearTimeout(_searchTimer);
             _searchTimer = setTimeout(async () => {
                 const query = q || CAT_QUERIES[cat] || "bio ecologico";
-                await loadProducts(query, 1);
+                await loadProducts(query);
             }, 400);
         });
     }
@@ -64,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         searchBtn.addEventListener("click", async () => {
             q = searchInput ? searchInput.value.trim() : "";
             clearTimeout(_searchTimer);
-            await loadProducts(q || CAT_QUERIES[cat] || "bio ecologico", 1);
+            await loadProducts(q || CAT_QUERIES[cat] || "bio ecologico");
         });
     }
 

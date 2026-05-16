@@ -1,13 +1,17 @@
 /* ── Product catalogue — cargado desde Open Food Facts API ── */
 
-let P = [];
+let P_ALL = [];
 
-const PAGE_SIZE = 20;
-const MAX_PAGES = 20;
-let currentPage  = 1;
-let totalCount   = 0;
-let currentQuery = "bio ecologico";
-let isLoading    = false;
+const FETCH_SIZE  = 50;
+const PAGE_SIZE   = 15;
+const MAX_BATCHES = 8; // tope: 400 productos
+
+let apiBatch      = 0;
+let totalApiCount = 0;
+let currentPage   = 1;
+let currentQuery  = "bio ecologico";
+let isLoading     = false;
+let isPrefetching = false;
 
 const CAT_KEYS = {
     "Alimentación": "cat_food",
@@ -48,59 +52,70 @@ function _mapProduct(p) {
     };
 }
 
-const _pageCache = new Map(); // clave: "query::page::lang"
+async function _fetchBatch(query, batch) {
+    const url = `/api/off/search?q=${encodeURIComponent(query)}&lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (batch === 1) {
+        totalApiCount = Math.min(data.count || 0, MAX_BATCHES * FETCH_SIZE);
+    }
+    return (data.products || []).map(_mapProduct);
+}
 
-async function loadProducts(query = currentQuery, page = 1) {
+async function loadProducts(query = currentQuery) {
     if (isLoading) return;
 
-    // Hit de caché — sin llamada a la API
-    const cacheKey = `${query}::${page}::${_lang}`;
-    const cached = _pageCache.get(cacheKey);
-    if (cached) {
-        P            = cached.products;
-        currentQuery = query;
-        currentPage  = page;
-        totalCount   = cached.count;
-        list();
-        return;
-    }
-
-    const prevP     = P;
-    const prevCount = totalCount;
-    const prevPage  = currentPage;
+    const prevAll   = P_ALL;
+    const prevCount = totalApiCount;
     const prevQuery = currentQuery;
-    const initial   = P.length === 0;
 
-    isLoading = true;
-    if (initial) {
-        list(); // skeletons solo en carga inicial
+    isLoading    = true;
+    currentPage  = 1;
+    currentQuery = query;
+
+    if (P_ALL.length === 0) {
+        // Carga inicial: mostrar skeletons
+        apiBatch      = 0;
+        totalApiCount = 0;
+        list();
     } else {
+        // Nueva búsqueda: mantener resultados actuales visibles mientras carga
         document.getElementById("grid")?.classList.add("grid-loading");
     }
 
     try {
-        const url = `/api/off/search?q=${encodeURIComponent(query)}&lang=${_lang}&page=${page}&page_size=${PAGE_SIZE}`;
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const data = await resp.json();
-        const products = (data.products || []).map(_mapProduct);
-        const count    = Math.min(data.count || 0, MAX_PAGES * PAGE_SIZE);
-
-        _pageCache.set(cacheKey, { products, count });
-
-        P            = products;
-        currentQuery = query;
-        currentPage  = page;
-        totalCount   = count;
+        const products = await _fetchBatch(query, 1);
+        P_ALL    = products;
+        apiBatch = 1;
     } catch (err) {
         console.error("Error cargando productos:", err);
-        P            = prevP;
-        totalCount   = prevCount;
-        currentPage  = prevPage;
-        currentQuery = prevQuery;
+        P_ALL         = prevAll;
+        totalApiCount = prevCount;
+        currentQuery  = prevQuery;
     } finally {
         isLoading = false;
         document.getElementById("grid")?.classList.remove("grid-loading");
         list();
+    }
+}
+
+async function prefetchNext() {
+    if (isPrefetching || isLoading)    return;
+    if (P_ALL.length >= totalApiCount) return;
+    if (apiBatch >= MAX_BATCHES)       return;
+
+    isPrefetching = true;
+    try {
+        const products = await _fetchBatch(currentQuery, apiBatch + 1);
+        if (products.length > 0) {
+            P_ALL = [...P_ALL, ...products];
+            apiBatch++;
+            list(); // extiende la paginación visualmente
+        }
+    } catch (err) {
+        console.error("Prefetch error:", err);
+    } finally {
+        isPrefetching = false;
     }
 }

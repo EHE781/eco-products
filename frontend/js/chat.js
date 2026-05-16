@@ -27,12 +27,36 @@ function initChat() {
     addMsg("bot", t("chat_welcome"));
 }
 
+function _md(text) {
+    const lines = text.split("\n");
+    let html = "";
+    let inList = false;
+    for (const line of lines) {
+        const li = line.match(/^[-•*]\s+(.+)/);
+        if (li) {
+            if (!inList) { html += "<ul>"; inList = true; }
+            html += `<li>${li[1]}</li>`;
+        } else {
+            if (inList) { html += "</ul>"; inList = false; }
+            html += line.trim() ? `<p>${line}</p>` : "";
+        }
+    }
+    if (inList) html += "</ul>";
+    return html
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+}
+
 function addMsg(role, text) {
     const msgs = document.getElementById("chatMsgs");
     if (!msgs) return;
     const div = document.createElement("div");
     div.className = `msg ${role}`;
-    div.textContent = text;
+    if (role === "bot") {
+        div.innerHTML = _md(text);
+    } else {
+        div.textContent = text;
+    }
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
 }

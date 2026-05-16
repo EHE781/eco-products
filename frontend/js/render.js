@@ -153,8 +153,7 @@ function list() {
         return;
     }
 
-    let items = P.filter(p => {
-        if (cat !== "all" && p.cat !== cat) return false;
+    let items = P_ALL.filter(p => {
         if (!q) return true;
         const needle = q.toLowerCase();
         return [pname(p), p.cat, p.origin, pdesc(p)].some(s => s.toLowerCase().includes(needle));
@@ -162,6 +161,9 @@ function list() {
 
     const sorter = SO[sortBy] ? SO[sortBy]() : SO.prox();
     items.sort(sorter);
+
+    const totalDisplayPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+    if (currentPage > totalDisplayPages) currentPage = totalDisplayPages;
 
     if (countEl) countEl.textContent = `${t("showing")} ${items.length} ${t("showing2")}`;
 
@@ -171,24 +173,27 @@ function list() {
         return;
     }
 
-    container.innerHTML = items.map(render).join("");
-    updateHeroStats(items);
-    renderPagination(currentPage, Math.ceil(totalCount / PAGE_SIZE));
+    const pageItems = items.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+    const missing = PAGE_SIZE - pageItems.length;
+    const skels = missing > 0 && P_ALL.length < totalApiCount ? renderSkeletons(missing) : "";
+    container.innerHTML = pageItems.map(render).join("") + skels;
+    updateHeroStats();
+    renderPagination(currentPage, totalDisplayPages);
 }
 
-function updateHeroStats(items) {
-    const total = items.length;
-    const local = items.filter(p => (p._km ?? 0) <= 200).length;
-    const pctLocal = total ? Math.round(local / total * 100) : 0;
-    const nsA = items.filter(p => p.ns === "A").length;
-    const co2 = items.reduce((s, p) => s + (p.co2 > 0 ? p.co2 : 0), 0);
+function updateHeroStats() {
+    const n      = P_ALL.length;
+    const local  = P_ALL.filter(p => (p._km ?? 0) <= 200).length;
+    const pctLocal = n ? Math.round(local / n * 100) : 0;
+    const nsA    = P_ALL.filter(p => p.ns === "A").length;
+    const co2    = P_ALL.reduce((s, p) => s + (p.co2 > 0 ? p.co2 : 0), 0);
 
     const elN     = document.getElementById("statN");
     const elLocal = document.getElementById("statLocal");
     const elNS    = document.getElementById("statNS");
     const elCO2   = document.getElementById("statCO2");
 
-    if (elN)     elN.textContent     = total;
+    if (elN)     elN.textContent     = totalApiCount > n ? totalApiCount.toLocaleString() : n;
     if (elLocal) elLocal.textContent = pctLocal + "%";
     if (elNS)    elNS.textContent    = nsA;
     if (elCO2)   elCO2.textContent   = co2.toFixed(1);
