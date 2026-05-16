@@ -11,7 +11,6 @@ class ProductOut(BaseModel):
     lat: float
     lon: float
     km: float
-    price: float
     unit: str
     ns: Optional[str]
     es: Optional[str]

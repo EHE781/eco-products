@@ -1,8 +1,12 @@
 """
 services/openfoodfacts.py — adapta la respuesta de OFF al formato interno
 """
+import asyncio
+import logging
 from typing import Optional
 import httpx
+
+logger = logging.getLogger(__name__)
 
 OFF_BASE = "https://world.openfoodfacts.org"
 HEADERS = {"User-Agent": "EcoScan/1.0 (ecoscan@example.com)"}
@@ -76,7 +80,6 @@ def _map_product(raw: dict, lang: str = "es") -> dict:
         "lat": 41.3851,
         "lon": 2.1734,
         "km": 0,
-        "price": 0.0,
         "unit": raw.get("quantity") or "ud",
         "ns": ns,
         "es": es,
@@ -99,16 +102,26 @@ async def search_food(
         "page": page,
         "page_size": page_size,
         "fields": _FIELDS,
-        "sort_by": "ecoscore_score",
+        "countries_tags": "en:spain",
     }
-    async with httpx.AsyncClient(headers=HEADERS, timeout=10.0) as client:
-        resp = await client.get(f"{OFF_BASE}/api/v2/search", params=params)
-        if resp.status_code == 503:
+    async with httpx.AsyncClient(headers=HEADERS, timeout=15.0) as client:
+        for attempt in range(3):
+            resp = await client.get(f"{OFF_BASE}/api/v2/search", params=params)
+            logger.info("OFF HTTP %d para q=%r page=%d (intento %d)", resp.status_code, query, page, attempt + 1)
+            if resp.status_code != 503:
+                break
+            logger.warning("OFF 503, reintentando en %ds…", attempt + 1)
+            await asyncio.sleep(attempt + 1)
+        else:
+            logger.error("OFF 503 tras 3 intentos, retornando vacío")
             return {"products": [], "count": 0, "page": page}
         resp.raise_for_status()
         data = resp.json()
+        logger.debug("OFF count=%s productos_raw=%d", data.get("count"), len(data.get("products", [])))
 
-    products = [_map_product(p, lang) for p in data.get("products", [])]
+    raw = data.get("products", [])
+    products = [_map_product(p, lang) for p in raw]
+    logger.info("OFF search q=%r page=%d → %d productos (count=%s)", query, page, len(products), data.get("count"))
     return {"products": products, "count": data.get("count", len(products)), "page": page}
 
 

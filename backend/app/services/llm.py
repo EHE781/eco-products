@@ -19,7 +19,7 @@ def build_system_prompt(products: list[dict], lang: str, context: str | None = N
     catalog = "\n".join(
         [
             f"[{p['id']}] {p['name']} | {p['cat']} | {p['origin']} | {p['km']:.1f}km | "
-            f"NS:{p['ns']} ES:{p['es']} | EUR {p['price']}/{p['unit']} | CO2:{p['co2']}kg | {p['desc']}"
+            f"NS:{p['ns']} ES:{p['es']} | {p['unit']} | CO2:{p['co2']}kg | {p['desc']}"
             for p in products
         ]
     )
@@ -32,7 +32,7 @@ def build_system_prompt(products: list[dict], lang: str, context: str | None = N
     )
 
 
-def generate_chat_reply(message: str, system_prompt: str) -> str:
+async def generate_chat_reply(message: str, system_prompt: str) -> str:
     if not settings.GEMINI_KEY:
         raise RuntimeError("GEMINI_KEY is not configured")
 
@@ -46,7 +46,8 @@ def generate_chat_reply(message: str, system_prompt: str) -> str:
     }
 
     try:
-        resp = httpx.post(url, json=payload, timeout=settings.GEMINI_TIMEOUT_S)
+        async with httpx.AsyncClient(timeout=settings.GEMINI_TIMEOUT_S) as client:
+            resp = await client.post(url, json=payload)
         resp.raise_for_status()
         data = resp.json()
     except Exception as exc:

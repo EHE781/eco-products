@@ -44,16 +44,68 @@ function nsScale(score, type) {
     }).join("");
 }
 
+/* ── Skeleton ── */
+function renderSkeleton() {
+    return `
+<article class="card card-skel">
+  <div class="card-top">
+    <div class="skel skel-img"></div>
+    <div style="flex:1;min-width:0">
+      <div class="skel skel-line" style="width:38%;margin-bottom:8px"></div>
+      <div class="skel skel-line" style="width:72%;margin-bottom:6px"></div>
+      <div class="skel skel-line" style="width:52%"></div>
+    </div>
+  </div>
+  <div class="skel skel-rating"></div>
+  <div style="display:flex;gap:12px;padding:12px 18px">
+    <div class="skel skel-score"></div>
+    <div class="skel skel-score"></div>
+    <div class="skel skel-score"></div>
+  </div>
+  <div class="skel skel-dist"></div>
+</article>`;
+}
+
+function renderSkeletons(n) {
+    return Array.from({ length: n }, renderSkeleton).join("");
+}
+
+/* ── Pagination ── */
+function _pageNums(cur, total) {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    if (cur <= 4)         return [1, 2, 3, 4, 5, "…", total];
+    if (cur >= total - 3) return [1, "…", total-4, total-3, total-2, total-1, total];
+    return [1, "…", cur-1, cur, cur+1, "…", total];
+}
+
+function renderPagination(cur, total) {
+    const el = document.getElementById("pagination");
+    if (!el) return;
+    if (total <= 1) { el.innerHTML = ""; return; }
+    const nums = _pageNums(cur, total);
+    el.innerHTML =
+        `<button class="pag-btn pag-arrow" onclick="goToPage(${cur-1})" ${cur<=1?"disabled":""}>&#8592;</button>` +
+        nums.map(n => n === "…"
+            ? `<span class="pag-ellipsis">…</span>`
+            : `<button class="pag-btn${n===cur?" active":""}" onclick="goToPage(${n})">${n}</button>`
+        ).join("") +
+        `<button class="pag-btn pag-arrow" onclick="goToPage(${cur+1})" ${cur>=total?"disabled":""}>&#8594;</button>`;
+}
+
+/* ── Card ── */
 function render(p) {
     const km = p._km ?? 0;
     const rat = rating(p.ns, p.es, km);
     const co2Pos = p.co2 > 0;
     const certsHtml = pcerts(p).map(c => `<span class="cert">${c}</span>`).join("");
+    const mediaHtml = p.image_url
+        ? `<img class="p-img" src="${p.image_url}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'p-emoji\\'>${p.emoji}</div>'">`
+        : `<div class="p-emoji">${p.emoji}</div>`;
 
     return `
-<article class="card" data-id="${p.id}" onclick="cardClick(${p.id})">
+<article class="card" data-id="${p.id}" onclick="cardClick('${p.id}')">
   <div class="card-top">
-    <div class="p-emoji">${p.emoji}</div>
+    ${mediaHtml}
     <div class="p-meta">
       <div class="p-cat">${t(CAT_KEYS[p.cat] || "cat_food")}</div>
       <div class="p-name">${pname(p)}</div>
@@ -71,9 +123,7 @@ function render(p) {
       <div class="score-label">${t("score_es")}</div>
       <div class="ns-scale">${nsScale(p.es, "es")}</div>
     </div>
-    <div class="price-col">
-      <div class="price-val">€${p.price.toFixed(2)}</div>
-      <div class="price-unit">/${p.unit}</div>
+    <div class="co2-col">
       <div class="co2-tag" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
         ${co2Pos ? "+" : ""}${p.co2} ${t(co2Pos ? "co2_saved" : "co2_added")}
       </div>
@@ -90,10 +140,18 @@ function render(p) {
 </article>`;
 }
 
+/* ── List ── */
 function list() {
     const container = document.getElementById("grid");
-    const countEl = document.getElementById("count");
+    const countEl   = document.getElementById("count");
     if (!container) return;
+
+    if (isLoading) {
+        container.innerHTML = renderSkeletons(PAGE_SIZE);
+        if (countEl) countEl.textContent = "";
+        renderPagination(0, 0);
+        return;
+    }
 
     let items = P.filter(p => {
         if (cat !== "all" && p.cat !== cat) return false;
@@ -109,11 +167,13 @@ function list() {
 
     if (items.length === 0) {
         container.innerHTML = `<div class="no-r"><div class="no-r-i">🌿</div><strong>${t("no_results")}</strong><p>${t("no_results_sub")}</p></div>`;
+        renderPagination(0, 0);
         return;
     }
 
     container.innerHTML = items.map(render).join("");
     updateHeroStats(items);
+    renderPagination(currentPage, Math.ceil(totalCount / PAGE_SIZE));
 }
 
 function updateHeroStats(items) {
@@ -123,13 +183,13 @@ function updateHeroStats(items) {
     const nsA = items.filter(p => p.ns === "A").length;
     const co2 = items.reduce((s, p) => s + (p.co2 > 0 ? p.co2 : 0), 0);
 
-    const elN = document.getElementById("statN");
+    const elN     = document.getElementById("statN");
     const elLocal = document.getElementById("statLocal");
-    const elNS = document.getElementById("statNS");
-    const elCO2 = document.getElementById("statCO2");
+    const elNS    = document.getElementById("statNS");
+    const elCO2   = document.getElementById("statCO2");
 
-    if (elN) elN.textContent = total;
+    if (elN)     elN.textContent     = total;
     if (elLocal) elLocal.textContent = pctLocal + "%";
-    if (elNS) elNS.textContent = nsA;
-    if (elCO2) elCO2.textContent = co2.toFixed(1);
+    if (elNS)    elNS.textContent    = nsA;
+    if (elCO2)   elCO2.textContent   = co2.toFixed(1);
 }

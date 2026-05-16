@@ -10,9 +10,8 @@ FOOD_CATS = {"Alimentación", "Lácteos", "Panadería", "Bebidas"}
 DEFAULT_QUERIES = ["bio ecologico barcelona", "yogur bio", "pan espelta", "zumo fruta"]
 
 
-async def _get_catalog(lang: str, user_lat: float, user_lon: float) -> list[dict]:
-    """Obtiene productos de OFF y calcula distancias."""
-    results = await search_food("bio ecologico", page=1, page_size=20, lang=lang)
+async def _get_catalog(q: str, lang: str, user_lat: float, user_lon: float) -> list[dict]:
+    results = await search_food(q, page=1, page_size=20, lang=lang)
     products = results["products"]
 
     for p in products:
@@ -28,4 +27,4 @@ async def list_products(
     user_lon: float = Query(2.1734),
     q: str = Query("bio ecologico"),
 ):
-    return await _get_catalog(lang, user_lat, user_lon)
+    return await _get_catalog(q, lang, user_lat, user_lon)
