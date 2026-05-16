@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .database import init_db
-from .routers import interactions, off, products, recommendations
+from .routers import chat, interactions, off, products, recommendations
 
 logger = logging.getLogger(__name__)
 
@@ -18,13 +18,8 @@ async def lifespan(app: FastAPI):
         init_db()
         logger.info("Database connected and tables ready.")
     except Exception as exc:
-        logger.warning(
-            "Database unavailable (%s). "
-            "API endpoints will fail until a DB is configured. "
-            "Frontend is still served.",
-            exc,
-        )
-    yield
+        logger.warning("DB no disponible: %s — continuando sin DB.", exc)
+    yield  # la app arranca siempre
 
 
 app = FastAPI(title="EcoScan API", lifespan=lifespan)
@@ -39,6 +34,7 @@ app.add_middleware(
 app.include_router(products.router)
 app.include_router(interactions.router)
 app.include_router(recommendations.router)
+app.include_router(chat.router)
 app.include_router(off.router)
 
 

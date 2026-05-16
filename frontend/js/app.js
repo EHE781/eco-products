@@ -36,10 +36,11 @@ function closeModal() {
     document.getElementById("geoOverlay").classList.remove("open");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     applyLang();
     initGeolocation();
     initChat();
+    await loadProducts(_lang);
     list();
 
     // Search

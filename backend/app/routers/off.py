@@ -1,11 +1,5 @@
-"""
-Open Food Facts proxy endpoints.
-
-Docs: https://openfoodfacts.github.io/openfoodfacts-python/
-API:  https://world.openfoodfacts.org/api/v2/
-"""
+# routers/off.py
 from fastapi import APIRouter, HTTPException, Path, Query
-
 from ..services.openfoodfacts import get_product, search_food
 
 router = APIRouter(prefix="/api/off", tags=["openfoodfacts"])
@@ -13,18 +7,20 @@ router = APIRouter(prefix="/api/off", tags=["openfoodfacts"])
 
 @router.get("/search")
 async def search_off(
-    q: str = Query(..., min_length=2, description="Food product search terms"),
+    q: str = Query(..., min_length=2),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
+    lang: str = Query("es", pattern="^(es|en|ca)$"),
 ):
-    """Search Open Food Facts for food products."""
-    return await search_food(q, page=page, page_size=page_size)
+    return await search_food(q, page=page, page_size=page_size, lang=lang)
 
 
 @router.get("/product/{barcode}")
-async def get_off_product(barcode: str = Path(..., description="EAN barcode")):
-    """Fetch a single product by barcode from Open Food Facts."""
-    product = await get_product(barcode)
+async def get_off_product(
+    barcode: str = Path(...),
+    lang: str = Query("es", pattern="^(es|en|ca)$"),
+):
+    product = await get_product(barcode, lang=lang)
     if not product:
-        raise HTTPException(status_code=404, detail="Product not found on Open Food Facts")
+        raise HTTPException(status_code=404, detail="Producto no encontrado en Open Food Facts")
     return product
