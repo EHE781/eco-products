@@ -1,45 +1,121 @@
-/* ── Product catalogue (food-only) ── */
-// Categories: Alimentación, Lácteos, Panadería, Bebidas
-// Cosmética and Limpieza removed
-const P = [
-    { id: 1, name_es: "Manzanas Bio Fuji", name_en: "Bio Fuji Apples", name_ca: "Pomes Bio Fuji", cat: "Alimentación", origin: "Lleida, Catalunya", lat: 41.6176, lon: 0.6200, price: 3.20, unit: "kg", ns: "A", es: "A", emoji: "🍎", season: "Sep–Mar", yr: false, co2: 0.9, desc_es: "Cultivadas sin pesticidas en la huerta leridana. Transporte en furgoneta eléctrica.", desc_en: "Grown without pesticides in Lleida's orchards. Transported by electric van.", desc_ca: "Cultivades sense pesticides a l'horta lleidatana. Transport en furgoneta elèctrica.", certs_es: ["Bio", "Recogida a mano"], certs_en: ["Bio", "Hand-picked"], certs_ca: ["Bio", "Collida a mà"], bens_es: ["Alto en fibra", "Sin pesticidas", "Recogida esta semana"], bens_en: ["High in fibre", "Pesticide-free", "Harvested this week"], bens_ca: ["Alt en fibra", "Sense pesticides", "Collita d'aquesta setmana"] },
-    { id: 2, name_es: "Pan de Espelta Km0", name_en: "Km0 Spelt Bread", name_ca: "Pa d'Espelta Km0", cat: "Panadería", origin: "Gracia, Barcelona", lat: 41.4032, lon: 2.1533, price: 4.50, unit: "hogaza", ns: "B", es: "A", emoji: "🍞", season: "Todo el año", yr: true, co2: 0.6, desc_es: "Masa madre 72h, trigo espelta ecológico de Can Barrina.", desc_en: "72h sourdough, organic spelt wheat from Can Barrina.", desc_ca: "Massa mare 72h, blat espelta ecològic de Can Barrina.", certs_es: ["Bio", "Km0", "Masa madre"], certs_en: ["Bio", "Km0", "Sourdough"], certs_ca: ["Bio", "Km0", "Massa mare"], bens_es: ["Sin aditivos", "Más digerible", "Artesano"], bens_en: ["No additives", "More digestible", "Artisan"], bens_ca: ["Sense additius", "Més digestible", "Artesà"] },
-    { id: 3, name_es: "Yogur Entero Ecológico", name_en: "Organic Whole Milk Yoghurt", name_ca: "Iogurt Sencer Ecològic", cat: "Lácteos", origin: "Osona, Catalunya", lat: 41.9333, lon: 2.1167, price: 2.80, unit: "500g", ns: "B", es: "A", emoji: "🥛", season: "Todo el año", yr: true, co2: 0.5, desc_es: "Leche entera de vacas de pasto de Can Relat, sin espesantes.", desc_en: "Whole milk from pasture-raised cows at Can Relat, no thickeners.", desc_ca: "Llet sencera de vaques de pastura de Can Relat, sense espessants.", certs_es: ["Bio", "Pastura", "Sin espesantes"], certs_en: ["Bio", "Pasture", "No thickeners"], certs_ca: ["Bio", "Pastura", "Sense espessants"], bens_es: ["Rico en proteínas", "Sin azúcar añadido", "Vacas en pasto"], bens_en: ["High in protein", "No added sugar", "Pasture-raised cows"], bens_ca: ["Ric en proteïnes", "Sense sucre afegit", "Vaques en pastura"] },
-    { id: 4, name_es: "Aceite de Oliva Virgen Extra", name_en: "Extra Virgin Olive Oil", name_ca: "Oli d'Oliva Verge Extra", cat: "Alimentación", origin: "Siurana, Tarragona", lat: 41.2667, lon: 0.9333, price: 12.50, unit: "500ml", ns: "A", es: "A", emoji: "🫒", season: "Nov–Feb", yr: false, co2: 1.1, desc_es: "DOP Siurana, variedad Arbequina, primera extracción en frío.", desc_en: "PDO Siurana, Arbequina variety, first cold extraction.", desc_ca: "DOP Siurana, varietat Arbequina, primera extracció en fred.", certs_es: ["DOP Siurana", "Bio", "Primera extracción en frío"], certs_en: ["PDO Siurana", "Bio", "First cold press"], certs_ca: ["DOP Siurana", "Bio", "Primera extracció en fred"], bens_es: ["Polifenoles altos", "Omega 9", "DOP certificado"], bens_en: ["High polyphenols", "Omega 9", "PDO certified"], bens_ca: ["Polifenols alts", "Omega 9", "DOP certificat"] },
-    { id: 5, name_es: "Bebida de Almendras Artesana", name_en: "Artisan Almond Drink", name_ca: "Beguda d'Ametlles Artesana", cat: "Bebidas", origin: "Reus, Tarragona", lat: 41.1554, lon: 1.1085, price: 3.90, unit: "litro", ns: "B", es: "A", emoji: "🥤", season: "Todo el año", yr: true, co2: 0.8, desc_es: "20% almendras Marcona de Reus, sin azúcar, sin carragenanos.", desc_en: "20% Marcona almonds from Reus, no sugar, no carrageenan.", desc_ca: "20% ametlles Marcona de Reus, sense sucre, sense carragenans.", certs_es: ["Sin azúcar", "Sin gluten", "Vegano"], certs_en: ["No sugar", "Gluten-free", "Vegan"], certs_ca: ["Sense sucre", "Sense gluten", "Vegà"], bens_es: ["Sin carragenanos", "Alta densidad de almendra", "Local"], bens_en: ["No carrageenan", "High almond density", "Local"], bens_ca: ["Sense carragenans", "Alta densitat d'ametlla", "Local"] },
-    { id: 6, name_es: "Tomates Cherry Hidropónicos", name_en: "Hydroponic Cherry Tomatoes", name_ca: "Tomàquets Cherry Hidropònics", cat: "Alimentación", origin: "El Prat, Barcelona", lat: 41.3270, lon: 2.0707, price: 4.20, unit: "250g", ns: "A", es: "B", emoji: "🍅", season: "Todo el año", yr: true, co2: 0.3, desc_es: "Invernadero de energía solar, 90% menos agua que cultivo tradicional.", desc_en: "Solar energy greenhouse, 90% less water than traditional farming.", desc_ca: "Hivernacle d'energia solar, 90% menys aigua que el cultiu tradicional.", certs_es: ["Sin pesticidas", "Energía solar", "Agua reciclada"], certs_en: ["Pesticide-free", "Solar energy", "Recycled water"], certs_ca: ["Sense pesticides", "Energia solar", "Aigua reciclada"], bens_es: ["Alto en licopeno", "Sin pesticidas", "90% menos agua"], bens_en: ["High in lycopene", "Pesticide-free", "90% less water"], bens_ca: ["Alt en licopè", "Sense pesticides", "90% menys aigua"] },
-    { id: 7, name_es: "Miel de la Collserola", name_en: "Collserola Honey", name_ca: "Mel de la Collserola", cat: "Alimentación", origin: "Collserola, Barcelona", lat: 41.4333, lon: 2.0833, price: 8.90, unit: "250g", ns: "B", es: "A", emoji: "🍯", season: "May–Sep", yr: false, co2: 1.4, desc_es: "Colmenas itinerantes en el Parc Natural de Collserola, floración de romero y tomillo.", desc_en: "Itinerant hives in Collserola Natural Park, rosemary and thyme blossom.", desc_ca: "Ruscos itinerants al Parc Natural de Collserola, floració de romaní i farigola.", certs_es: ["Sin antibióticos", "Polen de Collserola", "Envasado local"], certs_en: ["Antibiotic-free", "Collserola pollen", "Locally bottled"], certs_ca: ["Sense antibiòtics", "Pol·len de Collserola", "Envasat local"], bens_es: ["Propiedades antibacterianas", "Flora local", "Apicultura sostenible"], bens_en: ["Antibacterial properties", "Local flora", "Sustainable beekeeping"], bens_ca: ["Propietats antibacterianes", "Flora local", "Apicultura sostenible"] },
-    { id: 8, name_es: "Granola Artesana con Frutos Secos", name_en: "Artisan Granola with Nuts", name_ca: "Granola Artesana amb Fruits Secs", cat: "Panadería", origin: "Sant Cugat, Barcelona", lat: 41.4728, lon: 2.0792, price: 6.50, unit: "400g", ns: "B", es: "A", emoji: "🥣", season: "Todo el año", yr: true, co2: 0.7, desc_es: "Avena integral, miel de Collserola, almendras y nueces de la región.", desc_en: "Wholegrain oats, Collserola honey, almonds and regional walnuts.", desc_ca: "Civada integral, mel de Collserola, ametlles i nous de la regió.", certs_es: ["Sin gluten", "Bio", "Sin aceite de palma"], certs_en: ["Gluten-free", "Bio", "Palm oil-free"], certs_ca: ["Sense gluten", "Bio", "Sense oli de palma"], bens_es: ["Alto en fibra", "Sin aceite de palma", "Cereales integrales"], bens_en: ["High in fibre", "Palm oil-free", "Whole grains"], bens_ca: ["Alt en fibra", "Sense oli de palma", "Cereals integrals"] },
-    { id: 9, name_es: "Chocolate Negro 85% Bio", name_en: "85% Bio Dark Chocolate", name_ca: "Xocolata Negra 85% Bio", cat: "Alimentación", origin: "Vic, Barcelona", lat: 41.9303, lon: 2.2544, price: 4.80, unit: "100g", ns: "C", es: "B", emoji: "🍫", season: "Todo el año", yr: true, co2: -0.5, desc_es: "Cacao de comercio justo, bean-to-bar en Osona.", desc_en: "Fair trade cacao, bean-to-bar in Osona.", desc_ca: "Cacau de comerç just, bean-to-bar a Osona.", certs_es: ["Fairtrade", "Bio", "Bean-to-bar"], certs_en: ["Fairtrade", "Bio", "Bean-to-bar"], certs_ca: ["Fairtrade", "Bio", "Bean-to-bar"], bens_es: ["Antioxidantes", "Cacao puro", "Comercio justo"], bens_en: ["Antioxidants", "Pure cacao", "Fair trade"], bens_ca: ["Antioxidants", "Cacau pur", "Comerç just"] },
-    { id: 13, name_es: "Té Verde Sencha Orgánico", name_en: "Organic Sencha Green Tea", name_ca: "Te Verd Sencha Orgànic", cat: "Bebidas", origin: "Uji, Japón", lat: 34.8844, lon: 135.7997, price: 7.80, unit: "50g", ns: "A", es: "C", emoji: "🍵", season: "Abr–May", yr: false, co2: -1.2, desc_es: "Primera cosecha Uji, sin pesticidas.", desc_en: "First harvest Uji, pesticide-free.", desc_ca: "Primera collita Uji, sense pesticides.", certs_es: ["Bio JAS", "Fairtrade"], certs_en: ["Bio JAS", "Fairtrade"], certs_ca: ["Bio JAS", "Fairtrade"], bens_es: ["Alto en catequinas", "Certificación JAS", "Recolección manual"], bens_en: ["High in catechins", "JAS certification", "Hand-picked"], bens_ca: ["Alt en catequines", "Certificació JAS", "Recol·lecció manual"] },
-    { id: 14, name_es: "Pasta Integral Orgánica", name_en: "Organic Wholemeal Pasta", name_ca: "Pasta Integral Orgànica", cat: "Alimentación", origin: "Gragnano, Italia", lat: 40.6952, lon: 14.5218, price: 3.10, unit: "500g", ns: "A", es: "A", emoji: "🍝", season: "Todo el año", yr: true, co2: 0.4, desc_es: "Sémola de trigo duro ecológico, extrusión en bronce y secado lento 48h.", desc_en: "Organic durum wheat semolina, bronze die extrusion and 48h slow drying.", desc_ca: "Sèmola de blat dur ecològic, extrusió en bronze i assecat lent 48h.", certs_es: ["Bio EU", "IGP Gragnano"], certs_en: ["Bio EU", "IGP Gragnano"], certs_ca: ["Bio EU", "IGP Gragnano"], bens_es: ["Trigo duro bio", "Extrusión en bronce", "Secado lento"], bens_en: ["Bio durum wheat", "Bronze extrusion", "Slow dried"], bens_ca: ["Blat dur bio", "Extrusió en bronze", "Assecat lent"] },
-];
+/* ── Product catalogue — cargado desde Open Food Facts API ── */
 
-// Category → i18n key
+let P_ALL = [];
+
+const FETCH_SIZE  = 50;
+const PAGE_SIZE   = 15;
+const MAX_BATCHES = 8; // tope: 400 productos
+
+let apiBatch      = 0;
+let totalApiCount = 0;
+let currentPage   = 1;
+let currentQuery  = "bio ecologico";
+let isLoading     = false;
+let isPrefetching = false;
+
 const CAT_KEYS = {
     "Alimentación": "cat_food",
-    "Lácteos": "cat_dairy",
-    "Panadería": "cat_bakery",
-    "Bebidas": "cat_drinks",
+    "Lácteos":      "cat_dairy",
+    "Panadería":    "cat_bakery",
+    "Bebidas":      "cat_drinks",
 };
 
-// Sort orders: value → comparator factory
+const CAT_QUERIES = {
+    "all":          "bio ecologico",
+    "Alimentación": "alimentos bio ecologicos",
+    "Lácteos":      "lacteos bio ecologicos",
+    "Panadería":    "pan espelta bio ecologico",
+    "Bebidas":      "bebidas bio ecologicas",
+};
+
 const SO = {
-    prox: () => (a, b) => a._km - b._km,
-    ns: () => (a, b) => "ABCDE".indexOf(a.ns) - "ABCDE".indexOf(b.ns),
-    es: () => (a, b) => "ABCDE".indexOf(a.es) - "ABCDE".indexOf(b.es),
-    price: () => (a, b) => a.price - b.price,
+    prox: () => (a, b) => (a._km ?? 0) - (b._km ?? 0),
+    ns:   () => (a, b) => "ABCDE".indexOf(a.ns) - "ABCDE".indexOf(b.ns),
+    es:   () => (a, b) => "ABCDE".indexOf(a.es) - "ABCDE".indexOf(b.es),
 };
 
-function pname(p) {
-    return p["name_" + _lang] || p.name_es;
+function pname(p)  { return p[`name_${_lang}`]  || p.name_es  || p.name  || ""; }
+function pdesc(p)  { return p[`desc_${_lang}`]  || p.desc_es  || p.desc  || ""; }
+function pbens(p)  { return p[`bens_${_lang}`]  || p.bens_es  || p.bens  || []; }
+function pcerts(p) { return p[`certs_${_lang}`] || p.certs_es || p.certs || []; }
+
+function _mapProduct(p) {
+    return {
+        ...p,
+        name_es: p.name, name_en: p.name, name_ca: p.name,
+        desc_es: p.desc, desc_en: p.desc, desc_ca: p.desc,
+        bens_es: p.bens, bens_en: p.bens, bens_ca: p.bens,
+        certs_es: p.certs, certs_en: p.certs, certs_ca: p.certs,
+        _km:   p.km ?? 0,
+        yr:    p.year_round ?? true,
+        emoji: p.emoji || "🛒",
+    };
 }
-function pdesc(p) {
-    return p["desc_" + _lang] || p.desc_es;
+
+async function _fetchBatch(query, batch) {
+    const url = `/api/off/search?q=${encodeURIComponent(query)}&lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (batch === 1) {
+        totalApiCount = Math.min(data.count || 0, MAX_BATCHES * FETCH_SIZE);
+    }
+    return (data.products || []).map(_mapProduct);
 }
-function pbens(p) {
-    return p["bens_" + _lang] || p.bens_es || [];
+
+async function loadProducts(query = currentQuery) {
+    if (isLoading) return;
+
+    const prevAll   = P_ALL;
+    const prevCount = totalApiCount;
+    const prevQuery = currentQuery;
+
+    isLoading    = true;
+    currentPage  = 1;
+    currentQuery = query;
+
+    if (P_ALL.length === 0) {
+        // Carga inicial: mostrar skeletons
+        apiBatch      = 0;
+        totalApiCount = 0;
+        list();
+    } else {
+        // Nueva búsqueda: mantener resultados actuales visibles mientras carga
+        document.getElementById("grid")?.classList.add("grid-loading");
+    }
+
+    try {
+        const products = await _fetchBatch(query, 1);
+        P_ALL    = products;
+        apiBatch = 1;
+    } catch (err) {
+        console.error("Error cargando productos:", err);
+        P_ALL         = prevAll;
+        totalApiCount = prevCount;
+        currentQuery  = prevQuery;
+    } finally {
+        isLoading = false;
+        document.getElementById("grid")?.classList.remove("grid-loading");
+        list();
+    }
 }
-function pcerts(p) {
-    return p["certs_" + _lang] || p.certs_es || [];
+
+async function prefetchNext() {
+    if (isPrefetching || isLoading)    return;
+    if (P_ALL.length >= totalApiCount) return;
+    if (apiBatch >= MAX_BATCHES)       return;
+
+    isPrefetching = true;
+    try {
+        const products = await _fetchBatch(currentQuery, apiBatch + 1);
+        if (products.length > 0) {
+            P_ALL = [...P_ALL, ...products];
+            apiBatch++;
+            list(); // extiende la paginación visualmente
+        }
+    } catch (err) {
+        console.error("Prefetch error:", err);
+    } finally {
+        isPrefetching = false;
+    }
 }

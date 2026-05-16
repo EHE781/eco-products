@@ -1,11 +1,5 @@
-/* ── AI Chat (Gemini 2.0 Flash) ── */
-// Key is loaded from the backend config; for static-only mode it falls back to
-// the hardcoded value below. In production, remove the fallback and serve via the
-// /api/chat endpoint instead so the key never reaches the browser.
-const GEMINI_KEY = "AIzaSyDemo_replace_me";  // ← replace or proxy via /api/chat
-
 let _chatOpen = false;
-let _chatContext = "";   // current product context injected from cardClick
+let _chatContext = "";
 
 function toggleChat() {
     _chatOpen ? closeChat() : openChat();
@@ -33,12 +27,36 @@ function initChat() {
     addMsg("bot", t("chat_welcome"));
 }
 
+function _md(text) {
+    const lines = text.split("\n");
+    let html = "";
+    let inList = false;
+    for (const line of lines) {
+        const li = line.match(/^[-•*]\s+(.+)/);
+        if (li) {
+            if (!inList) { html += "<ul>"; inList = true; }
+            html += `<li>${li[1]}</li>`;
+        } else {
+            if (inList) { html += "</ul>"; inList = false; }
+            html += line.trim() ? `<p>${line}</p>` : "";
+        }
+    }
+    if (inList) html += "</ul>";
+    return html
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+}
+
 function addMsg(role, text) {
     const msgs = document.getElementById("chatMsgs");
     if (!msgs) return;
     const div = document.createElement("div");
     div.className = `msg ${role}`;
-    div.textContent = text;
+    if (role === "bot") {
+        div.innerHTML = _md(text);
+    } else {
+        div.textContent = text;
+    }
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
 }
@@ -69,7 +87,7 @@ async function send() {
     logInteraction(null, "chat", msg);
     addTyping();
     try {
-        const reply = await callGemini(msg);
+        const reply = await callBackendChat(msg);
         rmTyping();
         addMsg("bot", reply);
     } catch (err) {
@@ -78,39 +96,29 @@ async function send() {
     }
 }
 
-async function callGemini(userMsg) {
-    const catalog = P.map(p =>
-        `[${p.id}] ${pname(p)} | ${p.cat} | ${p.origin} | ${p._km ?? 0}km | NS:${p.ns} ES:${p.es} | €${p.price}/${p.unit} | CO2:${p.co2}kg | ${pdesc(p)}`
-    ).join("\n");
-
-    const systemInstruction = `Eres EcoScan, un asistente experto en productos ecológicos y alimentación sostenible en Barcelona.
-Catálogo actual (solo alimentos):
-${catalog}
-${_chatContext ? `\nContexto del producto seleccionado:\n${_chatContext}` : ""}
-Responde siempre en ${_lang === "ca" ? "catalán" : _lang === "en" ? "inglés" : "español"}. Sé conciso y útil.`;
-
-    const resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                system_instruction: { parts: [{ text: systemInstruction }] },
-                contents: [{ role: "user", parts: [{ text: userMsg }] }],
-            }),
-        }
-    );
-    if (!resp.ok) throw new Error("Gemini error");
+async function callBackendChat(userMsg) {
+    const resp = await fetch(`${API_BASE}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            message: userMsg,
+            lang: _lang,
+            context: _chatContext,
+            user_lat: userPos.lat,
+            user_lon: userPos.lon,
+        }),
+    });
+    if (!resp.ok) throw new Error("Chat backend error");
     const data = await resp.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text ?? fallback(userMsg);
+    return data.reply ?? fallback(userMsg);
 }
 
 function fallback(msg) {
     const m = msg.toLowerCase();
-    if (m.includes("yogur") || m.includes("leche") || m.includes("lácteo") || m.includes("lacti")) return t("fb_milk");
+    if (m.includes("yogur") || m.includes("leche") || m.includes("lacteo") || m.includes("lacti")) return t("fb_milk");
     if (m.includes("pan") || m.includes("bread") || m.includes("pa ")) return t("fb_bread");
     if (m.includes("manzana") || m.includes("apple") || m.includes("poma")) return t("fb_apple");
-    if (m.includes("temporada") || m.includes("season") || m.includes("temporada")) return t("fb_seasonal");
-    if (m.includes("bio") || m.includes("ecol") || m.includes("orgànic")) return t("fb_organic");
+    if (m.includes("temporada") || m.includes("season")) return t("fb_seasonal");
+    if (m.includes("bio") || m.includes("ecol") || m.includes("organic")) return t("fb_organic");
     return t("fb_general");
 }

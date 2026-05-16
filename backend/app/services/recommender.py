@@ -16,7 +16,6 @@ def _feature_vector(p: dict) -> list[float]:
         p.get("km", 500),
         SCORE_MAP.get(p.get("ns"), 3),
         SCORE_MAP.get(p.get("es"), 3),
-        p.get("price", 5.0),
         p.get("co2", 0.0),
     ]
 

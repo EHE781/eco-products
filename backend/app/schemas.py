@@ -11,7 +11,6 @@ class ProductOut(BaseModel):
     lat: float
     lon: float
     km: float
-    price: float
     unit: str
     ns: Optional[str]
     es: Optional[str]
@@ -34,3 +33,15 @@ class InteractionIn(BaseModel):
     lang: str = "es"
     user_lat: float = 41.3851
     user_lon: float = 2.1734
+
+
+class ChatIn(BaseModel):
+    message: str
+    lang: str = "es"
+    context: Optional[str] = None
+    user_lat: float = 41.3851
+    user_lon: float = 2.1734
+
+
+class ChatOut(BaseModel):
+    reply: str

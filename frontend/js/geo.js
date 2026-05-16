@@ -12,7 +12,7 @@ function haversine(lat1, lon1, lat2, lon2) {
 }
 
 function recomputeKm() {
-    P.forEach(p => { p._km = Math.round(haversine(userPos.lat, userPos.lon, p.lat, p.lon)); });
+    P_ALL.forEach(p => { p._km = Math.round(haversine(userPos.lat, userPos.lon, p.lat, p.lon)); });
 }
 
 function onGeoSuccess(pos) {
