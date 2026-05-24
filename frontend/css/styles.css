@@ -241,6 +241,19 @@ header {
     align-items: center
 }
 
+.filters_ai {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.filters_ai-title{
+    white-space: nowrap;
+    display: inline-block;
+}
+
 .chip {
     padding: 8px 18px;
     border-radius: 50px;
@@ -258,6 +271,21 @@ header {
     border-color: var(--g500);
     background: var(--g50);
     color: var(--g700)
+}
+
+.filters_ai {
+    .chip {
+        padding: 2px 10px;
+        cursor: default;
+    }
+
+    .chip.delete {
+        cursor: pointer;
+    }
+}
+
+.filters_ai.hidden {
+    display: none;
 }
 
 .sort {

@@ -13,7 +13,8 @@ async function setCat(c) {
     document.querySelectorAll(".chip").forEach(ch => {
         ch.classList.toggle("on", ch.dataset.cat === c);
     });
-    await loadProducts(CAT_QUERIES[c] || "bio ecologico");
+    removeIAFilters()
+    await loadProducts(CAT_QUERIES[c] || CAT_QUERIES.all);
 }
 
 function setSort(val) {
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             list(); // feedback inmediato con productos ya cargados
             clearTimeout(_searchTimer);
             _searchTimer = setTimeout(async () => {
-                const query = q || CAT_QUERIES[cat] || "bio ecologico";
+                const query = q || CAT_QUERIES[cat] || CAT_QUERIES.all;
                 await loadProducts(query);
             }, 400);
         });
@@ -68,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         searchBtn.addEventListener("click", async () => {
             q = searchInput ? searchInput.value.trim() : "";
             clearTimeout(_searchTimer);
-            await loadProducts(q || CAT_QUERIES[cat] || "bio ecologico");
+            await loadProducts(q || CAT_QUERIES[cat] || CAT_QUERIES.all);
         });
     }
 

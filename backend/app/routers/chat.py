@@ -1,19 +1,46 @@
+import json
 from fastapi import APIRouter
-from ..services.openfoodfacts import search_food
-from ..services.llm import build_system_prompt, generate_chat_reply
 from .. import schemas
-from ..database import haversine_km
+
+from app.models import ProducDuckDB
+from ..database_duckdb import read_products, clean_filter_forlater
+from ..services.llm import generate_filter_using_chat, explain_filter_using_chat
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
-@router.post("", response_model=schemas.ChatOut)
+@router.post("")
 async def chat(payload: schemas.ChatIn):
-    results = await search_food(payload.message, lang=payload.lang)
-    catalog = results["products"]
-    for p in catalog:
-        p["km"] = haversine_km(p["lat"], p["lon"], payload.user_lat, payload.user_lon)
+    reply = await generate_filter_using_chat(payload.message, payload.context)
+    filters = _parse_filter_response_(reply)
+    if filters is None:
+        return schemas.ChatOut()
 
-    system_prompt = build_system_prompt(catalog, payload.lang, payload.context)
-    reply = await generate_chat_reply(payload.message, system_prompt)
-    return schemas.ChatOut(reply=reply)
+    if isinstance(payload.page_query , str) and len(payload.page_query.strip()) >0:
+        filters["category"] = payload.page_query
+        if "relevant_properties" in filters:
+            filters["relevant_properties"] = ",".join([filters["relevant_properties"], "category"])
+
+    filtered = None
+    try:
+        filtered = read_products(filters, None, 20)
+    except Exception:
+        pass
+
+    filters = clean_filter_forlater(filters)
+    filters_short = _format_filter_for_chat2_(filters)
+    print(filters_short)
+    reply = await explain_filter_using_chat(payload.message, filters_short, payload.lang)
+
+    return schemas.ChatOut(reply=reply, filtered=filtered, filters=filters)
+
+def _parse_filter_response_(filters:str):
+    parsed : ProducDuckDB = None
+    try:
+        parsed= json.loads(filters)
+    except json.JSONDecodeError:
+        return None
+    return parsed
+
+def _format_filter_for_chat2_(filtes:dict):
+    return "\n".join([f"{key}: {filtes[key]["value"]}" for key in filtes.keys()])

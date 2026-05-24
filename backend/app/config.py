@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./ecoscan.db"  # ← SQLite, no necesita instalación
+    DATABASE_DUCKDB: str = "./products.db"
     OPENFOODFACTS_BASE_URL: str = "https://world.openfoodfacts.org"
     GEMINI_KEY: str = ""
     GEMINI_MODEL: str = "gemini-3.1-flash-lite"

@@ -24,7 +24,7 @@ function initChat() {
     const msgs = document.getElementById("chatMsgs");
     if (!msgs) return;
     msgs.innerHTML = "";
-    addMsg("bot", t("chat_welcome"));
+    addMsg("bot", translate("chat_welcome"));
 }
 
 function _md(text) {
@@ -87,9 +87,15 @@ async function send() {
     logInteraction(null, "chat", msg);
     addTyping();
     try {
-        const reply = await callBackendChat(msg);
+        const result = await callBackendChat(msg);
         rmTyping();
-        addMsg("bot", reply);
+        addMsg("bot", result.reply);
+        if(result.filtered?.products?.length >= 0){
+            P_ALL = result.filtered.products
+            addIAFilters(result.filters ?? {})
+            list()
+        }
+
     } catch (err) {
         rmTyping();
         addMsg("bot", fallback(msg));
@@ -104,21 +110,23 @@ async function callBackendChat(userMsg) {
             message: userMsg,
             lang: _lang,
             context: _chatContext,
+            page_query: currentQuery.join(","),
             user_lat: userPos.lat,
             user_lon: userPos.lon,
         }),
     });
     if (!resp.ok) throw new Error("Chat backend error");
     const data = await resp.json();
-    return data.reply ?? fallback(userMsg);
+    data.reply ??= fallback(userMsg)
+    return data;
 }
 
 function fallback(msg) {
     const m = msg.toLowerCase();
-    if (m.includes("yogur") || m.includes("leche") || m.includes("lacteo") || m.includes("lacti")) return t("fb_milk");
-    if (m.includes("pan") || m.includes("bread") || m.includes("pa ")) return t("fb_bread");
-    if (m.includes("manzana") || m.includes("apple") || m.includes("poma")) return t("fb_apple");
-    if (m.includes("temporada") || m.includes("season")) return t("fb_seasonal");
-    if (m.includes("bio") || m.includes("ecol") || m.includes("organic")) return t("fb_organic");
-    return t("fb_general");
+    if (m.includes("yogur") || m.includes("leche") || m.includes("lacteo") || m.includes("lacti")) return translate("fb_milk");
+    if (m.includes("pan") || m.includes("bread") || m.includes("pa ")) return translate("fb_bread");
+    if (m.includes("manzana") || m.includes("apple") || m.includes("poma")) return translate("fb_apple");
+    if (m.includes("temporada") || m.includes("season")) return translate("fb_seasonal");
+    if (m.includes("bio") || m.includes("ecol") || m.includes("organic")) return translate("fb_organic");
+    return translate("fb_general");
 }
