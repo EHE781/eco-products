@@ -1,12 +1,35 @@
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from sqlalchemy import (
     Boolean, Column, DateTime, Float, ForeignKey,
     Integer, String, Text,
 )
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 
 from .database import Base
 
+class ProducDuckDB(Base):
+    __tablename__ = "OPENFOOD_PRODUCTS"
+
+    id = Column(String, name="code", primary_key=True, index=True)
+    name = Column(String, name="product_name")
+    cat = Column(String, name="categories_en")
+    origin = Column(String, name="origins_en")
+    country = Column(String, name="countries_en")
+    country = Column(String, name="countries_en")
+    desc = Column(String, name="ingredients_text")
+    co2 = Column(String, name="carbon-footprint_100g")
+    ns = Column(String, name="nutriscore_grade")
+    co2 = Column(String, name="carbon-footprint_100g")
+    unit = Column(String, name="quantity")
+    allergens = Column(String, name="allergens")
+    image_url = Column(String, name="image_small_url")
+    proteins_100g = Column(String)
+    fiber_100g = Column(String)
+    salt_100g = Column(String)
+    sugars_100g = Column(String)
+    fat_100g = Column(String)
+    fat_sat_100g = Column(String, name="saturated-fat_100g")
+    kcal_100g = Column(String, name="energy-kcal_100g")
 
 class Product(Base):
     __tablename__ = "products"

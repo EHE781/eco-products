@@ -1,5 +1,22 @@
 /* ── Product catalogue — cargado desde Open Food Facts API ── */
 
+const CAT_KEYS = {
+    "Alimentación": "cat_food",
+    "Lácteos":      "cat_dairy",
+    "Panadería":    "cat_bakery",
+    "Bebidas":      "cat_drinks",
+};
+
+//por alguna razón mágica hay una cateogria: food and beverage, que obviamente incluye alimentos
+//el caso "-food" es para evitar que esto rompa el filtro de Lácteos o de Bebidas
+const CAT_QUERIES = {
+    "all":          [],
+    "Alimentación": ["alimento", "alimenta", "food"],
+    "Lácteos":      ["lacteo", "dairy", "milk", "-food"],
+    "Panadería":    ["pan", "bread", "loaf"],
+    "Bebidas":      ["bebida", "drink", "beverage", "-food"],
+};
+
 let P_ALL = [];
 
 const FETCH_SIZE  = 50;
@@ -9,24 +26,9 @@ const MAX_BATCHES = 8; // tope: 400 productos
 let apiBatch      = 0;
 let totalApiCount = 0;
 let currentPage   = 1;
-let currentQuery  = "bio ecologico";
+let currentQuery  = CAT_QUERIES.all;
 let isLoading     = false;
 let isPrefetching = false;
-
-const CAT_KEYS = {
-    "Alimentación": "cat_food",
-    "Lácteos":      "cat_dairy",
-    "Panadería":    "cat_bakery",
-    "Bebidas":      "cat_drinks",
-};
-
-const CAT_QUERIES = {
-    "all":          "bio ecologico",
-    "Alimentación": "alimentos bio ecologicos",
-    "Lácteos":      "lacteos bio ecologicos",
-    "Panadería":    "pan espelta bio ecologico",
-    "Bebidas":      "bebidas bio ecologicas",
-};
 
 const SO = {
     prox: () => (a, b) => (a._km ?? 0) - (b._km ?? 0),
@@ -53,7 +55,7 @@ function _mapProduct(p) {
 }
 
 async function _fetchBatch(query, batch) {
-    const url = `/api/off/search?q=${encodeURIComponent(query)}&lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
+    const url = `/api/off/search?q=${encodeURIComponent(query.join(","))}&lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();

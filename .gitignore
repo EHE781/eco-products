@@ -18,3 +18,9 @@ __pycache__/
 *.csv.gz
 *.jsonl.gz
 off_dataset/
+
+# vs code
+.vscode/
+
+# database
+*.db

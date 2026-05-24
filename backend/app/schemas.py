@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
 
+from app.models import ProducDuckDB
 
 class ProductOut(BaseModel):
     id: int
@@ -38,10 +39,18 @@ class InteractionIn(BaseModel):
 class ChatIn(BaseModel):
     message: str
     lang: str = "es"
+    page_query: Optional[str] = None
     context: Optional[str] = None
     user_lat: float = 41.3851
     user_lon: float = 2.1734
 
 
-class ChatOut(BaseModel):
+class ChatOut:
     reply: str
+    filtered: ProducDuckDB
+    filters: dict
+    
+    def __init__(self, reply: str = "", filtered: any = None, filters: dict = None):
+        self.reply = reply
+        self.filtered = filtered
+        self.filters = filters

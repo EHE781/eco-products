@@ -56,6 +56,17 @@ const TRANSLATIONS = {
         fb_seasonal: "🌱 Comprar productos de temporada reduce el CO₂ hasta un 60%. Pregúntame por los productos de temporada actuales.",
         fb_organic: "♻️ Los productos ecológicos evitan pesticidas y cuidan el suelo. ¿Quieres saber más sobre algún producto en concreto?",
         fb_general: "🌿 Estoy aquí para ayudarte a elegir productos más sostenibles. Puedes preguntarme sobre cualquier producto del catálogo.",
+        lvl100g_low: "nivel bajo",
+        lvl100g_middle: "nivel medio",
+        lvl100g_high: "nivel alto",
+        sugars_100g: "nivel de azúcar en 100g",
+        fat_100g: "nivel de grasas en 100g",
+        "saturated-fat_100g": "nivel de grasas saturadas en 100g",
+        fiber_100g : "nivel de fibra en 100g",
+        salt_100g : "nivel de sal en 100g",
+        "filters_ia-title": "Filtros aplicados por el asistente",
+        nutriscore: "puntuación valor nutricional",
+        "dangerous_allergens" : "excluidos estos alérgenos peligrosos"
     },
     en: {
         app_name: "EcoScan",
@@ -113,6 +124,17 @@ const TRANSLATIONS = {
         fb_seasonal: "🌱 Buying seasonal products reduces CO₂ by up to 60%. Ask me about current seasonal products.",
         fb_organic: "♻️ Organic products avoid pesticides and care for the soil. Want to know more about a specific product?",
         fb_general: "🌿 I'm here to help you choose more sustainable products. You can ask me about any product in the catalogue.",
+        lvl100g_low: "low level",
+        lvl100g_middle: "middle level",
+        lvl100g_high: "high level",
+        sugars_100g: "sugar content per 100g",
+        fat_100g: "fat content per 100g",
+        "saturated-fat_100g": "saturated fat content per 100g",
+        fiber_100g: "fiber content per 100g",
+        salt_100g: "salt content per 100g",
+        "filters_ia-title": "Filters applied by the wizard",
+        nutriscore: "nutritional nalue score",
+        "dangerous_allergens": "excluding these dangerous allergens"
     },
     ca: {
         app_name: "EcoScan",
@@ -170,19 +192,30 @@ const TRANSLATIONS = {
         fb_seasonal: "🌱 Comprar productes de temporada redueix el CO₂ fins a un 60%. Pregunta'm pels productes de temporada actuals.",
         fb_organic: "♻️ Els productes ecològics eviten pesticides i cuiden el sòl. Vols saber més sobre algun producte en concret?",
         fb_general: "🌿 Estic aquí per ajudar-te a triar productes més sostenibles. Pots preguntar-me sobre qualsevol producte del catàleg.",
+        lvl100g_low: "nivell baix", 
+        lvl100g_middle: "nivell mitjà", 
+        lvl100g_high: "nivell alt",
+        sugars_100g: "nivell de sucre en 100g", 
+        fat_100g: "nivell de greixos a 100g", 
+        "saturated-fat_100g": "nivell de greixos saturats en 100g", 
+        fiber_100g : "nivell de fibra a 100g", 
+        salt_100g : "nivell de sal a 100g",
+        "filters_ia-title": "Filtres aplicats per l'assistent",
+        nutriscore: "puntuació valor nutricional",
+        "dangerous_allergens" : "exclosos aquests al·lergògens perillosos"
     }
 };
 
 let _lang = localStorage.getItem("ecoscan_lang") || "es";
 
-function t(key) {
+function translate(key) {
     return (TRANSLATIONS[_lang] || TRANSLATIONS.es)[key] || key;
 }
 
 function applyLang() {
     document.querySelectorAll("[data-i18n]").forEach(el => {
         const k = el.dataset.i18n;
-        const v = t(k);
+        const v = translate(k);
         if (el.tagName === "INPUT") el.placeholder = v;
         else el.innerHTML = v;
     });
