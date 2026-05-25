@@ -67,7 +67,8 @@ const TRANSLATIONS = {
         "filters_ia-title": "Filtros aplicados por el asistente",
         nutriscore: "puntuación valor nutricional",
         "dangerous_allergens" : "excluidos estos alérgenos peligrosos",
-        q: "Categoría"
+        q: "Categoría",
+        chat_hist_empty: "No hay conversaciones guardadas"
     },
     en: {
         app_name: "EcoScan",
@@ -136,7 +137,8 @@ const TRANSLATIONS = {
         "filters_ia-title": "Filters applied by the wizard",
         nutriscore: "nutritional nalue score",
         "dangerous_allergens": "excluding these dangerous allergens",
-        q: "Category"
+        q: "Category",
+        chat_hist_empty: "No saved conversations"
     },
     ca: {
         app_name: "EcoScan",
@@ -205,7 +207,8 @@ const TRANSLATIONS = {
         "filters_ia-title": "Filtres aplicats per l'assistent",
         nutriscore: "puntuació valor nutricional",
         "dangerous_allergens" : "exclosos aquests al·lergògens perillosos",
-        q: "Categoria"
+        q: "Categoria",
+        chat_hist_empty: "No hi ha converses guardades"
     }
 };
 

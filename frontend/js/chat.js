@@ -1,5 +1,11 @@
 let _chatOpen = false;
 let _chatContext = "";
+let _chatMessages = [];
+let _showingHistory = false;
+let _sessionId = Date.now();
+
+const _HIST_KEY = "ecoscan_chat_history";
+const _HIST_MAX = 20;
 
 function toggleChat() {
     _chatOpen ? closeChat() : openChat();
@@ -18,13 +24,104 @@ function openChat(context = "") {
 function closeChat() {
     _chatOpen = false;
     document.getElementById("chatPanel").classList.remove("open");
+    if (_showingHistory) toggleHistory();
 }
 
 function initChat() {
     const msgs = document.getElementById("chatMsgs");
     if (!msgs) return;
     msgs.innerHTML = "";
+    _chatMessages = [];
+    _sessionId = Date.now();
     addMsg("bot", translate("chat_welcome"));
+}
+
+function newChat() {
+    _saveToHistory();
+    if (_showingHistory) toggleHistory();
+    initChat();
+}
+
+function toggleHistory() {
+    _showingHistory = !_showingHistory;
+    const msgsEl = document.getElementById("chatMsgs");
+    const histEl = document.getElementById("chatHistoryPanel");
+    const inpEl  = document.querySelector(".chat-inp");
+    const btn    = document.getElementById("chatHistBtn");
+
+    msgsEl.style.display = _showingHistory ? "none" : "";
+    inpEl.style.display  = _showingHistory ? "none" : "";
+    histEl.classList.toggle("open", _showingHistory);
+    btn?.classList.toggle("active", _showingHistory);
+
+    if (_showingHistory) {
+        _saveToHistory();
+        _renderHistory();
+    }
+}
+
+function _renderHistory() {
+    const histEl = document.getElementById("chatHistoryPanel");
+    const history = JSON.parse(localStorage.getItem(_HIST_KEY) || "[]");
+
+    if (history.length === 0) {
+        histEl.innerHTML = `<p class="chat-hist-empty">${translate("chat_hist_empty")}</p>`;
+        return;
+    }
+
+    histEl.innerHTML = history.map(c => {
+        const d = new Date(c.ts);
+        const date = d.toLocaleDateString(undefined, { day: "numeric", month: "short" })
+                   + " " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+        return `<div class="chat-hist-item" onclick="_loadConversation(${c.id})">
+            <div class="chi-title">${c.title}</div>
+            <div class="chi-date">${date}</div>
+        </div>`;
+    }).join("");
+}
+
+function _saveToHistory() {
+    const userMsgs = _chatMessages.filter(m => m.role === "user");
+    if (userMsgs.length === 0) return;
+
+    const history = JSON.parse(localStorage.getItem(_HIST_KEY) || "[]");
+    const existing = history.findIndex(c => c.id === _sessionId);
+
+    if (existing !== -1) {
+        // Update in place — conversation grew since last save
+        history[existing] = { ...history[existing], messages: [..._chatMessages], ts: Date.now() };
+    } else {
+        history.unshift({
+            id: _sessionId,
+            title: userMsgs[0].text.slice(0, 60),
+            messages: [..._chatMessages],
+            ts: Date.now(),
+        });
+    }
+
+    if (history.length > _HIST_MAX) history.length = _HIST_MAX;
+    localStorage.setItem(_HIST_KEY, JSON.stringify(history));
+}
+
+function _loadConversation(id) {
+    const history = JSON.parse(localStorage.getItem(_HIST_KEY) || "[]");
+    const conv = history.find(c => c.id === id);
+    if (!conv) return;
+
+    _chatMessages = [...conv.messages];
+    _sessionId = conv.id;
+    const msgs = document.getElementById("chatMsgs");
+    msgs.innerHTML = "";
+    for (const m of _chatMessages) {
+        const div = document.createElement("div");
+        div.className = `msg ${m.role}`;
+        if (m.role === "bot") div.innerHTML = _md(m.text);
+        else div.textContent = m.text;
+        msgs.appendChild(div);
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+
+    if (_showingHistory) toggleHistory();
 }
 
 function _md(text) {
@@ -59,6 +156,7 @@ function addMsg(role, text) {
     }
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
+    _chatMessages.push({ role, text });
 }
 
 function addTyping() {
@@ -87,6 +185,7 @@ async function send() {
     logInteraction(null, "chat", msg);
     try {
         const result = await callBackendChat(msg);
+        _chatMessages.push({ role: "bot", text: result.reply || fallback(msg) });
         if (result?.filtered?.products?.length > 0) {
             P_ALL = result.filtered.products.map(_mapProduct);
             totalApiCount = P_ALL.length;

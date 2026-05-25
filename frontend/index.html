@@ -119,9 +119,14 @@
                 <h3 data-i18n="chat_title">Asistente EcoScan</h3>
                 <p data-i18n="chat_sub">Alimentado por Gemini AI</p>
             </div>
-            <button id="chatClose" class="chat-close">✕</button>
+            <div class="chat-head-actions">
+                <button id="chatNewBtn" class="chat-head-btn" title="Nueva conversación">＋</button>
+                <button id="chatHistBtn" class="chat-head-btn" title="Historial">💬</button>
+                <button id="chatClose" class="chat-close">✕</button>
+            </div>
         </div>
         <div class="chat-msgs" id="chatMsgs"></div>
+        <div id="chatHistoryPanel" class="chat-history"></div>
         <div class="chat-inp">
             <input id="chatInput" type="text" data-i18n="chat_ph" placeholder="Pregunta sobre productos ecológicos…"
                 autocomplete="off" />

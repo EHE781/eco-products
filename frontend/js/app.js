@@ -79,11 +79,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sendBtn = document.getElementById("sendBtn");
     if (sendBtn) sendBtn.addEventListener("click", send);
 
-    // FAB & chat close
+    // FAB & chat controls
     const fab = document.getElementById("fab");
     if (fab) fab.addEventListener("click", toggleChat);
     const chatClose = document.getElementById("chatClose");
     if (chatClose) chatClose.addEventListener("click", closeChat);
+    const chatNewBtn = document.getElementById("chatNewBtn");
+    if (chatNewBtn) chatNewBtn.addEventListener("click", newChat);
+    const chatHistBtn = document.getElementById("chatHistBtn");
+    if (chatHistBtn) chatHistBtn.addEventListener("click", toggleHistory);
 
     // Sort
     const sortSel = document.getElementById("sortSel");
