@@ -46,6 +46,15 @@ _SEARCH_TOOL = {
         "parameters": {
             "type": "object",
             "properties": {
+                "q": {
+                    "type": "string",
+                    "description": (
+                        "Text search across product name and categories. "
+                        "Use English or Spanish food terms (e.g. 'dairy milk yogurt', 'bread bakery pan', 'bebidas drink'). "
+                        "Prefix a term with '-' to exclude it (e.g. '-food' to exclude generic food items). "
+                        "Always provide this when the user mentions a specific food type or category."
+                    ),
+                },
                 "nutriscore": {
                     "type": "string",
                     "enum": NUTRISCORE_GRADE,
@@ -79,7 +88,7 @@ _SEARCH_TOOL = {
                 },
                 "relevant_properties": {
                     "type": "string",
-                    "description": "Comma-separated list of the parameter names above that are relevant to this query",
+                    "description": "Comma-separated list of the parameter names above that are relevant to this query (always include 'q' when a food type is specified)",
                 },
             },
             "required": [],
@@ -176,6 +185,10 @@ def _system_prompt(lang: str, context: str) -> str:
         "food products in Barcelona. "
         "When users ask about specific foods, nutrition, allergies, dietary restrictions, or product "
         "recommendations, call the search_products tool to find relevant items. "
+        "IMPORTANT: When calling search_products, ALWAYS set the 'q' parameter to describe the food type "
+        "the user asked for (e.g. if they ask for dairy → q='lacteo dairy milk yogurt'; "
+        "bread → q='pan bread bakery'; drinks → q='bebida drink beverage -food'). "
+        "Only omit 'q' if the user has not specified any food type at all. "
         "For greetings, general conversation, or non-food topics, respond directly without calling the tool. "
         "Keep responses concise and friendly. "
         f"Always reply in {_language_name(lang)}."
@@ -237,6 +250,8 @@ def _tool_progress_msg(name: str, args: dict, lang: str) -> str:
     if name == "search_products":
         rel   = args.get("relevant_properties", "") or ""
         hints = []
+        if args.get("q"):
+            hints.append(args["q"].replace("-", "").strip()[:30])
         if "nutriscore" in rel and args.get("nutriscore"):
             hints.append(_t.get("ns", "Nutriscore {}").format(args["nutriscore"].upper()))
         if "dangerous_allergens" in rel and args.get("dangerous_allergens"):
