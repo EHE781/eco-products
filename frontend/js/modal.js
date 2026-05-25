@@ -8,7 +8,7 @@ function openProductModal(id) {
 
     _pmContext = [
         `${pname(p)}${p.brand ? ` (${p.brand})` : ""} — ${p.cat}`,
-        `Origen: ${p.origin} · ${p._km ?? 0}km`,
+        `Origen: ${p.origin || "España"} · ${p._km ?? 0}km`,
         `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | NOVA: ${p.nova||"?"} | CO2: ${p.co2}kg/100g`,
         p.kcal ? `Kcal: ${p.kcal} | Proteínas: ${p.proteins}g | HC: ${p.carbs}g | Grasas: ${p.fat}g | Azúcares: ${p.sugars}g | Sal: ${p.salt}g` : "",
         p.allergens ? `Alérgenos: ${p.allergens}` : "",
@@ -69,7 +69,7 @@ function openProductModal(id) {
         <div class="pm-cat-origin">
             ${translate(CAT_KEYS[p.cat] || "cat_food")}
             ${p.unit ? `· ${p.unit}` : ""}
-            · 📍 ${p.origin}
+            · 📍 ${p.origin || "España"}
         </div>
         <div class="pm-top-badges">
             <div class="pm-rating-bar" style="background:${rat.bg};color:${rat.color}">${rat.text}</div>
@@ -85,10 +85,13 @@ function openProductModal(id) {
                 <div class="ns-scale">${nsScale(p.es, "es")}</div>
             </div>
         </div>
-        <div class="pm-co2" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
+        ${p.co2 != null ? `<div class="pm-co2" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
             ${co2Pos ? "+" : ""}${p.co2} ${translate(co2Pos ? "co2_saved" : "co2_added")}
+        </div>` : ""}
+        <div class="pm-dist">
+            📍 ${p.origin || "España"}
             · ${translate("score_dist")}: <strong>${distLabel(p._km ?? 0)}</strong>
-            (${(p._km ?? 0).toLocaleString()} km)
+            · ${(p._km ?? 0).toLocaleString()} km
         </div>
         ${nutTable}
         ${allergenBadge}

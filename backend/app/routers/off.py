@@ -9,12 +9,18 @@ router = APIRouter(prefix="/api/off", tags=["openfoodfacts"])
 
 @router.get("/search")
 async def search_off(
-    q: str = Query(...),
+    q: str = Query(""),
+    display_cat: str = Query(""),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=50),
     lang: str = Query("es", pattern="^(es|en|ca)$"),
 ):
-    return read_products({"q": q}, page, page_size)
+    rq: dict = {}
+    if q:
+        rq["q"] = q
+    if display_cat and display_cat != "all":
+        rq["display_cat"] = display_cat
+    return read_products(rq, page, page_size)
 
 
 @router.get("/product/{barcode}")

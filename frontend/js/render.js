@@ -132,7 +132,7 @@ function render(p) {
     <div class="p-meta">
       <div class="p-cat">${translate(CAT_KEYS[p.cat] || "cat_food")}</div>
       <div class="p-name">${pname(p)}</div>
-      <div class="p-origin">📍 ${p.origin}</div>
+      <div class="p-origin">📍 ${p.origin || "España"}</div>
     </div>
     ${!p.yr ? `<span class="season">${p.season}</span>` : ""}
   </div>
@@ -147,9 +147,9 @@ function render(p) {
       <div class="ns-scale">${nsScale(p.es, "es")}</div>
     </div>
     <div class="co2-col">
-      <div class="co2-tag" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
+      ${p.co2 != null ? `<div class="co2-tag" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
         ${co2Pos ? "+" : ""}${p.co2} ${translate(co2Pos ? "co2_saved" : "co2_added")}
-      </div>
+      </div>` : `<div class="co2-tag" style="color:#9CA3AF">CO₂ N/D</div>`}
     </div>
   </div>
   <div class="dist-section">

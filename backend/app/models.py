@@ -35,8 +35,10 @@ class ProducDuckDB(Base):
     brands_en      = Column(String)
     nova_group     = Column(String)
     labels_en      = Column(String)
-    allergens_en   = Column(String)
-    img_nutrition  = Column(String, name="image_nutrition_small_url")
+    allergens_en         = Column(String)
+    img_nutrition        = Column(String, name="image_nutrition_small_url")
+    manufacturing_places = Column(String)
+    packaging_geo        = Column(String, name="first_packaging_code_geo")
 
 class Product(Base):
     __tablename__ = "products"
