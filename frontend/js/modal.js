@@ -7,9 +7,12 @@ function openProductModal(id) {
     logInteraction(id, "view");
 
     _pmContext = [
-        `${pname(p)} (${p.cat})`,
+        `${pname(p)}${p.brand ? ` (${p.brand})` : ""} — ${p.cat}`,
         `Origen: ${p.origin} · ${p._km ?? 0}km`,
-        `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | CO2: ${p.co2}kg/100g`,
+        `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | NOVA: ${p.nova||"?"} | CO2: ${p.co2}kg/100g`,
+        p.kcal ? `Kcal: ${p.kcal} | Proteínas: ${p.proteins}g | HC: ${p.carbs}g | Grasas: ${p.fat}g | Azúcares: ${p.sugars}g | Sal: ${p.salt}g` : "",
+        p.allergens ? `Alérgenos: ${p.allergens}` : "",
+        (p.labels||[]).length ? `Certificaciones: ${p.labels.join(", ")}` : "",
         pdesc(p),
     ].filter(Boolean).join("\n");
 
@@ -20,14 +23,58 @@ function openProductModal(id) {
         : `<div class="pm-emoji-large">${p.emoji}</div>`;
 
     // Info column
-    const rat = rating(p.ns, p.es, p._km ?? 0);
+    const rat    = rating(p.ns, p.es, p._km ?? 0);
     const co2Pos = p.co2 > 0;
-    const bens = pbens(p);
-    const certs = pcerts(p);
+    const bens   = pbens(p);
+    const certs  = pcerts(p);
+    const labels = p.labels || [];
+
+    const novaColors = { "1":"#22c55e","2":"#84cc16","3":"#f97316","4":"#ef4444" };
+    const novaLabels = { "1":"Sin procesar","2":"Ing. culinarios","3":"Procesado","4":"Ultraprocesado" };
+    const novaBadge = p.nova
+        ? `<span class="pm-nova" style="background:${novaColors[p.nova]||"#9ca3af"}">
+               NOVA ${p.nova} · ${novaLabels[p.nova]||""}
+           </span>`
+        : "";
+
+    const hasNut = p.kcal || p.proteins || p.carbs || p.fat;
+    const nutTable = hasNut ? `
+        <div class="pm-section-title">📊 Información nutricional <small>(por 100g)</small></div>
+        <table class="pm-nut-table">
+            ${p.kcal    ? `<tr><td>Calorías</td><td><strong>${p.kcal} kcal</strong></td></tr>` : ""}
+            ${p.proteins? `<tr><td>Proteínas</td><td>${p.proteins} g</td></tr>` : ""}
+            ${p.carbs   ? `<tr><td>Hidratos de carbono</td><td>${p.carbs} g</td></tr>` : ""}
+            ${p.sugars  ? `<tr class="pm-nut-sub"><td>— del cual azúcares</td><td>${p.sugars} g</td></tr>` : ""}
+            ${p.fat     ? `<tr><td>Grasas</td><td>${p.fat} g</td></tr>` : ""}
+            ${p.fat_sat ? `<tr class="pm-nut-sub"><td>— grasas saturadas</td><td>${p.fat_sat} g</td></tr>` : ""}
+            ${p.fiber   ? `<tr><td>Fibra</td><td>${p.fiber} g</td></tr>` : ""}
+            ${p.salt    ? `<tr><td>Sal</td><td>${p.salt} g</td></tr>` : ""}
+        </table>` : "";
+
+    const allergenBadge = p.allergens
+        ? `<div class="pm-section-title">⚠️ Alérgenos</div>
+           <p class="pm-allergens">${p.allergens}</p>`
+        : "";
+
+    const labelBadges = labels.length
+        ? `<div class="pm-section-title">🏷️ Certificaciones</div>
+           <div class="pm-tags">${labels.map(l => `<span class="cert">${l}</span>`).join("")}</div>`
+        : "";
+
+    const extraTags = [...bens, ...certs];
+
     document.getElementById("pmInfoCol").innerHTML = `
+        ${p.brand ? `<div class="pm-brand">${p.brand}</div>` : ""}
         <h2 class="pm-title">${pname(p)}</h2>
-        <div class="pm-cat-origin">${translate(CAT_KEYS[p.cat] || "cat_food")} · 📍 ${p.origin}</div>
-        <div class="pm-rating-bar" style="background:${rat.bg};color:${rat.color}">${rat.text}</div>
+        <div class="pm-cat-origin">
+            ${translate(CAT_KEYS[p.cat] || "cat_food")}
+            ${p.unit ? `· ${p.unit}` : ""}
+            · 📍 ${p.origin}
+        </div>
+        <div class="pm-top-badges">
+            <div class="pm-rating-bar" style="background:${rat.bg};color:${rat.color}">${rat.text}</div>
+            ${novaBadge}
+        </div>
         <div class="pm-scores">
             <div class="pm-score-row">
                 <span class="pm-score-lbl">${translate("score_ns")}</span>
@@ -40,16 +87,14 @@ function openProductModal(id) {
         </div>
         <div class="pm-co2" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
             ${co2Pos ? "+" : ""}${p.co2} ${translate(co2Pos ? "co2_saved" : "co2_added")}
+            · ${translate("score_dist")}: <strong>${distLabel(p._km ?? 0)}</strong>
+            (${(p._km ?? 0).toLocaleString()} km)
         </div>
-        <div class="pm-dist">
-            ${translate("score_dist")}: <strong>${distLabel(p._km ?? 0)}</strong>
-            · ${(p._km ?? 0).toLocaleString()} km
-        </div>
-        ${pdesc(p) ? `<p class="pm-desc">${pdesc(p)}</p>` : ""}
-        ${bens.length || certs.length ? `
-            <div class="pm-tags">
-                ${[...bens, ...certs].map(t => `<span class="cert">${t}</span>`).join("")}
-            </div>` : ""}
+        ${nutTable}
+        ${allergenBadge}
+        ${labelBadges}
+        ${extraTags.length ? `<div class="pm-tags">${extraTags.map(t=>`<span class="cert">${t}</span>`).join("")}</div>` : ""}
+        ${pdesc(p) ? `<div class="pm-section-title">🧾 Ingredientes</div><p class="pm-desc">${pdesc(p)}</p>` : ""}
     `;
 
     // Init modal chat

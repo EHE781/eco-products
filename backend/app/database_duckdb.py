@@ -17,6 +17,21 @@ def _grade(val: str | None) -> str | None:
     return val.strip().upper() if val and val.strip() else None
 
 
+def _f(val) -> float:
+    try: return round(float(val), 1)
+    except: return 0.0
+
+
+def _clean_tags(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    return [
+        t.strip().removeprefix("en:").replace("-", " ").title()
+        for t in raw.split(",")
+        if t.strip() and t.strip() not in ("", "en:")
+    ]
+
+
 def _serialize(p: ProducDuckDB) -> dict:
     return {
         "id":         p.id or "",
@@ -25,9 +40,25 @@ def _serialize(p: ProducDuckDB) -> dict:
         "origin":     p.origin or "",
         "ns":         _grade(p.ns),
         "es":         _grade(p.es),
-        "co2":        float(p.co2) if p.co2 else 0.0,
+        "co2":        _f(p.co2),
         "image_url":  p.image_url or None,
+        "img_nut":    p.img_nutrition or None,
         "desc":       p.desc or "",
+        "brand":      p.brands_en or "",
+        "nova":       p.nova_group or "",
+        "labels":     _clean_tags(p.labels_en),
+        "allergens":  ", ".join(_clean_tags(p.allergens_en or p.allergens or "")),
+        "unit":       p.unit or "",
+        # nutritional per 100g
+        "kcal":       _f(p.kcal_100g),
+        "proteins":   _f(p.proteins_100g),
+        "carbs":      _f(p.carbs_100g),
+        "sugars":     _f(p.sugars_100g),
+        "fat":        _f(p.fat_100g),
+        "fat_sat":    _f(p.fat_sat_100g),
+        "fiber":      _f(p.fiber_100g),
+        "salt":       _f(p.salt_100g),
+        # legacy / frontend helpers
         "bens":       [],
         "certs":      [],
         "km":         0,

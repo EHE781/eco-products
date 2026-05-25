@@ -29,7 +29,14 @@ class ProducDuckDB(Base):
     sugars_100g    = Column(String)
     fat_100g       = Column(String)
     fat_sat_100g   = Column(String, name="saturated-fat_100g")
+    carbs_100g     = Column(String, name="carbohydrates_100g")
+    sodium_100g    = Column(String)
     kcal_100g      = Column(String, name="energy-kcal_100g")
+    brands_en      = Column(String)
+    nova_group     = Column(String)
+    labels_en      = Column(String)
+    allergens_en   = Column(String)
+    img_nutrition  = Column(String, name="image_nutrition_small_url")
 
 class Product(Base):
     __tablename__ = "products"
