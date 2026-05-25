@@ -30,10 +30,12 @@ let currentQuery  = CAT_QUERIES.all;
 let isLoading     = false;
 let isPrefetching = false;
 
+function _scoreIdx(s) { const i = "ABCDE".indexOf(s); return i === -1 ? 5 : i; }
+
 const SO = {
     prox: () => (a, b) => (a._km ?? 0) - (b._km ?? 0),
-    ns:   () => (a, b) => "ABCDE".indexOf(a.ns) - "ABCDE".indexOf(b.ns),
-    es:   () => (a, b) => "ABCDE".indexOf(a.es) - "ABCDE".indexOf(b.es),
+    ns:   () => (a, b) => _scoreIdx(a.ns) - _scoreIdx(b.ns),
+    es:   () => (a, b) => _scoreIdx(a.es) - _scoreIdx(b.es),
 };
 
 function pname(p)  { return p[`name_${_lang}`]  || p.name_es  || p.name  || ""; }
@@ -62,7 +64,7 @@ async function _fetchBatch(query, batch) {
     let url = `/api/off/search?lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
     if (textTerms.length) url += `&q=${encodeURIComponent(textTerms.join(","))}`;
     if (dcEntry) url += `&display_cat=${encodeURIComponent(dcEntry.slice(5))}`;
-    url += `&user_lat=${userPos.lat}&user_lon=${userPos.lon}`;
+    if (hasRealLocation) url += `&user_lat=${userPos.lat}&user_lon=${userPos.lon}`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();

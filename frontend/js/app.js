@@ -1,6 +1,6 @@
 /* ── App state & event handlers ── */
 let cat    = "all";
-let sortBy = "prox";
+let sortBy = "ns";
 let q      = "";
 
 function refresh() { list(); }
@@ -37,8 +37,6 @@ function cardClick(id) {
     openProductModal(id);
 }
 
-function openModal()  { document.getElementById("geoOverlay").classList.add("open"); }
-function closeModal() { document.getElementById("geoOverlay").classList.remove("open"); }
 
 document.addEventListener("DOMContentLoaded", async () => {
     applyLang();

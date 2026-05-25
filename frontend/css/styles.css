@@ -83,8 +83,12 @@ header {
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 5px
+    gap: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background .15s
 }
+.loc-badge:hover { background: var(--g300) }
 
 .cfg-btn {
     background: none;
@@ -1034,6 +1038,21 @@ header {
 .btn-p:hover {
     background: var(--g900)
 }
+
+.loc-manual { border-top: 1px solid var(--border); padding-top: 16px }
+.loc-manual-label { font-size: .8rem; color: var(--muted); margin-bottom: 8px; font-weight: 600 }
+.loc-manual-row { display: flex; gap: 8px }
+.loc-manual-row input {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: .9rem;
+    outline: none
+}
+.loc-manual-row input:focus { border-color: var(--g700) }
+.loc-city-error { font-size: .8rem; color: #ef4444; margin-top: 6px; min-height: 18px }
 
 /* ── Footer ── */
 footer {
