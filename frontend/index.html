@@ -134,6 +134,24 @@
         </div>
     </div>
 
+    <!-- ── Product detail modal ── -->
+    <div id="productModal" class="pm-overlay">
+        <div class="pm-backdrop" onclick="closeProductModal()"></div>
+        <div class="pm-card">
+            <button class="pm-close-btn" onclick="closeProductModal()">✕</button>
+            <div class="pm-img-col" id="pmImgCol"></div>
+            <div class="pm-info-col" id="pmInfoCol"></div>
+            <div class="pm-chat-col">
+                <div class="pm-chat-head">💬 <span data-i18n="chat_title">Asistente EcoScan</span></div>
+                <div class="pm-chat-msgs" id="pmChatMsgs"></div>
+                <div class="pm-chat-inp">
+                    <input id="pmChatInput" type="text" autocomplete="off" />
+                    <button id="pmSendBtn" class="send-btn">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ── Geo permission modal ── -->
     <div id="geoOverlay" class="overlay">
         <div class="modal">
@@ -155,6 +173,7 @@
     <script src="js/render.js?v=2"></script>
     <script src="js/api.js?v=2"></script>
     <script src="js/chat.js?v=2"></script>
+    <script src="js/modal.js"></script>
     <script src="js/app.js"></script>
 </body>
 

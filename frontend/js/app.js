@@ -34,11 +34,7 @@ function goToPage(page) {
 }
 
 function cardClick(id) {
-    const p = P_ALL.find(x => x.id === id);
-    if (!p) return;
-    logInteraction(id, "view");
-    const context = `🛒 ${pname(p)} (${p.cat}, ${p.origin}, ${p._km ?? 0}km)\nNutriscore: ${p.ns} | Ecoscore: ${p.es}\n${pdesc(p)}\nBeneficios: ${pbens(p).join(", ")}`;
-    openChat(context);
+    openProductModal(id);
 }
 
 function openModal()  { document.getElementById("geoOverlay").classList.add("open"); }
@@ -88,6 +84,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (chatNewBtn) chatNewBtn.addEventListener("click", newChat);
     const chatHistBtn = document.getElementById("chatHistBtn");
     if (chatHistBtn) chatHistBtn.addEventListener("click", toggleHistory);
+
+    // Product modal chat
+    const pmChatInput = document.getElementById("pmChatInput");
+    if (pmChatInput) pmChatInput.addEventListener("keydown", e => { if (e.key === "Enter") sendPm(); });
+    const pmSendBtn = document.getElementById("pmSendBtn");
+    if (pmSendBtn) pmSendBtn.addEventListener("click", sendPm);
+
+    // Close modal on Escape
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeProductModal(); });
 
     // Sort
     const sortSel = document.getElementById("sortSel");

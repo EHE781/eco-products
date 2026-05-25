@@ -141,7 +141,9 @@ function _md(text) {
     if (inList) html += "</ul>";
     return html
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+        .replace(/\*([^*\n]+)\*/g, "<em>$1</em>")
+        .replace(/\[([^\]]+)\]\(product:([^)]+)\)/g,
+            '<button class="chat-product-link" onclick="openProductModal(\'$2\')">$1 🔍</button>');
 }
 
 function addMsg(role, text) {
@@ -198,15 +200,16 @@ async function send() {
     }
 }
 
-async function callBackendChat(userMsg) {
-    const msgs = document.getElementById("chatMsgs");
+async function callBackendChat(userMsg, msgsEl = null, contextOverride = undefined) {
+    const msgs = msgsEl || document.getElementById("chatMsgs");
+    const context = contextOverride !== undefined ? contextOverride : _chatContext;
     const resp = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             message:    userMsg,
             lang:       _lang,
-            context:    _chatContext,
+            context:    context,
             page_query: currentQuery.join(","),
             user_lat:   userPos.lat,
             user_lon:   userPos.lon,
