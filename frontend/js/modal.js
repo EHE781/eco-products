@@ -9,7 +9,7 @@ function openProductModal(id) {
     _pmContext = [
         `${pname(p)}${p.brand ? ` (${p.brand})` : ""} — ${p.cat}`,
         `Origen: ${p.origin || "España"} · ${p._km ?? 0}km`,
-        `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | NOVA: ${p.nova||"?"} | CO2: ${p.co2}kg/100g`,
+        `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | NOVA: ${p.nova||"?"}`,
         p.kcal ? `Kcal: ${p.kcal} | Proteínas: ${p.proteins}g | HC: ${p.carbs}g | Grasas: ${p.fat}g | Azúcares: ${p.sugars}g | Sal: ${p.salt}g` : "",
         p.allergens ? `Alérgenos: ${p.allergens}` : "",
         (p.labels||[]).length ? `Certificaciones: ${p.labels.join(", ")}` : "",
@@ -23,9 +23,8 @@ function openProductModal(id) {
         : `<div class="pm-emoji-large">${p.emoji}</div>`;
 
     // Info column
-    const rat    = rating(p.ns, p.es, p._km ?? 0);
-    const co2Pos = p.co2 > 0;
-    const bens   = pbens(p);
+    const rat  = rating(p.ns, p.es, p._km ?? 0);
+    const bens = pbens(p);
     const certs  = pcerts(p);
     const labels = p.labels || [];
 
@@ -85,9 +84,6 @@ function openProductModal(id) {
                 <div class="ns-scale">${nsScale(p.es, "es")}</div>
             </div>
         </div>
-        ${p.co2 != null ? `<div class="pm-co2" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
-            ${co2Pos ? "+" : ""}${p.co2} ${translate(co2Pos ? "co2_saved" : "co2_added")}
-        </div>` : ""}
         <div class="pm-dist">
             📍 ${p.origin || "España"}
             · ${translate("score_dist")}: <strong>${distLabel(p._km ?? 0)}</strong>

@@ -62,6 +62,7 @@ async function _fetchBatch(query, batch) {
     let url = `/api/off/search?lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
     if (textTerms.length) url += `&q=${encodeURIComponent(textTerms.join(","))}`;
     if (dcEntry) url += `&display_cat=${encodeURIComponent(dcEntry.slice(5))}`;
+    url += `&user_lat=${userPos.lat}&user_lon=${userPos.lon}`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();

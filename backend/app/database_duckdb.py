@@ -1,5 +1,6 @@
 """DuckDB product store"""
 
+import math
 import re
 import sqlalchemy
 from sqlalchemy import func, select, text, create_engine
@@ -531,6 +532,22 @@ def _base_query(rq: dict):
     return query
 
 
+class _LocProxy:
+    """Lightweight stand-in for ProducDuckDB used during proximity sorting."""
+    __slots__ = ("manufacturing_places", "origin", "packaging_geo")
+    def __init__(self, mfg, org, geo):
+        self.manufacturing_places = mfg
+        self.origin = org
+        self.packaging_geo = geo
+
+
+def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    return 6371 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
 def read_products(rq: dict, page: int | None, page_size: int):
     page   = page or 1
     offset = (page - 1) * page_size
@@ -538,12 +555,42 @@ def read_products(rq: dict, page: int | None, page_size: int):
     base  = _base_query(rq)
     total = _con_.execute(select(func.count()).select_from(base.subquery())).scalar() or 0
 
-    rows = [
-        item[0]
-        for item in _con_.execute(
-            base.order_by(ProducDuckDB.name).offset(offset).limit(page_size)
-        ).all()
-    ]
+    try:
+        ulat = float(rq["user_lat"])
+        ulon = float(rq["user_lon"])
+        has_loc = True
+    except (KeyError, TypeError, ValueError):
+        has_loc = False
+
+    if has_loc:
+        # Lightweight fetch: only location columns for all matching rows
+        light = base.with_only_columns(
+            ProducDuckDB.id,
+            ProducDuckDB.manufacturing_places,
+            ProducDuckDB.origin,
+            ProducDuckDB.packaging_geo,
+        )
+        lrows = _con_.execute(light).all()
+
+        def _dist(r):
+            lat, lon = _get_location(_LocProxy(r[1], r[2], r[3]))
+            return _haversine(ulat, ulon, lat, lon)
+
+        sorted_ids = [r[0] for r in sorted(lrows, key=_dist)]
+        page_ids   = sorted_ids[offset: offset + page_size]
+        id_rank    = {pid: i for i, pid in enumerate(page_ids)}
+
+        rows = [item[0] for item in _con_.execute(
+            select(ProducDuckDB).filter(ProducDuckDB.id.in_(page_ids))
+        ).all()]
+        rows.sort(key=lambda p: id_rank.get(p.id, 999))
+    else:
+        rows = [
+            item[0]
+            for item in _con_.execute(
+                base.order_by(ProducDuckDB.name).offset(offset).limit(page_size)
+            ).all()
+        ]
 
     return {"products": [_serialize(r) for r in rows], "count": total, "page": page}
 

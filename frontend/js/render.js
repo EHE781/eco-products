@@ -117,7 +117,6 @@ function renderPagination(cur, total) {
 function render(p) {
   const km = p._km ?? 0;
   const rat = rating(p.ns, p.es, km);
-  const co2Pos = p.co2 > 0;
   const certsHtml = pcerts(p)
     .map((c) => `<span class="cert">${c}</span>`)
     .join("");
@@ -145,11 +144,6 @@ function render(p) {
     <div class="score-col">
       <div class="score-label">${translate("score_es")}</div>
       <div class="ns-scale">${nsScale(p.es, "es")}</div>
-    </div>
-    <div class="co2-col">
-      ${p.co2 != null ? `<div class="co2-tag" style="color:${co2Pos ? "#16a34a" : "#dc2626"}">
-        ${co2Pos ? "+" : ""}${p.co2} ${translate(co2Pos ? "co2_saved" : "co2_added")}
-      </div>` : `<div class="co2-tag" style="color:#9CA3AF">CO₂ N/D</div>`}
     </div>
   </div>
   <div class="dist-section">
@@ -216,18 +210,15 @@ function updateHeroStats() {
   const local = P_ALL.filter((p) => (p._km ?? 0) <= 200).length;
   const pctLocal = n ? Math.round((local / n) * 100) : 0;
   const nsA = P_ALL.filter((p) => p.ns === "A").length;
-  const co2 = P_ALL.reduce((s, p) => s + (p.co2 > 0 ? p.co2 : 0), 0);
 
   const elN = document.getElementById("statN");
   const elLocal = document.getElementById("statLocal");
   const elNS = document.getElementById("statNS");
-  const elCO2 = document.getElementById("statCO2");
 
   if (elN)
     elN.textContent = totalApiCount > n ? totalApiCount.toLocaleString() : n;
   if (elLocal) elLocal.textContent = pctLocal + "%";
   if (elNS) elNS.textContent = nsA;
-  if (elCO2) elCO2.textContent = co2.toFixed(1);
 }
 
 function addIAFilters(filters) {
