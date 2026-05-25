@@ -66,7 +66,8 @@ const TRANSLATIONS = {
         salt_100g : "nivel de sal en 100g",
         "filters_ia-title": "Filtros aplicados por el asistente",
         nutriscore: "puntuación valor nutricional",
-        "dangerous_allergens" : "excluidos estos alérgenos peligrosos"
+        "dangerous_allergens" : "excluidos estos alérgenos peligrosos",
+        q: "Categoría"
     },
     en: {
         app_name: "EcoScan",
@@ -134,7 +135,8 @@ const TRANSLATIONS = {
         salt_100g: "salt content per 100g",
         "filters_ia-title": "Filters applied by the wizard",
         nutriscore: "nutritional nalue score",
-        "dangerous_allergens": "excluding these dangerous allergens"
+        "dangerous_allergens": "excluding these dangerous allergens",
+        q: "Category"
     },
     ca: {
         app_name: "EcoScan",
@@ -202,7 +204,8 @@ const TRANSLATIONS = {
         salt_100g : "nivell de sal a 100g",
         "filters_ia-title": "Filtres aplicats per l'assistent",
         nutriscore: "puntuació valor nutricional",
-        "dangerous_allergens" : "exclosos aquests al·lergògens perillosos"
+        "dangerous_allergens" : "exclosos aquests al·lergògens perillosos",
+        q: "Categoria"
     }
 };
 

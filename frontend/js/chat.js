@@ -89,6 +89,8 @@ async function send() {
         const result = await callBackendChat(msg);
         if (result?.filtered?.products?.length > 0) {
             P_ALL = result.filtered.products.map(_mapProduct);
+            totalApiCount = P_ALL.length;
+            currentPage = 1;
             addIAFilters(result.filters ?? {});
             list();
         }

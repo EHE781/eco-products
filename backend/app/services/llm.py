@@ -114,6 +114,7 @@ async def generate_chat_reply_stream(message: str, lang: str = "es", context: st
     }
 
     last_search: dict | None = None
+    last_search_args: dict | None = None
     parts: list = []
 
     for _ in range(_MAX_TOOL_ROUNDS):
@@ -138,6 +139,7 @@ async def generate_chat_reply_stream(message: str, lang: str = "es", context: st
 
             try:
                 if name == "search_products":
+                    last_search_args = args
                     last_search = read_products(args, None, 10)
                     response = {
                         "products": [_slim(p) for p in last_search.get("products", [])],
@@ -165,7 +167,19 @@ async def generate_chat_reply_stream(message: str, lang: str = "es", context: st
         parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
         text  = next((p["text"] for p in parts if "text" in p), None)
 
-    yield {"type": "done", "reply": text or "", "filtered": last_search}
+    from ..database_duckdb import clean_filter_forlater
+    _SKIP_DISPLAY = {"relevant_properties"}
+    if last_search_args:
+        filters = {k: v for k, v in clean_filter_forlater(last_search_args).items() if k not in _SKIP_DISPLAY}
+        if "q" in filters:
+            first = next((t for t in filters["q"]["value"].split() if not t.startswith("-")), "")
+            if first:
+                filters["q"] = {"type": "value", "value": first}
+            else:
+                del filters["q"]
+    else:
+        filters = None
+    yield {"type": "done", "reply": text or "", "filtered": last_search, "filters": filters}
 
 
 async def generate_chat_reply(message: str, lang: str = "es", context: str = "") -> tuple[str, dict | None]:
