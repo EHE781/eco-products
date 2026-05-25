@@ -1,123 +1,249 @@
 import logging
 import httpx
 from ..config import settings
-
-from app.constants import ALLERGENICS, NUTRISCORE_GRADE
+from ..constants import ALLERGENICS, NUTRISCORE_GRADE
 
 logger = logging.getLogger(__name__)
 
+_TABLE_SCHEMA = (
+    "Table: OPENFOOD_PRODUCTS. "
+    "Relevant columns: product_name, categories_en, countries_tags, nutriscore_grade, "
+    "environmental_score_grade, allergens, sugars_100g, fat_100g, fiber_100g, salt_100g, "
+    "\"saturated-fat_100g\", \"carbon-footprint_100g\", origins_en, image_small_url. "
+    "Always filter by countries_tags LIKE '%en:spain%'."
+)
 
-async def generate_filter_using_chat(message: str, context: str) -> str:
-    """Use AI to determine the best filters"""
-
-    return await _generate_chat_reply_({
-        "system_instruction": {"parts": [{"text": _build_system_prompt_filter_()}, {"text": "\n\nContext: " + context}]},
-        "contents": [{"role": "user", "parts": [{"text": message}]}],
-    })
-
-async def explain_filter_using_chat(message: str, filters: str, lang:str) -> str:
-    """Use AI to explain selected filters"""
-
-    text = _build_system_prompt_explainer(filters, lang)
-    return await _generate_chat_reply_({
-        "system_instruction": {
-            "parts": [
-                {"text": _build_system_prompt_response_()},
-                {"text": "\n\nContext: " + message}
-            ]
+_QUERY_TOOL = {
+    "functionDeclarations": [{
+        "name": "query_database",
+        "description": (
+            "Execute a read-only SQL SELECT on the product database to explore available data — "
+            "e.g. what categories exist, nutritional value ranges, or which allergens appear. "
+            "Use this to understand what filters make sense before calling search_products. "
+            f"{_TABLE_SCHEMA}"
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "sql": {
+                    "type": "string",
+                    "description": "A valid SELECT statement. Only SELECT is allowed.",
+                }
+            },
+            "required": ["sql"],
         },
-        "contents": [
-            {"role": "user", "parts": [{"text": text}]}
-        ]
-    })
+    }]
+}
 
-async def _generate_chat_reply_(payload:dict) -> str:
+_SEARCH_TOOL = {
+    "functionDeclarations": [{
+        "name": "search_products",
+        "description": (
+            "Search the local food product database using nutritional and dietary filters. "
+            "Call this when the user asks about specific foods, dietary restrictions, allergies, "
+            "nutritional quality, or product recommendations."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "nutriscore": {
+                    "type": "string",
+                    "enum": NUTRISCORE_GRADE,
+                    "description": "Nutritional score filter (a=best, e=worst)",
+                },
+                "dangerous_allergens": {
+                    "type": "string",
+                    "description": (
+                        f"Comma-separated allergens to exclude. Possible values: {', '.join(ALLERGENICS)}"
+                    ),
+                },
+                "sugars_100g": {
+                    "type": "number",
+                    "description": "Sugar threshold per 100g — 0–5=low, 5–24=medium, >24=high",
+                },
+                "fat_100g": {
+                    "type": "number",
+                    "description": "Fat threshold per 100g — 0–3=low, 4–18=medium, >18=high",
+                },
+                "fiber_100g": {
+                    "type": "number",
+                    "description": "Fiber threshold per 100g — 0–3=low, 3–6=medium, >6=high",
+                },
+                "salt_100g": {
+                    "type": "number",
+                    "description": "Salt threshold per 100g — 0–0.3=low, 0.3–1.5=medium, >1.5=high",
+                },
+                "saturated-fat_100g": {
+                    "type": "number",
+                    "description": "Saturated fat threshold per 100g — 0–1.5=low, 1.5–5=medium, >5=high",
+                },
+                "relevant_properties": {
+                    "type": "string",
+                    "description": "Comma-separated list of the parameter names above that are relevant to this query",
+                },
+            },
+            "required": [],
+        },
+    }]
+}
+
+
+_MAX_TOOL_ROUNDS = 5  # prevent infinite loops
+
+async def generate_chat_reply_stream(message: str, lang: str = "es", context: str = ""):
+    """Async generator that yields SSE-ready dicts:
+      {"type": "progress", "message": "..."}  — while tools are running
+      {"type": "done", "reply": "...", "filtered": {...} | None}  — final event
+    """
+    from ..database_duckdb import read_products, execute_readonly_query  # avoid circular import
+
+    contents = [{"role": "user", "parts": [{"text": message}]}]
+    payload = {
+        "system_instruction": {"parts": [{"text": _system_prompt(lang, context)}]},
+        "contents": contents,
+        "tools": [_QUERY_TOOL, _SEARCH_TOOL],
+    }
+
+    last_search: dict | None = None
+    parts: list = []
+
+    for _ in range(_MAX_TOOL_ROUNDS):
+        data          = await _call_gemini(payload)
+        candidate     = data.get("candidates", [{}])[0]
+        model_content = candidate.get("content", {})
+        parts         = model_content.get("parts", [])
+        func_calls    = [p["functionCall"] for p in parts if "functionCall" in p]
+
+        if not func_calls:
+            break
+
+        # Use the exact content Gemini returned — never reconstruct it
+        contents.append(model_content)
+
+        responses = []
+        for fc in func_calls:
+            name = fc.get("name")
+            args = fc.get("args", {})
+
+            yield {"type": "progress", "message": _tool_progress_msg(name, args, lang)}
+
+            try:
+                if name == "search_products":
+                    last_search = read_products(args, None, 10)
+                    response = {
+                        "products": [_slim(p) for p in last_search.get("products", [])],
+                        "count":    last_search.get("count", 0),
+                    }
+                elif name == "query_database":
+                    rows     = execute_readonly_query(args.get("sql", ""))
+                    response = {"rows": rows, "count": len(rows)}
+                else:
+                    response = {"error": f"Unknown tool: {name}"}
+            except Exception as exc:
+                logger.warning("Tool %s failed: %s", name, exc)
+                response = {"error": str(exc)}
+
+            responses.append({"functionResponse": {"name": name, "response": {"result": response}}})
+
+        contents.append({"role": "user", "parts": responses})
+        payload["contents"] = contents
+
+    text = next((p["text"] for p in parts if "text" in p), None)
+
+    if not text:
+        payload["toolConfig"] = {"functionCallingConfig": {"mode": "NONE"}}
+        data  = await _call_gemini(payload)
+        parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+        text  = next((p["text"] for p in parts if "text" in p), None)
+
+    yield {"type": "done", "reply": text or "", "filtered": last_search}
+
+
+async def generate_chat_reply(message: str, lang: str = "es", context: str = "") -> tuple[str, dict | None]:
+    """Non-streaming wrapper — collects the generator and returns the final result."""
+    text, filtered = "", None
+    async for event in generate_chat_reply_stream(message, lang, context):
+        if event["type"] == "done":
+            text, filtered = event["reply"], event.get("filtered")
+    return text, filtered
+
+
+# ── Internals ─────────────────────────────────────────────────────────────────
+
+def _system_prompt(lang: str, context: str) -> str:
+    base = (
+        "You are EcoScan, a friendly assistant that helps users find ecological and sustainable "
+        "food products in Barcelona. "
+        "When users ask about specific foods, nutrition, allergies, dietary restrictions, or product "
+        "recommendations, call the search_products tool to find relevant items. "
+        "For greetings, general conversation, or non-food topics, respond directly without calling the tool. "
+        "Keep responses concise and friendly. "
+        f"Always reply in {_language_name(lang)}."
+    )
+    return base + (f"\n\nProduct context: {context}" if context else "")
+
+
+def _slim(p: dict) -> dict:
+    """Return only the fields Gemini needs to generate a useful response."""
+    return {k: p[k] for k in ("id", "name", "cat", "origin", "ns", "es", "co2", "desc") if k in p}
+
+
+async def _call_gemini(payload: dict) -> dict:
     if not settings.GEMINI_KEY:
-        raise RuntimeError("GEMINI_KEY is not configured")
+        raise RuntimeError("GEMINI_KEY not configured")
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
         f"{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_KEY}"
     )
+    async with httpx.AsyncClient(timeout=settings.GEMINI_TIMEOUT_S) as client:
+        resp = await client.post(url, json=payload)
+    resp.raise_for_status()
+    return resp.json()
 
-    try:
-        async with httpx.AsyncClient(timeout=settings.GEMINI_TIMEOUT_S) as client:
-            resp = await client.post(url, json=payload)
-        resp.raise_for_status()
-        data = resp.json()
-    except Exception as exc:
-        logger.exception("Gemini request failed: %s", exc)
-        raise RuntimeError("Gemini request failed") from exc
-
-    reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
-    if not reply:
-        raise RuntimeError("Gemini returned an empty response")
-    return reply
 
 def _language_name(lang: str) -> str:
-    if lang == "ca":
-        return "catalan"
-    if lang == "en":
-        return "english"
-    return "spanish"
+    return {"ca": "Catalan", "en": "English"}.get(lang, "Spanish")
 
-def _build_system_prompt_filter_() -> str:
-    fields = '"nutriscore", "sugars_100g", "fat_100g", "fiber_100g", "salt_100g", "saturated-fat_100g", "dangerous_allergens"'
-    nutriscore = ",".join([f'"{score}"' for score in NUTRISCORE_GRADE])
-    allergens = ",".join([f'"{allergenic}"' for allergenic in ALLERGENICS])
-    return (
-        "You are FoodScan, an assistant specialized in finding food products.\n"
-        f"You must return exactly one valid JSON object only, with these keys: {fields} and \"relevant_properties\".\n"
-        "Use this exact structure and do not add any other keys or text.\n"
-        f"- \"nutriscore\": string, one of {nutriscore} or null.\n"
-        "  Meaning: nutritional score where \"a\" is best and \"a\" is worst.\n"
-        f"- \"dangerous_allergens\": list join by comma of some of these values: {allergens}, or null.\n"
-        "  Meaning: list of dangerous allergens of a food product. Use your knowledge of common allergies and medical conditions to decide which allergen is dangerous in this context. For example, if the user asks about celiacs or gluten-free products, include gluten. If the user ask for lactose intolerance, include milk\n"
-        "- \"sugars_100g\": number or null.\n"
-        "  Meaning: grams of sugar per 100g. Use these ranges as guidance: 0–5 = low, 5–24 = medium, greater than 24 = very high. higher values are worst\n"
-        "- \"fat_100g\": number or null.\n"
-        "  Meaning: grams of fat per 100g. Use these ranges as guidance: 0–3 = low, 4–18 = medium, greater than 18 = very high. higher values are worst\n"
-        "- \"fiber_100g\": number or null.\n"
-        "  Meaning: grams of dietary fiber per 100g. Use these ranges as guidance: 0–3 = low, 3–6 = medium, greater than 6 = very high. higher values better\n"
-        "- \"salt_100g\": number or null.\n"
-        "  Meaning: grams of salt per 100g. Use these ranges as guidance: 0–0.3 = low, 0.3–1.5 = medium, greater than 1.5 = very high. higher values are worst\n"
-        "- \"saturated-fat_100g\": number or null.\n"
-        "  Meaning: grams of saturated fat per 100g. Use these ranges as guidance: 0–1.5 = low, 1.5–5 = medium, greater than 5 = very high. higher values are worst\n"
-        "- \"relevant_properties\": string.\n"
-        "  Meaning: a list of properties of the object that are relevant to the question, join by comma. it can only include properties that have a logical relation to the question; only possible values are the fields listed above.\n"
-        "For the fields listed above always infer a valid value\n"
-        "Do not use markdown, code fences, comments, or any explanation.\n"
-        "Only output the JSON object.\n"
-        "Example: {\"nutriscore\": \"b\", \"sugars_100g\": 12, \"fat_100g\": 8, \"fiber_100g\": 4, \"salt_100g\": 0.8, \"saturated-fat_100g\": 2, \"relevant_properties\" : \"sugars_100g,fat_100g,salt_100g\", \"allergens\" : \"nuts,milk\", }.\n"
-    )
 
-def _build_system_prompt_response_() -> str:
-    return (
-        "You are Food explainer. Given this fields about nutritional information as a context:\n"
-        "- \"nutriscore\": nutritional score where \"a\" is best and \"a\" is worst.\n"
-        "- \"dangerous_allergens\": list of food allergens. Use your knowledge of common allergies and medical conditions to explain this. For example, if value includes gluten then info a bout celiacs is important. if value includes milk then lactose intolerance info is important\n"
-        "- \"sugars_100g\": grams of sugar per 100g. Use these ranges as guidance: 0–5 = low, 5–24 = medium, greater than 24 = very high. higher values are worst\n"
-        "- \"fat_100g\": grams of fat per 100g. Use these ranges as guidance: 0–3 = low, 4–18 = medium, greater than 18 = very high. higher values are worst\n"
-        "- \"fiber_100g\": grams of dietary fiber per 100g. Use these ranges as guidance: 0–3 = low, 3–6 = medium, greater than 6 = very high. higher values better\n"
-        "- \"salt_100g\": grams of salt per 100g. Use these ranges as guidance: 0–0.3 = low, 0.3–1.5 = medium, greater than 1.5 = very high. higher values are worst\n"
-        "- \"saturated-fat_100g\": grams of saturated fat per 100g. Use these ranges as guidance: 0–1.5 = low, 1.5–5 = medium, greater than 5 = very high. higher values are worst\n"
-        "- \"relevant_properties\": list of properties, about the properties previously mentioned, that are relevant to the question. if a property does not appears here, do not use it in the answer \n"
-        "If the user ask for nutritional information explain it in natural language, but use a formal tone and your knowledge of nutrional data and medical information.\n"
-    )
+def _tool_progress_msg(name: str, args: dict, lang: str) -> str:
+    _t = {
+        "es": {
+            "query":  "📊 Explorando la base de datos…",
+            "search": "🛒 Buscando productos",
+            "ns":     "Nutriscore {}",
+            "alrg":   "sin alérgenos",
+            "nutr":   "filtros nutricionales",
+        },
+        "ca": {
+            "query":  "📊 Explorant la base de dades…",
+            "search": "🛒 Cercant productes",
+            "ns":     "Nutriscore {}",
+            "alrg":   "sense al·lèrgens",
+            "nutr":   "filtres nutricionals",
+        },
+        "en": {
+            "query":  "📊 Exploring the database…",
+            "search": "🛒 Searching products",
+            "ns":     "Nutriscore {}",
+            "alrg":   "allergen-free",
+            "nutr":   "nutritional filters",
+        },
+    }.get(lang, {})
+    _t = _t or _t.get("es", {})
 
-def _build_system_prompt_explainer(filters: str, lang:str) -> str:
-    return (
-        "for the previous question, "
-        "you have determined this is the best nutritional information to filter products:\n"
-        f"{filters}\n"
-        "format the answer in a more user friendly format, then explain why.\n"
-        "Example:\n"
-        " - this is the best search for your needs:\n"
-        "   - dangerous_allergens: milk.\n"
-        "   the reason for this search is: lactose intolerant can not consume milk\n"
-        "Rules:\n"
-        " - do not use the format of the example, but it is mandatory to include the same kind of information\n"
-        " - when referencing a filter, you must use user friendly words. Example: instead of \"dangerous_allergens\" use \"Dangerous Allergens\"\n"
-        " - clearly indicate to the user that products list is already filtered\n"
-        " - be concise\n"
-        f" - reply in {_language_name(lang)}"
-    )
+    if name == "query_database":
+        return _t.get("query", "📊 Querying…")
+
+    if name == "search_products":
+        rel   = args.get("relevant_properties", "") or ""
+        hints = []
+        if "nutriscore" in rel and args.get("nutriscore"):
+            hints.append(_t.get("ns", "Nutriscore {}").format(args["nutriscore"].upper()))
+        if "dangerous_allergens" in rel and args.get("dangerous_allergens"):
+            hints.append(_t.get("alrg", "allergen-free"))
+        if any(k in rel for k in ("sugars_100g", "fat_100g", "salt_100g", "fiber_100g", "saturated-fat_100g")):
+            hints.append(_t.get("nutr", "nutritional filters"))
+        base = _t.get("search", "🛒 Searching")
+        return f"{base}: {', '.join(hints)}…" if hints else f"{base}…"
+
+    return f"⚙️ {name}…"

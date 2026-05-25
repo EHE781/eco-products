@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             list(); // feedback inmediato con productos ya cargados
             clearTimeout(_searchTimer);
             _searchTimer = setTimeout(async () => {
-                const query = q || CAT_QUERIES[cat] || CAT_QUERIES.all;
+                const query = q ? [q] : (CAT_QUERIES[cat] || CAT_QUERIES.all);
                 await loadProducts(query);
             }, 400);
         });
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         searchBtn.addEventListener("click", async () => {
             q = searchInput ? searchInput.value.trim() : "";
             clearTimeout(_searchTimer);
-            await loadProducts(q || CAT_QUERIES[cat] || CAT_QUERIES.all);
+            await loadProducts(q ? [q] : (CAT_QUERIES[cat] || CAT_QUERIES.all));
         });
     }
 

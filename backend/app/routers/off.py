@@ -14,7 +14,7 @@ async def search_off(
     page_size: int = Query(20, ge=1, le=50),
     lang: str = Query("es", pattern="^(es|en|ca)$"),
 ):
-    return read_products({"category": q}, page, page_size)
+    return read_products({"q": q}, page, page_size)
 
 
 @router.get("/product/{barcode}")

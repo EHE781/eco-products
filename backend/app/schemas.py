@@ -45,12 +45,7 @@ class ChatIn(BaseModel):
     user_lon: float = 2.1734
 
 
-class ChatOut:
-    reply: str
-    filtered: ProducDuckDB
-    filters: dict
-    
-    def __init__(self, reply: str = "", filtered: any = None, filters: dict = None):
-        self.reply = reply
-        self.filtered = filtered
-        self.filters = filters
+class ChatOut(BaseModel):
+    reply: str = ""
+    filtered: Optional[list] = None
+    filters: Optional[dict] = None

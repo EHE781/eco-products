@@ -85,40 +85,73 @@ async function send() {
     inp.value = "";
     addMsg("user", msg);
     logInteraction(null, "chat", msg);
-    addTyping();
     try {
         const result = await callBackendChat(msg);
-        rmTyping();
-        addMsg("bot", result.reply);
-        if(result.filtered?.products?.length >= 0){
-            P_ALL = result.filtered.products
-            addIAFilters(result.filters ?? {})
-            list()
+        if (result?.filtered?.products?.length > 0) {
+            P_ALL = result.filtered.products.map(_mapProduct);
+            addIAFilters(result.filters ?? {});
+            list();
         }
-
     } catch (err) {
-        rmTyping();
         addMsg("bot", fallback(msg));
     }
 }
 
 async function callBackendChat(userMsg) {
+    const msgs = document.getElementById("chatMsgs");
     const resp = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            message: userMsg,
-            lang: _lang,
-            context: _chatContext,
+            message:    userMsg,
+            lang:       _lang,
+            context:    _chatContext,
             page_query: currentQuery.join(","),
-            user_lat: userPos.lat,
-            user_lon: userPos.lon,
+            user_lat:   userPos.lat,
+            user_lon:   userPos.lon,
         }),
     });
     if (!resp.ok) throw new Error("Chat backend error");
-    const data = await resp.json();
-    data.reply ??= fallback(userMsg)
-    return data;
+
+    // Create bot bubble immediately — will show progress then final reply
+    const botDiv = document.createElement("div");
+    botDiv.className = "msg bot";
+    const progressEl = document.createElement("p");
+    progressEl.className = "tool-progress";
+    progressEl.textContent = "…";
+    botDiv.appendChild(progressEl);
+    msgs.appendChild(botDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    const reader  = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let result = { reply: "", filtered: null, filters: null };
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split("\n\n");
+        buffer = chunks.pop() ?? "";
+        for (const chunk of chunks) {
+            if (!chunk.startsWith("data: ")) continue;
+            try {
+                const event = JSON.parse(chunk.slice(6));
+                if (event.type === "progress") {
+                    progressEl.textContent = event.message;
+                    msgs.scrollTop = msgs.scrollHeight;
+                } else if (event.type === "done") {
+                    result = event;
+                    botDiv.innerHTML = _md(event.reply || fallback(userMsg));
+                    msgs.scrollTop = msgs.scrollHeight;
+                }
+            } catch { /* ignore malformed chunks */ }
+        }
+    }
+
+    if (!result.reply) botDiv.innerHTML = _md(fallback(userMsg));
+    return result;
 }
 
 function fallback(msg) {

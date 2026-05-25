@@ -771,6 +771,15 @@ header {
 
 .msg.bot p { margin: 0 0 6px }
 .msg.bot p:last-child { margin-bottom: 0 }
+.tool-progress {
+    color: #6B7280;
+    font-style: italic;
+    animation: tool-pulse 1.4s ease-in-out infinite;
+}
+@keyframes tool-pulse {
+    0%, 100% { opacity: 1 }
+    50%       { opacity: 0.35 }
+}
 .msg.bot ul {
     margin: 4px 0 6px;
     padding-left: 18px

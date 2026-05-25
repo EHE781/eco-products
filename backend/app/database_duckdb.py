@@ -1,27 +1,74 @@
-"""Database"""
+"""DuckDB product store"""
 
+import re
 import sqlalchemy
-from .config import settings
-
-from app.models import ProducDuckDB
+from sqlalchemy import func, select, text, create_engine
 from sqlalchemy.orm import Session
-from sqlalchemy import Select, Tuple, create_engine, select
-from app.constants import FOOD_SAFTY_RANGES, NUTRISCORE_GRADE
 
-_con_ = None
-_engine_ = None
-if _con_ is None:
-    _engine_ = create_engine(f"duckdb:///{settings.DATABASE_DUCKDB}")
-    _con_ = Session(_engine_)
+from .config import settings
+from .models import ProducDuckDB
+from .constants import FOOD_SAFTY_RANGES, NUTRISCORE_GRADE
 
-def read_products(rq:dict, page:int | None, page_size: int):
-    """Query products"""
-    query = select(ProducDuckDB)\
-        .filter(ProducDuckDB.ns.in_(NUTRISCORE_GRADE))\
-        .where((ProducDuckDB.name != '') & (ProducDuckDB.name is not None))
-        
+_engine_ = create_engine(f"duckdb:///{settings.DATABASE_DUCKDB}")
+_con_    = Session(_engine_)
+
+
+def _grade(val: str | None) -> str | None:
+    return val.strip().upper() if val and val.strip() else None
+
+
+def _serialize(p: ProducDuckDB) -> dict:
+    return {
+        "id":         p.id or "",
+        "name":       p.name or "",
+        "cat":        p.cat or "",
+        "origin":     p.origin or "",
+        "ns":         _grade(p.ns),
+        "es":         _grade(p.es),
+        "co2":        float(p.co2) if p.co2 else 0.0,
+        "image_url":  p.image_url or None,
+        "desc":       p.desc or "",
+        "bens":       [],
+        "certs":      [],
+        "km":         0,
+        "lat":        0.0,
+        "lon":        0.0,
+        "year_round": True,
+        "emoji":      None,
+    }
+
+
+def _base_query(rq: dict):
+    """Build the filtered query (no ORDER BY / LIMIT yet)."""
+    query = (
+        select(ProducDuckDB)
+        .filter(ProducDuckDB.ns.in_(NUTRISCORE_GRADE))
+        .filter(ProducDuckDB.name.isnot(None))
+        .filter(ProducDuckDB.name != "")
+        .filter(ProducDuckDB.countries_tags.contains("en:spain"))
+    )
+
+    # Free-text search across product name and categories
+    if _is_relevant_(rq, "q"):
+        raw   = [t.strip() for t in rq["q"].replace(",", " ").split() if t.strip()]
+        pos   = [t       for t in raw if not t.startswith("-") and len(t) > 2]
+        neg   = [t[1:]   for t in raw if     t.startswith("-") and len(t) > 3]
+        if pos:
+            conditions = [
+                cond
+                for t in pos
+                for cond in (
+                    ProducDuckDB.name.ilike(f"%{t}%"),
+                    ProducDuckDB.cat.ilike(f"%{t}%"),
+                )
+            ]
+            query = query.filter(sqlalchemy.or_(*conditions))
+        for t in neg:
+            query = query.filter(sqlalchemy.not_(ProducDuckDB.cat.ilike(f"%{t}%")))
+
+    # Nutritional filters
     if _is_relevant_(rq, "nutriscore"):
-        query = query.where(ProducDuckDB.ns == rq['nutriscore'])
+        query = query.filter(ProducDuckDB.ns == rq["nutriscore"])
     if _is_relevant_(rq, "sugars_100g"):
         query = _add_range_filter_(query, rq, "sugars_100g", ProducDuckDB.sugars_100g)
     if _is_relevant_(rq, "fat_100g"):
@@ -34,61 +81,90 @@ def read_products(rq:dict, page:int | None, page_size: int):
         query = _add_range_filter_(query, rq, "salt_100g", ProducDuckDB.salt_100g)
     if _is_relevant_(rq, "dangerous_allergens"):
         query = _add_contains_filter_(query, rq, "dangerous_allergens", ProducDuckDB.allergens, True, "en:none")
-    if _is_relevant_(rq, "category"):
-        if rq["category"].find("-food"): #por alguna razón mágica hay una cateogria: food and beverage, que rompe la busqueda de bebidas y lacteos, esto lo arregla
-            query = query.filter(sqlalchemy.not_(ProducDuckDB.cat.contains("food")))
-        query = _add_or_contains_filter_(query, rq, "category", ProducDuckDB.cat)
-    query = query.order_by(ProducDuckDB.name)
-    query = query.limit(page_size)
 
-    print(query.compile(_engine_)) # para confirmar si la query es correcta
+    return query
 
-    rows : list[ProducDuckDB] = [item[0] for item in _con_.execute(query).all()]
-    return {"products": rows, "count": len(rows), "page": page}
 
-def clean_filter_forlater(rq:dict):
-    """ Format filter for ai chat use, and for frontend """
+def read_products(rq: dict, page: int | None, page_size: int):
+    page   = page or 1
+    offset = (page - 1) * page_size
 
+    base  = _base_query(rq)
+    total = _con_.execute(select(func.count()).select_from(base.subquery())).scalar() or 0
+
+    rows = [
+        item[0]
+        for item in _con_.execute(
+            base.order_by(ProducDuckDB.name).offset(offset).limit(page_size)
+        ).all()
+    ]
+
+    return {"products": [_serialize(r) for r in rows], "count": total, "page": page}
+
+
+_FORBIDDEN = re.compile(
+    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|EXEC|EXECUTE|PRAGMA|ATTACH|DETACH|COPY|EXPORT|IMPORT)\b",
+    re.IGNORECASE,
+)
+
+def execute_readonly_query(sql: str, max_rows: int = 50) -> list[dict]:
+    """Execute a read-only SQL query. Raises ValueError for anything that isn't a plain SELECT."""
+    stripped = sql.strip()
+    if not stripped.upper().startswith("SELECT"):
+        raise ValueError("Only SELECT queries are allowed")
+    if _FORBIDDEN.search(stripped):
+        raise ValueError("Query contains a forbidden keyword")
+    result = _con_.execute(text(stripped))
+    cols = list(result.keys())
+    return [dict(zip(cols, row)) for row in result.fetchmany(max_rows)]
+
+
+def clean_filter_forlater(rq: dict):
+    """Format filter for AI chat / frontend display."""
     cleaned = {}
-    for key in  [key for key in rq.keys() if _is_relevant_(rq, key)]:
+    for key in [k for k in rq if _is_relevant_(rq, k)]:
         cleaned[key] = {"value": rq[key], "type": "value"}
         if key.endswith("100g"):
-            cleaned[key]["type"] = "range"
+            cleaned[key]["type"]  = "range"
             cleaned[key]["range"] = _get_range_lvl_(rq, key)
     return cleaned
 
+
+# ── Internal helpers ──────────────────────────────────────────────────────────
+
 def _is_relevant_(rq: dict, key: str):
-    return key in rq and rq[key] is not None and \
-        ("relevant_properties" not in rq or rq["relevant_properties"].find(key) != -1)
+    return key in rq and rq[key] is not None and (
+        "relevant_properties" not in rq or rq["relevant_properties"].find(key) != -1
+    )
 
-def _add_range_filter_(query :Select[Tuple], rq: dict, key:str, column: Tuple):
+
+def _add_range_filter_(query, rq, key, column):
     config = FOOD_SAFTY_RANGES[key]
-    values =  config[_get_range_lvl_(rq, key)]
-    [vmin, vmax] = [values["start"], values["end"] if "end" in values else 999999]
-    return query.where((column >= vmin) & (column < vmax))
+    values = config[_get_range_lvl_(rq, key)]
+    vmin   = values["start"]
+    vmax   = values.get("end", 999999)
+    return query.filter((column >= vmin) & (column < vmax))
 
-def _add_contains_filter_(query :Select[Tuple], rq: dict, key:str, column: Tuple, negative: bool, negative_flag: str = None):
-    for item in [val.strip() for val in rq[key].split(",")]:
+
+def _add_contains_filter_(query, rq, key, column, negative: bool, negative_flag: str = None):
+    for item in [v.strip() for v in rq[key].split(",")]:
         if negative:
-            query = query.filter((column != '') & (column is not None))
-            if isinstance(negative_flag, str) and len(negative_flag.strip())>0:
-                query = query.filter(sqlalchemy.or_(*[sqlalchemy.not_(column.contains(item)), column == negative_flag]))
+            query = query.filter(column.isnot(None)).filter(column != "")
+            if negative_flag:
+                query = query.filter(
+                    sqlalchemy.or_(sqlalchemy.not_(column.contains(item)), column == negative_flag)
+                )
             else:
                 query = query.filter(sqlalchemy.not_(column.contains(item)))
         else:
             query = query.filter(column.contains(item))
     return query
 
-def _add_or_contains_filter_(query :Select[Tuple], rq: dict, key:str, column: Tuple):
-    options = [val.strip() for val in rq[key].split(",")]
-    return query.filter(sqlalchemy.or_(*[column.contains(item) for item in options]))
 
 def _get_range_lvl_(rq: dict, key: str):
     config = FOOD_SAFTY_RANGES[key]
-    result : str = "low"
     for level in ["low", "middle", "high"]:
-        if config[level]["start"] < rq[key] and \
-                ("end" not in config[level] or rq[key] < config[level]["end"]):
-            result = level
-            break
-    return result
+        cfg = config[level]
+        if cfg["start"] < rq[key] and ("end" not in cfg or rq[key] < cfg["end"]):
+            return level
+    return "low"
