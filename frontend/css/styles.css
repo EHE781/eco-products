@@ -431,20 +431,35 @@ header {
     border-bottom: 1px solid var(--border)
 }
 
+.p-media {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #f9fafb
+}
+
 .p-emoji {
-    font-size: 2.8rem;
-    line-height: 1;
-    flex-shrink: 0
+    font-size: 2.4rem;
+    line-height: 1
 }
 
 .p-img {
-    width: 4rem;
-    height: 4rem;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: 6px;
-    flex-shrink: 0;
-    background: #f9fafb
+    opacity: 0;
+    transition: opacity .25s ease
 }
+
+.p-img.loaded { opacity: 1 }
 
 .p-meta {
     flex: 1;
@@ -1151,6 +1166,7 @@ footer p {
 }
 
 .pm-img-col {
+    position: relative;
     background: var(--g50);
     display: flex;
     align-items: center;
@@ -1160,11 +1176,17 @@ footer p {
 }
 
 .pm-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 24px
+    padding: 24px;
+    opacity: 0;
+    transition: opacity .25s ease
 }
+
+.pm-img.loaded { opacity: 1 }
 
 .pm-emoji-large {
     font-size: 6rem

@@ -120,9 +120,11 @@ function render(p) {
   const certsHtml = pcerts(p)
     .map((c) => `<span class="cert">${c}</span>`)
     .join("");
-  const mediaHtml = p.image_url
-    ? `<img class="p-img" src="${p.image_url}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'p-emoji\\'>${p.emoji}</div>'">`
-    : `<div class="p-emoji">${p.emoji}</div>`;
+  const mediaHtml = `
+<div class="p-media">
+  <span class="p-emoji">🛒</span>
+  ${p.image_url ? `<img class="p-img" src="${p.image_url}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.remove()">` : ""}
+</div>`;
 
   return `
 <article class="card" data-id="${p.id}" onclick="cardClick('${p.id}')">

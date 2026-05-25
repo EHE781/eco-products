@@ -16,11 +16,13 @@ function openProductModal(id) {
         pdesc(p),
     ].filter(Boolean).join("\n");
 
-    // Image column
-    document.getElementById("pmImgCol").innerHTML = p.image_url
-        ? `<img class="pm-img" src="${p.image_url}" alt="${pname(p)}"
-               onerror="this.outerHTML='<div class=\\'pm-emoji-large\\'>${p.emoji}</div>'">`
-        : `<div class="pm-emoji-large">${p.emoji}</div>`;
+    // Image column — emoji always visible as placeholder, image fades in on load
+    document.getElementById("pmImgCol").innerHTML =
+        `<div class="pm-emoji-large">🛒</div>` +
+        (p.image_url
+            ? `<img class="pm-img" src="${p.image_url}" alt="${pname(p)}" decoding="async"
+                   onload="this.classList.add('loaded')" onerror="this.remove()">`
+            : "");
 
     // Info column
     const rat  = rating(p.ns, p.es, p._km ?? 0);
