@@ -123,7 +123,7 @@ function render(p) {
   const mediaHtml = `
 <div class="p-media">
   <span class="p-emoji">🛒</span>
-  ${p.image_url ? `<img class="p-img" src="${p.image_url}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.remove()">` : ""}
+  ${p.image_url ? `<img class="p-img" src="${p.image_url}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded');this.previousElementSibling.style.display='none'" onerror="this.remove()">` : ""}
 </div>`;
 
   return `

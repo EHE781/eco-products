@@ -21,7 +21,7 @@ function openProductModal(id) {
         `<div class="pm-emoji-large">🛒</div>` +
         (p.image_url
             ? `<img class="pm-img" src="${p.image_url}" alt="${pname(p)}" decoding="async"
-                   onload="this.classList.add('loaded')" onerror="this.remove()">`
+                   onload="this.classList.add('loaded');this.previousElementSibling.style.opacity='0'" onerror="this.remove()">`
             : "");
 
     // Info column

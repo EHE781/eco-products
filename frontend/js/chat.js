@@ -161,19 +161,20 @@ function addMsg(role, text) {
     _chatMessages.push({ role, text });
 }
 
-function addTyping() {
-    const msgs = document.getElementById("chatMsgs");
+function addTyping(container = null) {
+    const msgs = container || document.getElementById("chatMsgs");
     if (!msgs) return;
     const div = document.createElement("div");
     div.className = "typing";
-    div.id = "typingIndicator";
     div.innerHTML = `<div class="td"></div><div class="td"></div><div class="td"></div>`;
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
 }
 
-function rmTyping() {
-    const el = document.getElementById("typingIndicator");
+function rmTyping(container = null) {
+    const msgs = container || document.getElementById("chatMsgs");
+    if (!msgs) return;
+    const el = msgs.querySelector(".typing");
     if (el) el.remove();
 }
 
@@ -203,6 +204,9 @@ async function send() {
 async function callBackendChat(userMsg, msgsEl = null, contextOverride = undefined) {
     const msgs = msgsEl || document.getElementById("chatMsgs");
     const context = contextOverride !== undefined ? contextOverride : _chatContext;
+
+    addTyping(msgs);
+
     const resp = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -215,9 +219,11 @@ async function callBackendChat(userMsg, msgsEl = null, contextOverride = undefin
             user_lon:   userPos.lon,
         }),
     });
-    if (!resp.ok) throw new Error("Chat backend error");
+    if (!resp.ok) { rmTyping(msgs); throw new Error("Chat backend error"); }
 
-    // Create bot bubble immediately — will show progress then final reply
+    rmTyping(msgs);
+
+    // Create bot bubble — will show progress then final reply
     const botDiv = document.createElement("div");
     botDiv.className = "msg bot";
     const progressEl = document.createElement("p");
