@@ -11,10 +11,10 @@ const CAT_KEYS = {
 //el caso "-food" es para evitar que esto rompa el filtro de Lácteos o de Bebidas
 const CAT_QUERIES = {
     "all":          [],
-    "Alimentación": ["alimento", "alimenta", "food"],
-    "Lácteos":      ["lacteo", "dairy", "milk", "-food"],
-    "Panadería":    ["pan", "bread", "loaf"],
-    "Bebidas":      ["bebida", "drink", "beverage", "-food"],
+    "Alimentación": ["__dc:Alimentación"],
+    "Lácteos":      ["__dc:Lácteos"],
+    "Panadería":    ["__dc:Panadería"],
+    "Bebidas":      ["__dc:Bebidas"],
 };
 
 let P_ALL = [];
@@ -30,10 +30,12 @@ let currentQuery  = CAT_QUERIES.all;
 let isLoading     = false;
 let isPrefetching = false;
 
+function _scoreIdx(s) { const i = "ABCDE".indexOf(s); return i === -1 ? 5 : i; }
+
 const SO = {
     prox: () => (a, b) => (a._km ?? 0) - (b._km ?? 0),
-    ns:   () => (a, b) => "ABCDE".indexOf(a.ns) - "ABCDE".indexOf(b.ns),
-    es:   () => (a, b) => "ABCDE".indexOf(a.es) - "ABCDE".indexOf(b.es),
+    ns:   () => (a, b) => _scoreIdx(a.ns) - _scoreIdx(b.ns),
+    es:   () => (a, b) => _scoreIdx(a.es) - _scoreIdx(b.es),
 };
 
 function pname(p)  { return p[`name_${_lang}`]  || p.name_es  || p.name  || ""; }
@@ -42,20 +44,27 @@ function pbens(p)  { return p[`bens_${_lang}`]  || p.bens_es  || p.bens  || []; 
 function pcerts(p) { return p[`certs_${_lang}`] || p.certs_es || p.certs || []; }
 
 function _mapProduct(p) {
+    const hasCoords = p.lat && p.lon && (p.lat !== 0 || p.lon !== 0);
+    const km = hasCoords ? Math.round(haversine(userPos.lat, userPos.lon, p.lat, p.lon)) : (p.km ?? 0);
     return {
         ...p,
         name_es: p.name, name_en: p.name, name_ca: p.name,
         desc_es: p.desc, desc_en: p.desc, desc_ca: p.desc,
         bens_es: p.bens, bens_en: p.bens, bens_ca: p.bens,
         certs_es: p.certs, certs_en: p.certs, certs_ca: p.certs,
-        _km:   p.km ?? 0,
+        _km:   km,
         yr:    p.year_round ?? true,
         emoji: p.emoji || "🛒",
     };
 }
 
 async function _fetchBatch(query, batch) {
-    const url = `/api/off/search?q=${encodeURIComponent(query.join(","))}&lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
+    const dcEntry = query.find(t => t.startsWith("__dc:"));
+    const textTerms = query.filter(t => !t.startsWith("__dc:"));
+    let url = `/api/off/search?lang=${_lang}&page=${batch}&page_size=${FETCH_SIZE}`;
+    if (textTerms.length) url += `&q=${encodeURIComponent(textTerms.join(","))}`;
+    if (dcEntry) url += `&display_cat=${encodeURIComponent(dcEntry.slice(5))}`;
+    if (hasRealLocation) url += `&user_lat=${userPos.lat}&user_lon=${userPos.lon}`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();

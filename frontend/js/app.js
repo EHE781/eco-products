@@ -1,6 +1,6 @@
 /* ── App state & event handlers ── */
 let cat    = "all";
-let sortBy = "prox";
+let sortBy = "ns";
 let q      = "";
 
 function refresh() { list(); }
@@ -34,15 +34,9 @@ function goToPage(page) {
 }
 
 function cardClick(id) {
-    const p = P_ALL.find(x => x.id === id);
-    if (!p) return;
-    logInteraction(id, "view");
-    const context = `🛒 ${pname(p)} (${p.cat}, ${p.origin}, ${p._km ?? 0}km)\nNutriscore: ${p.ns} | Ecoscore: ${p.es}\n${pdesc(p)}\nBeneficios: ${pbens(p).join(", ")}`;
-    openChat(context);
+    openProductModal(id);
 }
 
-function openModal()  { document.getElementById("geoOverlay").classList.add("open"); }
-function closeModal() { document.getElementById("geoOverlay").classList.remove("open"); }
 
 document.addEventListener("DOMContentLoaded", async () => {
     applyLang();
@@ -59,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             list(); // feedback inmediato con productos ya cargados
             clearTimeout(_searchTimer);
             _searchTimer = setTimeout(async () => {
-                const query = q || CAT_QUERIES[cat] || CAT_QUERIES.all;
+                const query = q ? [q] : (CAT_QUERIES[cat] || CAT_QUERIES.all);
                 await loadProducts(query);
             }, 400);
         });
@@ -69,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         searchBtn.addEventListener("click", async () => {
             q = searchInput ? searchInput.value.trim() : "";
             clearTimeout(_searchTimer);
-            await loadProducts(q || CAT_QUERIES[cat] || CAT_QUERIES.all);
+            await loadProducts(q ? [q] : (CAT_QUERIES[cat] || CAT_QUERIES.all));
         });
     }
 
@@ -79,11 +73,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sendBtn = document.getElementById("sendBtn");
     if (sendBtn) sendBtn.addEventListener("click", send);
 
-    // FAB & chat close
+    // FAB & chat controls
     const fab = document.getElementById("fab");
     if (fab) fab.addEventListener("click", toggleChat);
     const chatClose = document.getElementById("chatClose");
     if (chatClose) chatClose.addEventListener("click", closeChat);
+    const chatNewBtn = document.getElementById("chatNewBtn");
+    if (chatNewBtn) chatNewBtn.addEventListener("click", newChat);
+    const chatHistBtn = document.getElementById("chatHistBtn");
+    if (chatHistBtn) chatHistBtn.addEventListener("click", toggleHistory);
+
+    // Product modal chat
+    const pmChatInput = document.getElementById("pmChatInput");
+    if (pmChatInput) pmChatInput.addEventListener("keydown", e => { if (e.key === "Enter") sendPm(); });
+    const pmSendBtn = document.getElementById("pmSendBtn");
+    if (pmSendBtn) pmSendBtn.addEventListener("click", sendPm);
+
+    // Close modal on Escape
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeProductModal(); });
 
     // Sort
     const sortSel = document.getElementById("sortSel");

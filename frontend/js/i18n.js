@@ -3,7 +3,7 @@ const TRANSLATIONS = {
     es: {
         app_name: "EcoScan",
         hero_title: "Productos <span>ecológicos</span> cerca de ti",
-        hero_sub: "Descubre alimentos locales, sostenibles y saludables en Barcelona",
+        hero_sub: "Descubre alimentos locales, sostenibles y saludables en España",
         search_ph: "Buscar productos, origen, categoría…",
         search_btn: "Buscar",
         stat_local: "% origen local",
@@ -45,7 +45,7 @@ const TRANSLATIONS = {
         co2_added: "kg CO₂ añadido",
         cert_title: "Certificaciones",
         footer_title: "EcoScan",
-        footer_sub: "Ayudando a Barcelona a comprar de forma más sostenible",
+        footer_sub: "Ayudando a España a comprar de forma más sostenible",
         modal_perm: "Permite la ubicación",
         modal_perm_txt: "Para mostrarte la distancia real a cada producto, necesitamos acceder a tu ubicación. Solo se usa localmente.",
         modal_allow: "Permitir",
@@ -66,12 +66,14 @@ const TRANSLATIONS = {
         salt_100g : "nivel de sal en 100g",
         "filters_ia-title": "Filtros aplicados por el asistente",
         nutriscore: "puntuación valor nutricional",
-        "dangerous_allergens" : "excluidos estos alérgenos peligrosos"
+        "dangerous_allergens" : "excluidos estos alérgenos peligrosos",
+        q: "Categoría",
+        chat_hist_empty: "No hay conversaciones guardadas"
     },
     en: {
         app_name: "EcoScan",
         hero_title: "<span>Ecological</span> products near you",
-        hero_sub: "Discover local, sustainable and healthy food in Barcelona",
+        hero_sub: "Discover local, sustainable and healthy food in Spain",
         search_ph: "Search products, origin, category…",
         search_btn: "Search",
         stat_local: "% local origin",
@@ -113,7 +115,7 @@ const TRANSLATIONS = {
         co2_added: "kg CO₂ added",
         cert_title: "Certifications",
         footer_title: "EcoScan",
-        footer_sub: "Helping Barcelona shop more sustainably",
+        footer_sub: "Helping Spain shop more sustainably",
         modal_perm: "Allow location",
         modal_perm_txt: "To show you the real distance to each product, we need access to your location. It's only used locally.",
         modal_allow: "Allow",
@@ -134,12 +136,14 @@ const TRANSLATIONS = {
         salt_100g: "salt content per 100g",
         "filters_ia-title": "Filters applied by the wizard",
         nutriscore: "nutritional nalue score",
-        "dangerous_allergens": "excluding these dangerous allergens"
+        "dangerous_allergens": "excluding these dangerous allergens",
+        q: "Category",
+        chat_hist_empty: "No saved conversations"
     },
     ca: {
         app_name: "EcoScan",
         hero_title: "Productes <span>ecològics</span> a prop teu",
-        hero_sub: "Descobreix aliments locals, sostenibles i saludables a Barcelona",
+        hero_sub: "Descobreix aliments locals, sostenibles i saludables a Espanya",
         search_ph: "Cerca productes, origen, categoria…",
         search_btn: "Cercar",
         stat_local: "% origen local",
@@ -181,7 +185,7 @@ const TRANSLATIONS = {
         co2_added: "kg CO₂ afegit",
         cert_title: "Certificacions",
         footer_title: "EcoScan",
-        footer_sub: "Ajudant Barcelona a comprar de manera més sostenible",
+        footer_sub: "Ajudant Espanya a comprar de manera més sostenible",
         modal_perm: "Permet la ubicació",
         modal_perm_txt: "Per mostrar-te la distància real a cada producte, necessitem accedir a la teva ubicació. Només s'usa localment.",
         modal_allow: "Permetre",
@@ -202,7 +206,9 @@ const TRANSLATIONS = {
         salt_100g : "nivell de sal a 100g",
         "filters_ia-title": "Filtres aplicats per l'assistent",
         nutriscore: "puntuació valor nutricional",
-        "dangerous_allergens" : "exclosos aquests al·lergògens perillosos"
+        "dangerous_allergens" : "exclosos aquests al·lergògens perillosos",
+        q: "Categoria",
+        chat_hist_empty: "No hi ha converses guardades"
     }
 };
 
