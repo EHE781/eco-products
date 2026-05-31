@@ -18,6 +18,7 @@ class ProducDuckDB(Base):
     countries_tags = Column(String, name="countries_tags")
     desc           = Column(String, name="ingredients_text")
     ns             = Column(String, name="nutriscore_grade")
+    ns2             = Column(String, name="nutriscore_grade_predicted")
     es             = Column(String, name="environmental_score_grade")
     co2            = Column(String, name="carbon-footprint_100g")
     unit           = Column(String, name="quantity")

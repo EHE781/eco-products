@@ -445,6 +445,7 @@ def _serialize(p: ProducDuckDB) -> dict:
         "origin":         location_label,
         "location_label": location_label,
         "ns":         _grade(p.ns),
+        "ns2":         _grade(p.ns2),
         "es":         _grade(p.es),
         "co2":        _f_or_none(p.co2),
         "image_url":  p.image_url or None,

@@ -7,6 +7,8 @@ const SCORE_COLORS = {
   E: "#E63312",
 };
 
+const LETTERS = ["A", "B", "C", "D", "E"];
+
 function scoreColor(s) {
   return SCORE_COLORS[s] || "#9CA3AF";
 }
@@ -49,8 +51,7 @@ function rating(ns, es, km) {
 }
 
 function nsScale(score, type) {
-  const letters = ["A", "B", "C", "D", "E"];
-  return letters
+  return LETTERS
     .map((l) => {
       const cls = `ns-l nl-${l.toLowerCase()}${l === score ? " active" : ""}${score == null ? " na" : ""}`;
       return `<span class="${cls}">${l}</span>`;
@@ -126,6 +127,8 @@ function render(p) {
   ${p.image_url ? `<img class="p-img" src="${p.image_url}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded');this.previousElementSibling.style.display='none'" onerror="this.remove()">` : ""}
 </div>`;
 
+  const ns2 = LETTERS.indexOf(p.ns2) !== -1 ? `<div class="ns-scale">${nsScale(p.ns2, "ns")}</div>` : ''
+
   return `
 <article class="card" data-id="${p.id}" onclick="cardClick('${p.id}')">
   <div class="card-top">
@@ -142,6 +145,7 @@ function render(p) {
     <div class="score-col">
       <div class="score-label">${translate("score_ns")}</div>
       <div class="ns-scale">${nsScale(p.ns, "ns")}</div>
+      ${ns2}
     </div>
     <div class="score-col">
       <div class="score-label">${translate("score_es")}</div>
