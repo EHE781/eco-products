@@ -1,18 +1,20 @@
 let _pmContext = "";
 let _pmExtraProducts = [];
+let _pmTriggerEl = null;
 
 function openProductModal(id) {
     const p = P_ALL.find(x => x.id === id) || _pmExtraProducts.find(x => x.id === id);
     if (!p) return;
+    _pmTriggerEl = document.activeElement;
     logInteraction(id, "view");
 
     _pmContext = [
         `${pname(p)}${p.brand ? ` (${p.brand})` : ""} — ${p.cat}`,
         `Origen: ${p.origin || "España"} · ${p._km ?? 0}km`,
-        `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | NOVA: ${p.nova||"?"}`,
+        `Nutriscore: ${p.ns} | Ecoscore: ${p.es} | NOVA: ${p.nova || "?"}`,
         p.kcal ? `Kcal: ${p.kcal} | Proteínas: ${p.proteins}g | HC: ${p.carbs}g | Grasas: ${p.fat}g | Azúcares: ${p.sugars}g | Sal: ${p.salt}g` : "",
         p.allergens ? `Alérgenos: ${p.allergens}` : "",
-        (p.labels||[]).length ? `Certificaciones: ${p.labels.join(", ")}` : "",
+        (p.labels || []).length ? `Certificaciones: ${p.labels.join(", ")}` : "",
         pdesc(p),
     ].filter(Boolean).join("\n");
 
@@ -25,16 +27,16 @@ function openProductModal(id) {
             : "");
 
     // Info column
-    const rat  = rating(p.ns, p.es, p._km ?? 0);
+    const rat = rating(p.ns, p.es, p._km ?? 0);
     const bens = pbens(p);
-    const certs  = pcerts(p);
+    const certs = pcerts(p);
     const labels = p.labels || [];
 
-    const novaColors = { "1":"#22c55e","2":"#84cc16","3":"#f97316","4":"#ef4444" };
-    const novaLabels = { "1":"Sin procesar","2":"Ing. culinarios","3":"Procesado","4":"Ultraprocesado" };
+    const novaColors = { "1": "#22c55e", "2": "#84cc16", "3": "#f97316", "4": "#ef4444" };
+    const novaLabels = { "1": "Sin procesar", "2": "Ing. culinarios", "3": "Procesado", "4": "Ultraprocesado" };
     const novaBadge = p.nova
-        ? `<span class="pm-nova" style="background:${novaColors[p.nova]||"#9ca3af"}">
-               NOVA ${p.nova} · ${novaLabels[p.nova]||""}
+        ? `<span class="pm-nova" style="background:${novaColors[p.nova] || "#9ca3af"}">
+               NOVA ${p.nova} · ${novaLabels[p.nova] || ""}
            </span>`
         : "";
 
@@ -42,14 +44,14 @@ function openProductModal(id) {
     const nutTable = hasNut ? `
         <div class="pm-section-title">📊 Información nutricional <small>(por 100g)</small></div>
         <table class="pm-nut-table">
-            ${p.kcal    ? `<tr><td>Calorías</td><td><strong>${p.kcal} kcal</strong></td></tr>` : ""}
-            ${p.proteins? `<tr><td>Proteínas</td><td>${p.proteins} g</td></tr>` : ""}
-            ${p.carbs   ? `<tr><td>Hidratos de carbono</td><td>${p.carbs} g</td></tr>` : ""}
-            ${p.sugars  ? `<tr class="pm-nut-sub"><td>— del cual azúcares</td><td>${p.sugars} g</td></tr>` : ""}
-            ${p.fat     ? `<tr><td>Grasas</td><td>${p.fat} g</td></tr>` : ""}
+            ${p.kcal ? `<tr><td>Calorías</td><td><strong>${p.kcal} kcal</strong></td></tr>` : ""}
+            ${p.proteins ? `<tr><td>Proteínas</td><td>${p.proteins} g</td></tr>` : ""}
+            ${p.carbs ? `<tr><td>Hidratos de carbono</td><td>${p.carbs} g</td></tr>` : ""}
+            ${p.sugars ? `<tr class="pm-nut-sub"><td>— del cual azúcares</td><td>${p.sugars} g</td></tr>` : ""}
+            ${p.fat ? `<tr><td>Grasas</td><td>${p.fat} g</td></tr>` : ""}
             ${p.fat_sat ? `<tr class="pm-nut-sub"><td>— grasas saturadas</td><td>${p.fat_sat} g</td></tr>` : ""}
-            ${p.fiber   ? `<tr><td>Fibra</td><td>${p.fiber} g</td></tr>` : ""}
-            ${p.salt    ? `<tr><td>Sal</td><td>${p.salt} g</td></tr>` : ""}
+            ${p.fiber ? `<tr><td>Fibra</td><td>${p.fiber} g</td></tr>` : ""}
+            ${p.salt ? `<tr><td>Sal</td><td>${p.salt} g</td></tr>` : ""}
         </table>` : "";
 
     const allergenBadge = p.allergens
@@ -87,14 +89,14 @@ function openProductModal(id) {
             </div>
         </div>
         <div class="pm-dist">
-            📍 ${p.origin || "España"}
+            <span aria-hidden="true">📍</span> ${p.origin || "España"}
             · ${translate("score_dist")}: <strong>${distLabel(p._km ?? 0)}</strong>
             · ${(p._km ?? 0).toLocaleString()} km
         </div>
         ${nutTable}
         ${allergenBadge}
         ${labelBadges}
-        ${extraTags.length ? `<div class="pm-tags">${extraTags.map(t=>`<span class="cert">${t}</span>`).join("")}</div>` : ""}
+        ${extraTags.length ? `<div class="pm-tags">${extraTags.map(t => `<span class="cert">${t}</span>`).join("")}</div>` : ""}
         ${pdesc(p) ? `<div class="pm-section-title">🧾 Ingredientes</div><p class="pm-desc">${pdesc(p)}</p>` : ""}
     `;
 
@@ -104,13 +106,26 @@ function openProductModal(id) {
     _addPmMsg("bot", `¡Hola! Puedo contarte todo sobre **${pname(p)}** 🌿 ¿Tienes alguna pregunta sobre sus ingredientes, valor nutricional o impacto ambiental?`);
 
     document.getElementById("pmChatInput").placeholder = translate("chat_ph");
-    document.getElementById("productModal").classList.add("open");
+    const modal = document.getElementById("productModal");
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    // Set aria-labelledby target after info column is rendered
+    const titleEl = document.querySelector("#pmInfoCol .pm-title");
+    if (titleEl) {
+        titleEl.id = "pmTitle";
+    }
     document.getElementById("pmChatInput").focus();
 }
 
 function closeProductModal() {
-    document.getElementById("productModal").classList.remove("open");
+    const modal = document.getElementById("productModal");
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
     _pmContext = "";
+    if (_pmTriggerEl) {
+        _pmTriggerEl.focus();
+        _pmTriggerEl = null;
+    }
 }
 
 function _addPmMsg(role, text) {

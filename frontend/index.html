@@ -16,18 +16,21 @@
 
 <body>
 
+    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
     <!-- ── Header ── -->
     <header>
         <div class="hinner">
-            <a class="logo" href="#">
-                <div class="logo-box">🌿</div>
+            <a class="logo" href="/" aria-label="EcoScan – inicio">
+                <div class="logo-box" aria-hidden="true">🌿</div>
                 <span data-i18n="app_name">EcoScan</span>
             </a>
-            <button class="loc-badge" id="locBadge" onclick="requestGeolocation()">📍 España</button>
-            <div class="lang-sw">
-                <button class="lang-btn active" data-lang="es">ES</button>
-                <button class="lang-btn" data-lang="ca">CA</button>
-                <button class="lang-btn" data-lang="en">EN</button>
+            <button class="loc-badge" id="locBadge" onclick="requestGeolocation()" aria-haspopup="dialog"
+                aria-label="Cambiar ubicación: España"><span aria-hidden="true">📍</span> España</button>
+            <div class="lang-sw" role="group" aria-label="Seleccionar idioma">
+                <button class="lang-btn active" data-lang="es" aria-label="Español" aria-pressed="true">ES</button>
+                <button class="lang-btn" data-lang="ca" aria-label="Català" aria-pressed="false">CA</button>
+                <button class="lang-btn" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
             </div>
         </div>
     </header>
@@ -36,38 +39,43 @@
     <section class="hero">
         <h1 data-i18n="hero_title">Productos <span>ecológicos</span> cerca de ti</h1>
         <p data-i18n="hero_sub">Descubre alimentos locales, sostenibles y saludables en España</p>
-        <div class="search-wrap">
+        <div class="search-wrap" role="search">
+            <label for="searchInput" class="visually-hidden"><span data-i18n="search_btn">Buscar</span></label>
             <input id="searchInput" type="text" data-i18n="search_ph" placeholder="Buscar productos, origen, categoría…"
                 autocomplete="off" />
             <button id="searchBtn" class="search-btn" data-i18n="search_btn">Buscar</button>
         </div>
-        <div class="hero-stats">
+        <div class="hero-stats" role="group" aria-label="Estadísticas del catálogo">
             <div class="hstat">
-                <div class="hstat-v" id="statN">11</div>
-                <div class="hstat-l" data-i18n="stat_n">productos</div>
+                <div class="hstat-v" id="statN" aria-describedby="statNLabel">11</div>
+                <div class="hstat-l" id="statNLabel" data-i18n="stat_n">productos</div>
             </div>
             <div class="hstat">
-                <div class="hstat-v" id="statLocal">—</div>
-                <div class="hstat-l" data-i18n="stat_local">% origen local</div>
+                <div class="hstat-v" id="statLocal" aria-describedby="statLocalLabel">—</div>
+                <div class="hstat-l" id="statLocalLabel" data-i18n="stat_local">% origen local</div>
             </div>
             <div class="hstat">
-                <div class="hstat-v" id="statNS">—</div>
-                <div class="hstat-l" data-i18n="stat_ns">Nutriscore A</div>
+                <div class="hstat-v" id="statNS" aria-describedby="statNSLabel">—</div>
+                <div class="hstat-l" id="statNSLabel" data-i18n="stat_ns">Nutriscore A</div>
             </div>
         </div>
     </section>
 
     <!-- ── Main content ── -->
-    <main class="main">
+    <main class="main" id="main-content">
         <!-- Filter chips -->
-        <div class="filters">
-            <button class="chip on" data-cat="all" onclick="setCat('all')" data-i18n="filters_all">Todos</button>
-            <button class="chip" data-cat="Alimentación" onclick="setCat('Alimentación')"
-                data-i18n="cat_food">Alimentación</button>
-            <button class="chip" data-cat="Lácteos" onclick="setCat('Lácteos')" data-i18n="cat_dairy">Lácteos</button>
-            <button class="chip" data-cat="Panadería" onclick="setCat('Panadería')"
-                data-i18n="cat_bakery">Panadería</button>
-            <button class="chip" data-cat="Bebidas" onclick="setCat('Bebidas')" data-i18n="cat_drinks">Bebidas</button>
+        <div class="filters" role="group" aria-label="Filtrar por categoría">
+            <button class="chip on" data-cat="all" onclick="setCat('all')" data-i18n="filters_all"
+                aria-pressed="true">Todos</button>
+            <button class="chip" data-cat="Alimentación" onclick="setCat('Alimentación')" data-i18n="cat_food"
+                aria-pressed="false">Alimentación</button>
+            <button class="chip" data-cat="Lácteos" onclick="setCat('Lácteos')" data-i18n="cat_dairy"
+                aria-pressed="false">Lácteos</button>
+            <button class="chip" data-cat="Panadería" onclick="setCat('Panadería')" data-i18n="cat_bakery"
+                aria-pressed="false">Panadería</button>
+            <button class="chip" data-cat="Bebidas" onclick="setCat('Bebidas')" data-i18n="cat_drinks"
+                aria-pressed="false">Bebidas</button>
+            <label for="sortSel" class="visually-hidden" data-i18n="sort_label">Ordenar:</label>
             <select id="sortSel" class="sort">
                 <option value="ns" data-i18n="sort_ns">Nutriscore</option>
                 <option value="prox" data-i18n="sort_prox">Proximidad</option>
@@ -76,20 +84,21 @@
         </div>
 
         <!-- IA Filter chips-->
-        <h6 class="filters_ai hidden" id="filters_ia-component">
-            <span class="filters_ai-title"> 
+        <div class="filters_ai hidden" id="filters_ia-component" role="group"
+            aria-label="Filtros aplicados por el asistente">
+            <span class="filters_ai-title">
                 <span data-i18n="filters_ia-title">Filtros IA</span> :
             </span>
-        </h6>
+        </div>
 
         <!-- Count row -->
         <div class="sh">
-            <h2 data-i18n="filters_all">Todos</h2>
-            <span class="sh-count" id="count"></span>
+            <h2 id="results-heading" data-i18n="filters_all">Todos</h2>
+            <span class="sh-count" id="count" role="status" aria-live="polite" aria-atomic="true"></span>
         </div>
 
         <!-- Product grid -->
-        <div class="grid" id="grid"></div>
+        <div class="grid" id="grid" aria-label="Productos" aria-busy="true"></div>
 
         <!-- Pagination -->
         <div class="pag" id="pagination"></div>
@@ -102,68 +111,79 @@
     </footer>
 
     <!-- ── FAB ── -->
-    <button id="fab" class="fab">
-        <div class="fab-dot"></div>
+    <button id="fab" class="fab" aria-expanded="false" aria-controls="chatPanel" aria-haspopup="dialog">
+        <div class="fab-dot" aria-hidden="true"></div>
         <span data-i18n="fab">Asistente IA</span>
     </button>
 
     <!-- ── Chat panel ── -->
-    <div id="chatPanel" class="chat">
+    <!-- ── Chat panel ── -->
+    <div id="chatPanel" class="chat" role="dialog" aria-modal="true" aria-labelledby="chatTitle" aria-hidden="true">
         <div class="chat-head">
-            <div>🌿</div>
+            <div aria-hidden="true">🌿</div>
             <div class="chat-head-txt">
-                <h3 data-i18n="chat_title">Asistente EcoScan</h3>
+                <h3 id="chatTitle" data-i18n="chat_title">Asistente EcoScan</h3>
                 <p data-i18n="chat_sub">Alimentado por Gemini AI</p>
             </div>
             <div class="chat-head-actions">
-                <button id="chatNewBtn" class="chat-head-btn" title="Nueva conversación">＋</button>
-                <button id="chatHistBtn" class="chat-head-btn" title="Historial">💬</button>
-                <button id="chatClose" class="chat-close">✕</button>
+                <button id="chatNewBtn" class="chat-head-btn" aria-label="Nueva conversación">＋</button>
+                <button id="chatHistBtn" class="chat-head-btn" aria-label="Historial de conversaciones">💬</button>
+                <button id="chatClose" class="chat-close" aria-label="Cerrar asistente">✕</button>
             </div>
         </div>
-        <div class="chat-msgs" id="chatMsgs"></div>
-        <div id="chatHistoryPanel" class="chat-history"></div>
+        <div class="chat-msgs" id="chatMsgs" aria-live="polite" aria-label="Mensajes del chat"></div>
+        <div id="chatHistoryPanel" class="chat-history" aria-label="Historial de conversaciones"></div>
         <div class="chat-inp">
+            <label for="chatInput" class="visually-hidden" data-i18n="chat_ph">Pregunta sobre productos
+                ecológicos…</label>
             <input id="chatInput" type="text" data-i18n="chat_ph" placeholder="Pregunta sobre productos ecológicos…"
                 autocomplete="off" />
-            <button id="sendBtn" class="send-btn">➤</button>
+            <button id="sendBtn" class="send-btn" aria-label="Enviar mensaje">➤</button>
         </div>
     </div>
 
     <!-- ── Product detail modal ── -->
-    <div id="productModal" class="pm-overlay">
-        <div class="pm-backdrop" onclick="closeProductModal()"></div>
+    <div id="productModal" class="pm-overlay" role="dialog" aria-modal="true" aria-labelledby="pmTitle"
+        aria-hidden="true">
+        <div class="pm-backdrop" onclick="closeProductModal()" aria-hidden="true"></div>
         <div class="pm-card">
-            <button class="pm-close-btn" onclick="closeProductModal()">✕</button>
+            <button class="pm-close-btn" onclick="closeProductModal()" aria-label="Cerrar ficha del producto">✕</button>
             <div class="pm-img-col" id="pmImgCol"></div>
             <div class="pm-info-col" id="pmInfoCol"></div>
             <div class="pm-chat-col">
-                <div class="pm-chat-head">💬 <span data-i18n="chat_title">Asistente EcoScan</span></div>
-                <div class="pm-chat-msgs" id="pmChatMsgs"></div>
+                <div class="pm-chat-head" aria-hidden="true">💬 <span data-i18n="chat_title">Asistente EcoScan</span>
+                </div>
+                <div class="pm-chat-msgs" id="pmChatMsgs" aria-live="polite" aria-label="Chat sobre el producto"></div>
                 <div class="pm-chat-inp">
+                    <label for="pmChatInput" class="visually-hidden" data-i18n="chat_ph">Pregunta sobre productos
+                        ecológicos…</label>
                     <input id="pmChatInput" type="text" autocomplete="off" />
-                    <button id="pmSendBtn" class="send-btn">➤</button>
+                    <button id="pmSendBtn" class="send-btn" aria-label="Enviar mensaje">➤</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- ── Location picker modal ── -->
-    <div id="locOverlay" class="overlay">
+    <div id="locOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="locModalTitle">
         <div class="modal">
-            <h2>📍 Tu ubicación</h2>
+            <h2 id="locModalTitle"><span aria-hidden="true">📍</span> Tu ubicación</h2>
             <p>Ordena los productos por cercanía usando tu ubicación o introduce una ciudad manualmente.</p>
             <div class="mbtn-row" style="margin-bottom:16px">
-                <button class="btn-p" onclick="locUseGeo()">📡 Usar mi ubicación</button>
+                <button class="btn-p" onclick="locUseGeo()"><span aria-hidden="true">📡</span> Usar mi
+                    ubicación</button>
                 <button class="btn-p" style="background:#9CA3AF" onclick="closeLocModal()">Cancelar</button>
             </div>
             <div class="loc-manual">
                 <div class="loc-manual-label">O introduce una ciudad:</div>
                 <div class="loc-manual-row">
-                    <input id="locCityInput" type="text" placeholder="Ej: Palma de Mallorca" autocomplete="off" />
-                    <button class="btn-p" style="flex:0;padding:10px 18px" onclick="locUseCity()">→</button>
+                    <label for="locCityInput" class="visually-hidden">Ciudad</label>
+                    <input id="locCityInput" type="text" placeholder="Ej: Palma de Mallorca"
+                        autocomplete="address-level2" />
+                    <button class="btn-p" style="flex:0;padding:10px 18px" onclick="locUseCity()"
+                        aria-label="Buscar ciudad">→</button>
                 </div>
-                <div id="locCityError" class="loc-city-error"></div>
+                <div id="locCityError" class="loc-city-error" role="alert"></div>
             </div>
         </div>
     </div>
