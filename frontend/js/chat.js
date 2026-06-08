@@ -14,7 +14,11 @@ function toggleChat() {
 function openChat(context = "") {
     _chatContext = context;
     _chatOpen = true;
-    document.getElementById("chatPanel").classList.add("open");
+    const panel = document.getElementById("chatPanel");
+    panel.classList.add("open");
+    panel.setAttribute("aria-hidden", "false");
+    const fab = document.getElementById("fab");
+    if (fab) fab.setAttribute("aria-expanded", "true");
     document.getElementById("chatInput").focus();
     if (context) {
         addMsg("bot", context);
@@ -23,7 +27,14 @@ function openChat(context = "") {
 
 function closeChat() {
     _chatOpen = false;
-    document.getElementById("chatPanel").classList.remove("open");
+    const panel = document.getElementById("chatPanel");
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden", "true");
+    const fab = document.getElementById("fab");
+    if (fab) {
+        fab.setAttribute("aria-expanded", "false");
+        fab.focus();
+    }
     if (_showingHistory) toggleHistory();
 }
 
@@ -46,11 +57,11 @@ function toggleHistory() {
     _showingHistory = !_showingHistory;
     const msgsEl = document.getElementById("chatMsgs");
     const histEl = document.getElementById("chatHistoryPanel");
-    const inpEl  = document.querySelector(".chat-inp");
-    const btn    = document.getElementById("chatHistBtn");
+    const inpEl = document.querySelector(".chat-inp");
+    const btn = document.getElementById("chatHistBtn");
 
     msgsEl.style.display = _showingHistory ? "none" : "";
-    inpEl.style.display  = _showingHistory ? "none" : "";
+    inpEl.style.display = _showingHistory ? "none" : "";
     histEl.classList.toggle("open", _showingHistory);
     btn?.classList.toggle("active", _showingHistory);
 
@@ -72,11 +83,11 @@ function _renderHistory() {
     histEl.innerHTML = history.map(c => {
         const d = new Date(c.ts);
         const date = d.toLocaleDateString(undefined, { day: "numeric", month: "short" })
-                   + " " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
-        return `<div class="chat-hist-item" onclick="_loadConversation(${c.id})">
+            + " " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+        return `<button class="chat-hist-item" onclick="_loadConversation(${c.id})" aria-label="${c.title.replace(/"/g, '&quot;')} - ${date}">
             <div class="chi-title">${c.title}</div>
             <div class="chi-date">${date}</div>
-        </div>`;
+        </button>`;
     }).join("");
 }
 
@@ -166,7 +177,8 @@ function addTyping(container = null) {
     if (!msgs) return;
     const div = document.createElement("div");
     div.className = "typing";
-    div.innerHTML = `<div class="td"></div><div class="td"></div><div class="td"></div>`;
+    div.setAttribute("aria-label", "Procesando respuesta");
+    div.innerHTML = `<div class="td" aria-hidden="true"></div><div class="td" aria-hidden="true"></div><div class="td" aria-hidden="true"></div>`;
     msgs.appendChild(div);
     msgs.scrollTop = msgs.scrollHeight;
 }
@@ -211,12 +223,12 @@ async function callBackendChat(userMsg, msgsEl = null, contextOverride = undefin
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            message:    userMsg,
-            lang:       _lang,
-            context:    context,
+            message: userMsg,
+            lang: _lang,
+            context: context,
             page_query: currentQuery.join(","),
-            user_lat:   userPos.lat,
-            user_lon:   userPos.lon,
+            user_lat: userPos.lat,
+            user_lon: userPos.lon,
         }),
     });
     if (!resp.ok) { rmTyping(msgs); throw new Error("Chat backend error"); }
@@ -233,7 +245,7 @@ async function callBackendChat(userMsg, msgsEl = null, contextOverride = undefin
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
 
-    const reader  = resp.body.getReader();
+    const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
     let result = { reply: "", filtered: null, filters: null };

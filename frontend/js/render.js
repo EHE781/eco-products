@@ -51,10 +51,11 @@ function rating(ns, es, km) {
 }
 
 function nsScale(score, type) {
+  const label = score ? `${type === "ns" ? "Nutriscore" : "Ecoscore"}: ${score}` : translate("score_ns") + ": N/D";
   return LETTERS
     .map((l) => {
       const cls = `ns-l nl-${l.toLowerCase()}${l === score ? " active" : ""}${score == null ? " na" : ""}`;
-      return `<span class="${cls}">${l}</span>`;
+      return `<span class="${cls}" aria-hidden="true">${l}</span>`;
     })
     .join("");
 }
@@ -62,7 +63,7 @@ function nsScale(score, type) {
 /* ── Skeleton ── */
 function renderSkeleton() {
   return `
-<article class="card card-skel">
+<article class="card card-skel" aria-hidden="true">
   <div class="card-top">
     <div class="skel skel-img"></div>
     <div style="flex:1;min-width:0">
@@ -102,16 +103,17 @@ function renderPagination(cur, total) {
     return;
   }
   const nums = _pageNums(cur, total);
+  const prevLabel = translate("sort_prox") ? "P\u00e1gina anterior" : "P\u00e1gina anterior";
   el.innerHTML =
-    `<button class="pag-btn pag-arrow" onclick="goToPage(${cur - 1})" ${cur <= 1 ? "disabled" : ""}>&#8592;</button>` +
+    `<button class="pag-btn pag-arrow" onclick="goToPage(${cur - 1})" aria-label="P\u00e1gina anterior" ${cur <= 1 ? "disabled" : ""}>&larr;</button>` +
     nums
       .map((n) =>
-        n === "…"
-          ? `<span class="pag-ellipsis">…</span>`
-          : `<button class="pag-btn${n === cur ? " active" : ""}" onclick="goToPage(${n})">${n}</button>`,
+        n === "\u2026"
+          ? `<span class="pag-ellipsis">\u2026</span>`
+          : `<button class="pag-btn${n === cur ? " active" : ""}" onclick="goToPage(${n})" aria-label="P\u00e1gina ${n}"${n === cur ? " aria-current=\"page\"" : ""}>${n}</button>`,
       )
       .join("") +
-    `<button class="pag-btn pag-arrow" onclick="goToPage(${cur + 1})" ${cur >= total ? "disabled" : ""}>&#8594;</button>`;
+    `<button class="pag-btn pag-arrow" onclick="goToPage(${cur + 1})" aria-label="P\u00e1gina siguiente" ${cur >= total ? "disabled" : ""}>&rarr;</button>`;
 }
 
 /* ── Card ── */
@@ -130,7 +132,10 @@ function render(p) {
   const ns2 = LETTERS.indexOf(p.ns2) !== -1 ? `<div class="ns-scale">${nsScale(p.ns2, "ns")}</div>` : ''
 
   return `
-<article class="card" data-id="${p.id}" onclick="cardClick('${p.id}')">
+<article class="card" data-id="${p.id}" onclick="cardClick('${p.id}')"
+  role="button" tabindex="0"
+  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardClick('${p.id}')}"
+  aria-label="${pname(p)}, ${translate(CAT_KEYS[p.cat] || 'cat_food')}">
   <div class="card-top">
     ${mediaHtml}
     <div class="p-meta">
@@ -207,6 +212,18 @@ function list() {
   const skels =
     missing > 0 && P_ALL.length < totalApiCount ? renderSkeletons(missing) : "";
   container.innerHTML = pageItems.map(render).join("") + skels;
+  const grid = document.getElementById("grid");
+
+  // Hover a card → focus it so Tab continues from there (mouse mode only)
+  container.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("mouseenter", () => {
+      if (typeof _usingMouse !== "undefined" && _usingMouse) {
+        card.focus({ preventScroll: true });
+      }
+    });
+  });
+
+  if (grid) grid.setAttribute("aria-busy", "false");
   updateHeroStats();
   renderPagination(currentPage, totalDisplayPages);
 }
@@ -229,21 +246,21 @@ function updateHeroStats() {
 
 function addIAFilters(filters) {
   const getValue = (filter) => filter.type === "range" ? translate(`lvl100g_${filter.range}`) : filter.value
-  const addLangTag = (filter) => filter.type === "range" ?  `data-i18n="lvl100g_${filter.range}"` : ""
+  const addLangTag = (filter) => filter.type === "range" ? `data-i18n="lvl100g_${filter.range}"` : ""
 
   removeIAFilters()
-  if(typeof filters !== "object"  || Object.keys(filters).length<=0)
+  if (typeof filters !== "object" || Object.keys(filters).length <= 0)
     return
 
   const container = document.getElementById("filters_ia-component");
   container.classList.remove("hidden")
-    
-  for(const key in filters) {
-    if(key === "category") continue //este filtro es de los botones superiores: Todos, Alimentación, ... No se debe mostrar nuevamente
 
-    const element =document.createElement('div')
+  for (const key in filters) {
+    if (key === "category") continue //este filtro es de los botones superiores: Todos, Alimentación, ... No se debe mostrar nuevamente
+
+    const element = document.createElement('div')
     element.classList.add("chip", "on")
-    element.innerHTML= `
+    element.innerHTML = `
       <span data-i18n="${key}">${translate(key)}</span>
       : 
       <span ${addLangTag(filters[key])}>${getValue(filters[key])}</span>`
@@ -251,18 +268,18 @@ function addIAFilters(filters) {
   };
   const element = document.createElement('div')
   element.classList.add("chip", "on", "delete")
-  element.innerText= "X"
+  element.innerText = "X"
   element.addEventListener("click", async () => {
-    removeIAFilters(); 
+    removeIAFilters();
     await loadProducts(CAT_QUERIES.all)
   })
   container.appendChild(element)
 }
 
-function removeIAFilters(){
+function removeIAFilters() {
   const container = document.getElementById("filters_ia-component");
   container.classList.add("hidden")
-  for(const old of [... container.getElementsByClassName("chip")])
+  for (const old of [...container.getElementsByClassName("chip")])
     old.remove()
 }
 

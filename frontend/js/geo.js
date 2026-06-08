@@ -19,7 +19,9 @@ function recomputeKm() {
 function _setLocBadge(text, loading = false) {
     const el = document.getElementById("locBadge");
     if (!el) return;
-    el.textContent = loading ? `⏳ ${text}` : `📍 ${text}`;
+    const label = loading ? `\u23f3 ${text}` : `\ud83d\udccd ${text}`;
+    el.innerHTML = `<span aria-hidden="true">${loading ? "\u23f3" : "\ud83d\udccd"}</span> ${text}`;
+    el.setAttribute("aria-label", `Cambiar ubicaci\u00f3n: ${text}`);
 }
 
 async function _reverseGeocode(lat, lon) {
@@ -79,6 +81,7 @@ function requestGeolocation() {
 
 function closeLocModal() {
     document.getElementById("locOverlay")?.classList.remove("open");
+    document.getElementById("locBadge")?.focus();
 }
 
 function locUseGeo() {

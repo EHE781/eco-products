@@ -62,11 +62,11 @@ const TRANSLATIONS = {
         sugars_100g: "nivel de azúcar en 100g",
         fat_100g: "nivel de grasas en 100g",
         "saturated-fat_100g": "nivel de grasas saturadas en 100g",
-        fiber_100g : "nivel de fibra en 100g",
-        salt_100g : "nivel de sal en 100g",
+        fiber_100g: "nivel de fibra en 100g",
+        salt_100g: "nivel de sal en 100g",
         "filters_ia-title": "Filtros aplicados por el asistente",
         nutriscore: "puntuación valor nutricional",
-        "dangerous_allergens" : "excluidos estos alérgenos peligrosos",
+        "dangerous_allergens": "excluidos estos alérgenos peligrosos",
         q: "Categoría",
         chat_hist_empty: "No hay conversaciones guardadas"
     },
@@ -196,17 +196,17 @@ const TRANSLATIONS = {
         fb_seasonal: "🌱 Comprar productes de temporada redueix el CO₂ fins a un 60%. Pregunta'm pels productes de temporada actuals.",
         fb_organic: "♻️ Els productes ecològics eviten pesticides i cuiden el sòl. Vols saber més sobre algun producte en concret?",
         fb_general: "🌿 Estic aquí per ajudar-te a triar productes més sostenibles. Pots preguntar-me sobre qualsevol producte del catàleg.",
-        lvl100g_low: "nivell baix", 
-        lvl100g_middle: "nivell mitjà", 
+        lvl100g_low: "nivell baix",
+        lvl100g_middle: "nivell mitjà",
         lvl100g_high: "nivell alt",
-        sugars_100g: "nivell de sucre en 100g", 
-        fat_100g: "nivell de greixos a 100g", 
-        "saturated-fat_100g": "nivell de greixos saturats en 100g", 
-        fiber_100g : "nivell de fibra a 100g", 
-        salt_100g : "nivell de sal a 100g",
+        sugars_100g: "nivell de sucre en 100g",
+        fat_100g: "nivell de greixos a 100g",
+        "saturated-fat_100g": "nivell de greixos saturats en 100g",
+        fiber_100g: "nivell de fibra a 100g",
+        salt_100g: "nivell de sal a 100g",
         "filters_ia-title": "Filtres aplicats per l'assistent",
         nutriscore: "puntuació valor nutricional",
-        "dangerous_allergens" : "exclosos aquests al·lergògens perillosos",
+        "dangerous_allergens": "exclosos aquests al·lergògens perillosos",
         q: "Categoria",
         chat_hist_empty: "No hi ha converses guardades"
     }
@@ -219,13 +219,18 @@ function translate(key) {
 }
 
 function applyLang() {
+    document.documentElement.lang = _lang;
     document.querySelectorAll("[data-i18n]").forEach(el => {
         const k = el.dataset.i18n;
         const v = translate(k);
         if (el.tagName === "INPUT") el.placeholder = v;
         else el.innerHTML = v;
     });
-    document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b.dataset.lang === _lang));
+    document.querySelectorAll(".lang-btn").forEach(b => {
+        const isActive = b.dataset.lang === _lang;
+        b.classList.toggle("active", isActive);
+        b.setAttribute("aria-pressed", String(isActive));
+    });
 }
 
 function changeLang(l) {

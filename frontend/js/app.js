@@ -1,17 +1,19 @@
 /* ── App state & event handlers ── */
-let cat    = "all";
+let cat = "all";
 let sortBy = "ns";
-let q      = "";
+let q = "";
 
 function refresh() { list(); }
 
 async function setCat(c) {
     cat = c;
-    q   = "";
+    q = "";
     const searchInput = document.getElementById("searchInput");
     if (searchInput) searchInput.value = "";
     document.querySelectorAll(".chip").forEach(ch => {
-        ch.classList.toggle("on", ch.dataset.cat === c);
+        const isActive = ch.dataset.cat === c;
+        ch.classList.toggle("on", isActive);
+        ch.setAttribute("aria-pressed", String(isActive));
     });
     removeIAFilters()
     await loadProducts(CAT_QUERIES[c] || CAT_QUERIES.all);
@@ -37,6 +39,10 @@ function cardClick(id) {
     openProductModal(id);
 }
 
+// Mouse vs keyboard mode — mouseenter only focuses when mouse is driving
+let _usingMouse = true;
+document.addEventListener("keydown", e => { if (e.key === "Tab") _usingMouse = false; });
+document.addEventListener("mousemove", () => { _usingMouse = true; }, { passive: true });
 
 document.addEventListener("DOMContentLoaded", async () => {
     applyLang();
